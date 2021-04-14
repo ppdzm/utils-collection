@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="noona.push.ActivityPushTask">
+
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="io.github.ppdzm.utils.universal.base.Person">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">id,name,age,status</sql>
+
+    <insert id="insertOrUpdate">
+        INSERT INTO person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="age != null">age,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="age != null">#{age},</if>
+            <if test="status != null">#{status},</if>
+            <if test="number != null">#{number}</if>
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        <trim suffixOverrides=",">
+            <if test="id != null">id = #{id},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="number != null">number = #{number}</if>
+        </trim>
+    </insert>
+
+    <select id="select" resultMap="AllColumnMap" useCache="false" flushCache="true">
+        select
+        <include refid="all_column"/>
+        from person
+    </select>
+
+    <select id="selectOne" resultMap="AllColumnMap" useCache="false" flushCache="true">
+        SELECT
+        <include refid="all_column"/>
+        from person
+        <where>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null">AND name = #{name}</if>
+            <if test="age != null">AND age = #{age}</if>
+            <if test="status != null">AND status = #{status}</if>
+        </where>
+        limit 1
+    </select>
+
+</mapper>

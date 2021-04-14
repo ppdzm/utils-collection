@@ -1,0 +1,38 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <typeAliases>
+        <typeAlias type="org.sa.utils.database.pool.jdbc.HikariDataSourceFactory" alias="HIKARI"/>
+        <typeAlias type="org.sa.utils.database.pool.jdbc.DruidDataSourceFactory" alias="DRUID"/>
+    </typeAliases>
+
+    <environments default="default_env">
+        <environment id="default_env">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url"
+                          value="jdbc:mysql://HOST:PORT/DATABASE?allowMultiQueries=true&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull"/>
+                <property name="username" value="USERNAME"/>
+                <property name="password" value="PASSWORD"/>
+            </dataSource>
+        </environment>
+        <environment id="another_env">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url"
+                          value="jdbc:mysql://HOST:PORT/DATABASE?allowMultiQueries=true&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull"/>
+                <property name="username" value="USERNAME"/>
+                <property name="password" value="PASSWORD"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="example-mapper.xml"/>
+    </mappers>
+
+</configuration>
