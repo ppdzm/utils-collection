@@ -3,7 +3,7 @@ package io.github.ppdzm.utils.universal.base
 import java.lang.management.ManagementFactory
 import java.lang.reflect.InvocationTargetException
 
-import Symbols._
+import io.github.ppdzm.utils.universal.base.Symbols._
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import sun.management.VMManagement
 

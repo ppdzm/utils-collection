@@ -65,6 +65,20 @@ object DateTimeUtils {
 
     def dayOfLastHour(format: String = "yyyyMMdd"): String = hourBeforeNow(1, format)
 
+    def hourBeforeNow(number: Int, format: String = "HH"): String = {
+        val now = System.currentTimeMillis()
+        val before = now - number * 3600 * 1000
+        getDateFormat(format).format(new Date(before))
+    }
+
+    def getDateFormat(format: String): SimpleDateFormat = {
+        if (!dataFormats.contains(format)) {
+            val simpleDateFormat = new SimpleDateFormat(format)
+            dataFormats.put(format, simpleDateFormat)
+        }
+        dataFormats(format)
+    }
+
     def format(date: Date, format: String): String = getDateFormat(format).format(date)
 
     def format(unixTime: Long, format: String): String = getDateFormat(format).format(unixTime2Date(unixTime))
@@ -85,20 +99,6 @@ object DateTimeUtils {
     }
 
     def lastHour(format: String = "HH"): String = hourBeforeNow(1, format)
-
-    def hourBeforeNow(number: Int, format: String = "HH"): String = {
-        val now = System.currentTimeMillis()
-        val before = now - number * 3600 * 1000
-        getDateFormat(format).format(new Date(before))
-    }
-
-    def getDateFormat(format: String): SimpleDateFormat = {
-        if (!dataFormats.contains(format)) {
-            val simpleDateFormat = new SimpleDateFormat(format)
-            dataFormats.put(format, simpleDateFormat)
-        }
-        dataFormats(format)
-    }
 
     /**
      * 返回在这个时间范围内的timezone

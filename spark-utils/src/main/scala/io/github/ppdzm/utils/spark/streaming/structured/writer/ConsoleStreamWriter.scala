@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.streaming.structured.writer
 
 import org.apache.spark.sql.streaming.DataStreamWriter
-import org.sa.utils.spark.streaming.structured.sink.Sinks.consoleSink
+import io.github.ppdzm.utils.spark.streaming.structured.sink.Sinks.consoleSink
 
 import scala.reflect.ClassTag
 

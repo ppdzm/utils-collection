@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.universal.cli
 
 import io.github.ppdzm.utils.universal.config.{ConfigItem, ConfigTrait}
-import org.sa.utils.universal.config.ConfigItem
 
 /**
  * Created by Stuart Alex on 2017/12/1.

@@ -3,8 +3,7 @@ package io.github.ppdzm.utils.universal.implicits
 import java.nio.charset.StandardCharsets
 
 import io.github.ppdzm.utils.universal.base.{BytesUtils, Mathematics}
-import org.sa.utils.universal.base.{BytesUtils, Mathematics}
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 import scala.collection.mutable
 
@@ -34,13 +33,6 @@ object UnitConversions {
         def toHexStringWith0X: String = "0x" + this.toHexString
 
         /**
-         * 字节数组转换为十六进制字符串
-         *
-         * @return
-         */
-        def toHexString: String = BytesUtils.toHex(bytes)
-
-        /**
          * 字符串转二进制字符串
          *
          * @return
@@ -66,6 +58,13 @@ object UnitConversions {
                 case _ => ""
             }.mkString
         }
+
+        /**
+         * 字节数组转换为十六进制字符串
+         *
+         * @return
+         */
+        def toHexString: String = BytesUtils.toHex(bytes)
 
         /**
          * 字节数组转换为以:分隔每个字节的十六进制字符串

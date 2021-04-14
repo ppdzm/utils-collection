@@ -6,12 +6,12 @@ import org.apache.hadoop.hbase.client.Result
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 import org.apache.spark.sql.datasources.hbase.HBaseTableCatalog
-import org.sa.utils.hadoop.constants.ZookeeperConfigConstants
-import org.sa.utils.hadoop.hbase.implicts.HBaseImplicits._
-import org.sa.utils.hadoop.hbase.{HBaseCatalog, HBaseEnvironment}
-import org.sa.utils.spark.SparkUtils
-import org.sa.utils.spark.sql.SparkSQL
-import org.sa.utils.universal.config.{Config, FileConfig}
+import io.github.ppdzm.utils.hadoop.constants.ZookeeperConfigConstants
+import io.github.ppdzm.utils.hadoop.hbase.implicts.HBaseImplicits._
+import io.github.ppdzm.utils.hadoop.hbase.{HBaseCatalog, HBaseEnvironment}
+import io.github.ppdzm.utils.spark.SparkUtils
+import io.github.ppdzm.utils.spark.sql.SparkSQL
+import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.scalatest.FunSuite
 
 class SparkHBaseTest extends FunSuite with HBaseEnvironment with PrintConfig with ZookeeperConfigConstants {

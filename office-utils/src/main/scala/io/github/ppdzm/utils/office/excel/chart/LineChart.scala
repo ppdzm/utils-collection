@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.LineChartGrouping.Value
 import org.apache.poi.ss.usermodel.charts._
 import org.openxmlformats.schemas.drawingml.x2006.chart._
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.LineChartGrouping
 
 object LineChart {
     def paddingData(ctLineChart: CTLineChart, labeled: Boolean, xAxisValues: Array[String], seriesMapping: Map[String, ChartDataSource[Number]]): Unit = {

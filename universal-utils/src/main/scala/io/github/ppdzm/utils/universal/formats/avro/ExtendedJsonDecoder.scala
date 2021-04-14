@@ -6,13 +6,13 @@ import java.nio.charset.StandardCharsets
 import java.util
 
 import com.fasterxml.jackson.core.JsonToken._
-import com.fasterxml.jackson.core._
+import com.fasterxml.jackson.core.{JsonFactory, JsonParser, JsonToken}
 import com.fasterxml.jackson.databind.node.NullNode
+import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.avro.io.ParsingDecoder
 import org.apache.avro.io.parsing.{JsonGrammarGenerator, Parser, Symbol}
 import org.apache.avro.util.Utf8
 import org.apache.avro.{AvroTypeException, Schema}
-import org.sa.utils.universal.base.Logging
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -21,50 +21,15 @@ import scala.collection.mutable
  * Created by Stuart Alex on 2021/3/18.
  */
 class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser.ActionHandler with Logging {
-    private var currentReorderBuffer: ReorderBuffer = _
-    private var in: JsonParser = _
     private val jsonFactory = new JsonFactory
     private val reorderBuffers = new util.Stack[ReorderBuffer]()
     private val NULL_JSON_ELEMENT = JsonElement(null)
+    private var currentReorderBuffer: ReorderBuffer = _
+    private var in: JsonParser = _
 
     def this(json: String, schema: Schema) = {
         this(new JsonGrammarGenerator().generate(schema))
         configure(json)
-    }
-
-    private class ReorderBuffer {
-        var savedFields = new util.HashMap[String, List[JsonElement]]
-        var origParser: JsonParser = _
-    }
-
-    private def advance(symbol: Symbol): Symbol = {
-        this.parser.processTrailingImplicitActions()
-        if (in.getCurrentToken == null && this.parser.depth == 1) {
-            throw new EOFException
-        }
-        parser.advance(symbol)
-    }
-
-    override def arrayNext(): Long = {
-        advance(Symbol.ITEM_END)
-        doArrayNext()
-    }
-
-    private def checkFixed(size: Int): Unit = {
-        advance(Symbol.FIXED)
-        val top = parser.popSymbol.asInstanceOf[Symbol.IntCheckAction]
-        if (size != top.size) {
-            throw new AvroTypeException(s"Incorrect length for fixed binary: expected ${top.size} but received $size bytes.")
-        }
-    }
-
-    def configure(inputStream: InputStream): Unit = {
-        if (null == inputStream) {
-            throw new NullPointerException("InputStream to read from cannot be null!")
-        }
-        parser.reset()
-        this.in = jsonFactory.createJsonParser(inputStream)
-        this.in.nextToken
     }
 
     def configure(json: String): Unit = {
@@ -73,6 +38,20 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         }
         parser.reset()
         this.in = jsonFactory.createJsonParser(json)
+        this.in.nextToken
+    }
+
+    override def arrayNext(): Long = {
+        advance(Symbol.ITEM_END)
+        doArrayNext()
+    }
+
+    def configure(inputStream: InputStream): Unit = {
+        if (null == inputStream) {
+            throw new NullPointerException("InputStream to read from cannot be null!")
+        }
+        parser.reset()
+        this.in = jsonFactory.createJsonParser(inputStream)
         this.in.nextToken
     }
 
@@ -137,40 +116,6 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         }
         null
     }
-
-    private def doArrayNext(): Int = {
-        if (in.getCurrentToken == JsonToken.END_ARRAY) {
-            parser.advance(Symbol.ARRAY_END)
-            in.nextToken
-            0
-        }
-        else 1
-    }
-
-    private def doMapNext(): Int = {
-        if (in.getCurrentToken eq JsonToken.END_OBJECT) {
-            in.nextToken
-            advance(Symbol.MAP_END)
-            0
-        }
-        else {
-            1
-        }
-    }
-
-    private def doSkipFixed(length: Int): Unit = {
-        if (in.getCurrentToken eq JsonToken.VALUE_STRING) {
-            val result = readByteArray
-            in.nextToken
-            if (result.length != length) {
-                throw new AvroTypeException(s"Expected fixed length $length, but got${result.length}")
-            }
-        } else {
-            throw error("fixed")
-        }
-    }
-
-    private def error(`type`: String) = new AvroTypeException(s"Expected ${`type`}. Got ${in.getCurrentToken}")
 
     private def getValueAsTree(in: JsonParser): List[JsonElement] = {
         var level = 0
@@ -239,6 +184,15 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         }
     }
 
+    private def doArrayNext(): Int = {
+        if (in.getCurrentToken == JsonToken.END_ARRAY) {
+            parser.advance(Symbol.ARRAY_END)
+            in.nextToken
+            0
+        }
+        else 1
+    }
+
     override def readBoolean(): Boolean = {
         advance(Symbol.BOOLEAN)
         val t = in.getCurrentToken
@@ -249,8 +203,6 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
             throw error("boolean")
         }
     }
-
-    private def readByteArray: Array[Byte] = in.getText.getBytes(StandardCharsets.ISO_8859_1)
 
     override def readBytes(old: ByteBuffer): ByteBuffer = {
         advance(Symbol.BYTES)
@@ -273,7 +225,6 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
             throw error("double")
         }
     }
-
 
     override def readEnum(): Int = {
         advance(Symbol.ENUM)
@@ -389,6 +340,17 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         }
     }
 
+    private def doMapNext(): Int = {
+        if (in.getCurrentToken eq JsonToken.END_OBJECT) {
+            in.nextToken
+            advance(Symbol.MAP_END)
+            0
+        }
+        else {
+            1
+        }
+    }
+
     override def readNull(): Unit = {
         advance(Symbol.NULL)
         if (in.getCurrentToken eq VALUE_NULL) {
@@ -397,6 +359,8 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
             throw error("null")
         }
     }
+
+    override def readString(old: Utf8): Utf8 = new Utf8(readString())
 
     override def readString(): String = {
         advance(Symbol.STRING)
@@ -414,8 +378,6 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         result
     }
 
-    override def readString(old: Utf8): Utf8 = new Utf8(readString())
-
     override def skipArray(): Long = {
         advance(Symbol.ARRAY_START)
         if (in.getCurrentToken eq START_ARRAY) {
@@ -427,6 +389,16 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         }
         0
     }
+
+    private def advance(symbol: Symbol): Symbol = {
+        this.parser.processTrailingImplicitActions()
+        if (in.getCurrentToken == null && this.parser.depth == 1) {
+            throw new EOFException
+        }
+        parser.advance(symbol)
+    }
+
+    private def error(`type`: String) = new AvroTypeException(s"Expected ${`type`}. Got ${in.getCurrentToken}")
 
     override def skipBytes(): Unit = {
         advance(Symbol.BYTES)
@@ -447,6 +419,28 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
         checkFixed(length)
         doSkipFixed(length)
     }
+
+    private def checkFixed(size: Int): Unit = {
+        advance(Symbol.FIXED)
+        val top = parser.popSymbol.asInstanceOf[Symbol.IntCheckAction]
+        if (size != top.size) {
+            throw new AvroTypeException(s"Incorrect length for fixed binary: expected ${top.size} but received $size bytes.")
+        }
+    }
+
+    private def doSkipFixed(length: Int): Unit = {
+        if (in.getCurrentToken eq JsonToken.VALUE_STRING) {
+            val result = readByteArray
+            in.nextToken
+            if (result.length != length) {
+                throw new AvroTypeException(s"Expected fixed length $length, but got${result.length}")
+            }
+        } else {
+            throw error("fixed")
+        }
+    }
+
+    private def readByteArray: Array[Byte] = in.getText.getBytes(StandardCharsets.ISO_8859_1)
 
     override def skipMap(): Long = {
         advance(Symbol.MAP_START)
@@ -471,5 +465,10 @@ class ExtendedJsonDecoder(root: Symbol) extends ParsingDecoder(root) with Parser
             throw error("string")
         }
         in.nextToken
+    }
+
+    private class ReorderBuffer {
+        var savedFields = new util.HashMap[String, List[JsonElement]]
+        var origParser: JsonParser = _
     }
 }

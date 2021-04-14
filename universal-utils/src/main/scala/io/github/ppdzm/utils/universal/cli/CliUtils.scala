@@ -4,10 +4,8 @@ import java.util.Properties
 
 import io.github.ppdzm.utils.universal.base.{Logging, Symbols}
 import io.github.ppdzm.utils.universal.cli.Renders.Render
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.commons.cli.{HelpFormatter, Options}
-import org.sa.utils.universal.base.{Logging, Symbols}
-import org.sa.utils.universal.cli.Renders.Render
-import org.sa.utils.universal.implicits.BasicConversions._
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -122,21 +120,21 @@ object CliUtils extends Logging {
     /**
      * 渲染文本
      *
-     * @param string  原始文本
-     * @param renders 渲染器
-     * @return
-     */
-    def render(string: String, renders: Render*) = s"${this.ESCAPE}${renders.mkString(";")}m$string${this.ESCAPE}${Renders.RESET}m"
-
-    /**
-     * 渲染文本
-     *
      * @param stringRenderPair 原始文本和渲染器配对
      * @return
      */
     def render(stringRenderPair: Array[(String, Render)]): String = {
         stringRenderPair.map { case (str, rend) => render(str, rend) }.mkString
     }
+
+    /**
+     * 渲染文本
+     *
+     * @param string  原始文本
+     * @param renders 渲染器
+     * @return
+     */
+    def render(string: String, renders: Render*) = s"${this.ESCAPE}${renders.mkString(";")}m$string${this.ESCAPE}${Renders.RESET}m"
 
     /**
      * 重置所有设置

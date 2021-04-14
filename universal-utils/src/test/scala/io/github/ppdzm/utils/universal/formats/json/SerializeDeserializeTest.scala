@@ -3,7 +3,6 @@ package io.github.ppdzm.utils.universal.formats.json
 import io.github.ppdzm.utils.universal.base.Person
 import org.json4s.native.Serialization
 import org.json4s.{Formats, NoTypeHints}
-import org.sa.utils.universal.base.Person
 import org.scalatest.FunSuite
 
 /**

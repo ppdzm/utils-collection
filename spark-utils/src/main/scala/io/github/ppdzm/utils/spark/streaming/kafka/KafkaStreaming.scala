@@ -8,9 +8,9 @@ import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
 import org.apache.spark.streaming.kafka010.{CanCommitOffsets, HasOffsetRanges, KafkaUtils}
-import org.sa.utils.hadoop.constants.KafkaConfigConstants
-import org.sa.utils.spark.common.SparkStreamingEnvironment
-import org.sa.utils.spark.streaming.{PartitionProcessor, RDDProcessor, ResultProcessor}
+import io.github.ppdzm.utils.hadoop.constants.KafkaConfigConstants
+import io.github.ppdzm.utils.spark.common.SparkStreamingEnvironment
+import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, RDDProcessor, ResultProcessor}
 
 import scala.collection.mutable
 

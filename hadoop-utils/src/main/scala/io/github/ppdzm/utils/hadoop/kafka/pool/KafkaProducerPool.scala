@@ -2,15 +2,14 @@ package io.github.ppdzm.utils.hadoop.kafka.pool
 
 import java.util.Properties
 
+import io.github.ppdzm.utils.hadoop.kafka.config.KafkaProducerProperties
+import io.github.ppdzm.utils.hadoop.kafka.factory.KafkaProducerFactory
 import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.feature.Pool
 import org.apache.commons.pool2.ObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.sa.utils.hadoop.kafka.config.KafkaProducerProperties
-import org.sa.utils.hadoop.kafka.factory.KafkaProducerFactory
-import org.sa.utils.universal.base.Logging
 
 /**
  * Created by Stuart Alex on 2017/3/29.

@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.hadoop.hbase.pool
 
+import io.github.ppdzm.utils.hadoop.hbase.HBaseEnvironment
 import org.apache.commons.pool2.impl.DefaultPooledObject
 import org.apache.commons.pool2.{BasePooledObjectFactory, PooledObject}
 import org.apache.hadoop.hbase.client.{Connection, ConnectionFactory}
-import org.sa.utils.hadoop.hbase.HBaseEnvironment
 
 /**
  * Created by Stuart Alex on 2017/4/5.

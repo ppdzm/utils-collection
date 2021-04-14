@@ -20,6 +20,8 @@ class ExtendedJsonParser(elements: List[JsonElement]) extends JsonParser {
 
     override def getCodec: ObjectCodec = throw new UnsupportedOperationException()
 
+    override def setCodec(objectCodec: ObjectCodec): Unit = throw new UnsupportedOperationException()
+
     override def getCurrentLocation: JsonLocation = throw new UnsupportedOperationException()
 
     override def getCurrentName: String = throw new UnsupportedOperationException()
@@ -29,6 +31,8 @@ class ExtendedJsonParser(elements: List[JsonElement]) extends JsonParser {
     override def getDecimalValue: java.math.BigDecimal = throw new UnsupportedOperationException()
 
     override def getDoubleValue: Double = getText.toDouble
+
+    override def getText: String = elements(pos).value
 
     override def getFloatValue: Float = getText.toFloat
 
@@ -41,8 +45,6 @@ class ExtendedJsonParser(elements: List[JsonElement]) extends JsonParser {
     override def getLongValue: Long = getText.toLong
 
     override def getParsingContext: JsonStreamContext = throw new UnsupportedOperationException()
-
-    override def getText: String = elements(pos).value
 
     override def getTextCharacters: Array[Char] = throw new UnsupportedOperationException()
 
@@ -58,8 +60,6 @@ class ExtendedJsonParser(elements: List[JsonElement]) extends JsonParser {
         pos += 1
         elements(pos).token
     }
-
-    override def setCodec(objectCodec: ObjectCodec): Unit = throw new UnsupportedOperationException()
 
     override def skipChildren(): JsonParser = {
         var level = 0

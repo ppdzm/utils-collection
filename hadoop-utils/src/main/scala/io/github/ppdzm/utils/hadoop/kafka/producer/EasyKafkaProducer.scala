@@ -7,16 +7,13 @@ import java.util
 import java.util.Properties
 
 import io.github.ppdzm.utils.hadoop.kafka.config.KafkaProducerProperties.Builder
-import io.github.ppdzm.utils.hadoop.kafka.functions.{AlwaysTrueCondition, Condition, ExceptionHandler, PrintExceptionHandler}
+import io.github.ppdzm.utils.hadoop.kafka.config.{KafkaConsumerProperties, KafkaProducerProperties}
+import io.github.ppdzm.utils.hadoop.kafka.functions._
 import io.github.ppdzm.utils.universal.base.{Mathematics, ResourceUtils, StringUtils}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.kafka.clients.consumer.{ConsumerRecords, KafkaConsumer, OffsetResetStrategy}
 import org.apache.kafka.clients.producer.KafkaProducer
-import org.sa.utils.hadoop.kafka.config.{KafkaConsumerProperties, KafkaProducerProperties}
-import org.sa.utils.hadoop.kafka.functions.{AlwaysTrueCondition, Condition, ExceptionHandler, NeverStopSleeper, NoSubstitutor, PrintExceptionHandler, Sleeper, Substitutor}
-import org.sa.utils.universal.base.{ResourceUtils, StringUtils}
-import org.sa.utils.universal.feature._
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 import scala.io.Source
 import scala.reflect.ClassTag

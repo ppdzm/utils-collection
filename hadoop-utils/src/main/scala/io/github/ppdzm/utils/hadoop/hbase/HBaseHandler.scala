@@ -2,13 +2,14 @@ package io.github.ppdzm.utils.hadoop.hbase
 
 import java.util
 
-import org.apache.hadoop.hbase._
+import io.github.ppdzm.utils.universal.base.{DateTimeUtils, Logging}
+import io.github.ppdzm.utils.universal.feature.LoanPattern
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.client._
 import org.apache.hadoop.hbase.filter._
 import org.apache.hadoop.hbase.snapshot.{SnapshotCreationException, SnapshotExistsException}
 import org.apache.hadoop.hbase.util.Bytes
-import org.sa.utils.universal.base.{DateTimeUtils, Logging}
-import org.sa.utils.universal.implicits.BasicConversions._
+import org.apache.hadoop.hbase.{CompareOperator, HColumnDescriptor, HTableDescriptor, NamespaceDescriptor, NamespaceExistException, NamespaceNotFoundException, TableExistsException, TableName}
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._

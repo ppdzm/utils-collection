@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.office.excel
 
+import io.github.ppdzm.utils.office.excel.chart.{ColumnSeriesBarChart, ValueSeriesBarChart}
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.{BarChartGrouping, Direction, Order}
+import io.github.ppdzm.utils.office.excel.workbook.OOXMLWorkBook
 import io.github.ppdzm.utils.universal.feature.LoanPattern
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.{BarChartGrouping, Direction, Order}
-import org.sa.utils.office.excel.chart.{ColumnSeriesBarChart, ValueSeriesBarChart}
-import org.sa.utils.office.excel.workbook.OOXMLWorkBook
 import org.scalatest.FunSuite
 
 class BarChartTest extends FunSuite {

@@ -5,7 +5,6 @@ import java.util.Properties
 
 import io.github.ppdzm.utils.database.common.Drivers
 import io.github.ppdzm.utils.database.pool.jdbc.HikariConnectionPool
-import org.sa.utils.database.common.Drivers
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable

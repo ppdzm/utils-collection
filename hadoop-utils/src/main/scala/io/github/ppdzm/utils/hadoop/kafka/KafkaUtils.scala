@@ -3,10 +3,9 @@ package io.github.ppdzm.utils.hadoop.kafka
 import java.util.Properties
 
 import io.github.ppdzm.utils.hadoop.kafka.config.KafkaConsumerProperties
+import io.github.ppdzm.utils.hadoop.kafka.pool.KafkaConsumerPool
 import io.github.ppdzm.utils.universal.feature.Pool
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.sa.utils.hadoop.kafka.config.KafkaConsumerProperties
-import org.sa.utils.hadoop.kafka.pool.KafkaConsumerPool
 
 import scala.collection.JavaConversions._
 

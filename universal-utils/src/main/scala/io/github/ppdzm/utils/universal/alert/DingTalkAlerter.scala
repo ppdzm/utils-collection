@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.universal.alert
 
 import io.github.ppdzm.utils.universal.openapi.DingTalkUtils
-import org.sa.utils.universal.openapi.DingTalkUtils
 
 /**
  * Created by Stuart Alex on 2021/4/12.

@@ -2,11 +2,10 @@ package io.github.ppdzm.utils.hadoop.hbase
 
 import io.github.ppdzm.utils.universal.base.functions
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.CellUtil
 import org.apache.hadoop.hbase.client.Result
 import org.apache.hadoop.hbase.util.Bytes
-import org.sa.utils.universal.base.functions
-import org.sa.utils.universal.implicits.BasicConversions._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable

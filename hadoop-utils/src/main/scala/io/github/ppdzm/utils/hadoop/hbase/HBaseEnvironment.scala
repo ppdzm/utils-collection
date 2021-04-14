@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.hadoop.hbase
 
+import io.github.ppdzm.utils.hadoop.hbase.pool.HBaseConnectionPool
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.HBaseConfiguration
 import org.apache.hadoop.hbase.client.Connection
-import org.sa.utils.hadoop.hbase.pool.HBaseConnectionPool
 
 trait HBaseEnvironment {
     protected lazy val configuration: Configuration = {

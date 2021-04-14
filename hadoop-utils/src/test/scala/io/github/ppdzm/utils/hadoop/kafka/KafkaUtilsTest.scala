@@ -1,8 +1,7 @@
 package io.github.ppdzm.utils.hadoop.kafka
 
+import io.github.ppdzm.utils.hadoop.constants.KafkaConfigConstants
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
-import org.sa.utils.hadoop.constants.KafkaConfigConstants
-import org.sa.utils.universal.config.Config
 import org.scalatest.FunSuite
 
 /**

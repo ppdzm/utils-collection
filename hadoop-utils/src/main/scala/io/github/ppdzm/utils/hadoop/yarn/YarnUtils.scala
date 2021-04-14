@@ -9,11 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.github.ppdzm.utils.universal.cli.MessageGenerator
 import io.github.ppdzm.utils.universal.feature.{ExceptionGenerator, LoanPattern}
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringEscapeUtils
-import org.sa.utils.universal.cli.MessageGenerator
-import org.sa.utils.universal.feature.{ExceptionGenerator, LoanPattern}
-import org.sa.utils.universal.implicits.BasicConversions._
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -48,18 +46,6 @@ object YarnUtils {
     }
 
     /**
-     * 获取Executor日志
-     *
-     * @param address    日志主地址
-     * @param length     获取日志的长度
-     * @param outputType 获取日志的类型
-     * @return
-     */
-    def executorLogs(address: String, length: String, outputType: OutputType.Value = OutputType.err): String = {
-        this.acquireLogs(s"$address/root/$outputType/?start=$length")
-    }
-
-    /**
      * 从url获取网页源码，解析日志正文
      *
      * @param url 网页地址
@@ -70,6 +56,37 @@ object YarnUtils {
         new Regex("""<pre>([\s\S]*?)</pre>""", "log").findFirstMatchIn(html)
             .orElse(new Regex("""<td class="content">[^<]*?<h1>([\s\S]*?)</h1>""", "log").findFirstMatchIn(html))
             .getOrElse(throw new NoSuchElementException(this.noLogsMsg(html))).group("log").trim
+    }
+
+    /**
+     * Spark应用详情Json
+     *
+     * @param id Spark应用id
+     * @return
+     */
+    def sparkAppJson(id: String, resourceManagerAddresses: Array[String]): String = {
+        this.checkID(id)
+        val attachableAddress = findAttachableUrl(resourceManagerAddresses)
+        LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps/$id", "utf-8"))(_.mkString)
+    }
+
+    /**
+     * 检查id的合法性
+     *
+     * @param id Spark应用id
+     */
+    private def checkID(id: String): Unit = assert(id.matches("""application_\d+_\d+"""), s"$id is not correct Yarn Application format")
+
+    /**
+     * 获取Executor日志
+     *
+     * @param address    日志主地址
+     * @param length     获取日志的长度
+     * @param outputType 获取日志的类型
+     * @return
+     */
+    def executorLogs(address: String, length: String, outputType: OutputType.Value = OutputType.err): String = {
+        this.acquireLogs(s"$address/root/$outputType/?start=$length")
     }
 
     /**
@@ -121,38 +138,6 @@ object YarnUtils {
             .findFirstMatchIn(json)
             .getOrElse(throw new NoSuchFieldException(this.fieldMsgFormatter("trackingUrl", JsonUtils.pretty(json)))).group("url")
     }
-
-    /**
-     * Spark应用详情Json
-     *
-     * @param id Spark应用id
-     * @return
-     */
-    def sparkAppJson(id: String, resourceManagerAddresses: Array[String]): String = {
-        this.checkID(id)
-        val attachableAddress = findAttachableUrl(resourceManagerAddresses)
-        LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps/$id", "utf-8"))(_.mkString)
-    }
-
-    /**
-     * 找到可连接的url
-     *
-     * @param urls 一组url
-     * @return
-     */
-    def findAttachableUrl(urls: Array[String]): String = {
-        val attachableUrl = urls.find(url => Try(Source.fromURL(s"http://$url", "utf8")).isSuccess)
-        if (attachableUrl.isEmpty)
-            throw ExceptionGenerator.newException("NoAttachableUrl", "no attachable resource manager found")
-        attachableUrl.get
-    }
-
-    /**
-     * 检查id的合法性
-     *
-     * @param id Spark应用id
-     */
-    private def checkID(id: String): Unit = assert(id.matches("""application_\d+_\d+"""), s"$id is not correct Yarn Application format")
 
     /**
      * 返回executors详情
@@ -226,6 +211,19 @@ object YarnUtils {
     private def allYarnApps(resourceManagerAddresses: Array[String]): String = {
         val attachableAddress = findAttachableUrl(resourceManagerAddresses)
         LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps", "utf-8"))(_.mkString)
+    }
+
+    /**
+     * 找到可连接的url
+     *
+     * @param urls 一组url
+     * @return
+     */
+    def findAttachableUrl(urls: Array[String]): String = {
+        val attachableUrl = urls.find(url => Try(Source.fromURL(s"http://$url", "utf8")).isSuccess)
+        if (attachableUrl.isEmpty)
+            throw ExceptionGenerator.newException("NoAttachableUrl", "no attachable resource manager found")
+        attachableUrl.get
     }
 
     /**

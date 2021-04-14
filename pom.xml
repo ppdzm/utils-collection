@@ -3,6 +3,20 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <name>utils-collection</name>
+    <description>a collection of some common utils</description>
+    <url>https://github.com/ppdzm/utils-collection</url>
+    <scm>
+        <connection>scm:git:git@github.com:ppdzm/utils-collection.git</connection>
+        <developerConnection>scm:git:git@github.com:ppdzm/utils-collection.git</developerConnection>
+        <url>git@github.com:ppdzm/utils-collection.git</url>
+    </scm>
+    <developers>
+        <developer>
+            <name>Stuart Alex</name>
+            <email>278195317@qq.com</email>
+        </developer>
+    </developers>
     <groupId>io.github.ppdzm</groupId>
     <artifactId>utils-collection</artifactId>
     <packaging>pom</packaging>
@@ -157,11 +171,22 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <repository>
-            <id>nexus-releases</id>
-            <name>Local Nexus Repository</name>
-            <url>http://mav.chinapex.com.cn/repository/maven-releases/</url>
-        </repository>
-    </distributionManagement>
+    <profiles>
+        <profile>
+            <id>oss</id>
+            <properties>
+                <profiles.active>oss</profiles.active>
+            </properties>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

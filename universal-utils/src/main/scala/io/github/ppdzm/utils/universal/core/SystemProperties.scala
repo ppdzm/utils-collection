@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.universal.core
 
-import CoreConstants._
+import io.github.ppdzm.utils.universal.core.CoreConstants._
 
 /**
  * Created by Stuart Alex on 2021/4/8.

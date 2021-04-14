@@ -7,19 +7,15 @@ config:
     name: stuart
     age: 30
   listmap:
-    -
-      a: 1
+    - a: 1
       b: 2
-    -
-      x: 11
+    - x: 11
       y: 12
   maplist:
     ml1:
-      -
-        a: 1
+      - a: 1
         b: 2
-      -
-        x: 11
+      - x: 11
         y:  12
     ml2:
       - a: 1

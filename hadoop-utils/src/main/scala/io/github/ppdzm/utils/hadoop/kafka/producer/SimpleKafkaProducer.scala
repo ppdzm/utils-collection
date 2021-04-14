@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.hadoop.kafka.producer
 
+import io.github.ppdzm.utils.hadoop.kafka.pool.KafkaProducerPool
 import io.github.ppdzm.utils.universal.feature.Pool
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import org.sa.utils.hadoop.kafka.pool.KafkaProducerPool
 
 /**
  * Created by Stuart Alex on 2017/3/26.

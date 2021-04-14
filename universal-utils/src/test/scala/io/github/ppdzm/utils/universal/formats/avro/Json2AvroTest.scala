@@ -11,8 +11,6 @@ import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.commons.io.FileUtils
-import org.sa.utils.universal.feature.LoanPattern
-import org.sa.utils.universal.formats.json.JsonUtils
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

@@ -6,8 +6,8 @@ import io.github.ppdzm.utils.database.connection.MySQLConnection
 import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
-import org.sa.utils.spark.SparkUtils
-import org.sa.utils.spark.implicits.DataFrameConversions._
+import io.github.ppdzm.utils.spark.SparkUtils
+import io.github.ppdzm.utils.spark.implicits.DataFrameConversions._
 import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
 import io.github.ppdzm.utils.universal.implicits.UnitConversions._
 

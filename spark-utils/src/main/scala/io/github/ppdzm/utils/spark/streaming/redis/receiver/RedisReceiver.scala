@@ -5,8 +5,8 @@ import java.util
 import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
-import org.sa.utils.spark.streaming.redis.RedisConfigConstants
-import org.sa.utils.spark.streaming.redis.wrapper.{JedisClusterWrapper, JedisSingletonWrapper, JedisWrapper}
+import io.github.ppdzm.utils.spark.streaming.redis.RedisConfigConstants
+import io.github.ppdzm.utils.spark.streaming.redis.wrapper.{JedisClusterWrapper, JedisSingletonWrapper, JedisWrapper}
 import redis.clients.jedis.{HostAndPort, Jedis, JedisCluster}
 
 import scala.util.{Failure, Success, Try}

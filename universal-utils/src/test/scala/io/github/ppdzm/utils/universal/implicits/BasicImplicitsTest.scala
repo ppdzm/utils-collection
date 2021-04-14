@@ -1,8 +1,7 @@
 package io.github.ppdzm.utils.universal.implicits
 
 import io.github.ppdzm.utils.universal.base.Logging
-import org.sa.utils.universal.base.Logging
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.scalatest.FunSuite
 
 /**

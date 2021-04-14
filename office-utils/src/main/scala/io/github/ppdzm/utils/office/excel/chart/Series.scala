@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.apache.poi.ss.usermodel.charts.ChartDataSource
-import org.sa.utils.office.excel.sheet.OOXMLSheet
 
 trait Series {
     protected lazy val xAxisValues: Array[String] = ooxmlSheet.getColumnData(xAxisColumnName).distinct

@@ -6,5 +6,5 @@ trait Enum extends Enumeration {
         this.values.find(_.toString == value)
             .getOrElse(throw new IllegalArgumentException(s"unsupported $value in ${this.getClass.getSimpleName}"))
     }
-    
+
 }

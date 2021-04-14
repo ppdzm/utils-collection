@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.universal.alert
 
 import io.github.ppdzm.utils.universal.config.{Config, ConfigItem, ConfigTrait}
-import org.sa.utils.universal.config.{Config, ConfigItem, ConfigTrait}
 
 /**
  * Created by Stuart Alex on 2021/4/12.

@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import BasicConversions._
-import SeqConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.SeqConversions._
 
 import scala.reflect.ClassTag
 

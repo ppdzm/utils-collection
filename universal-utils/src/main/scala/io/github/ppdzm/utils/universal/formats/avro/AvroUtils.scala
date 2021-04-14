@@ -5,14 +5,12 @@ import java.io.{ByteArrayOutputStream, EOFException}
 import com.sksamuel.avro4s.json.JsonToAvroConverter
 import io.github.ppdzm.utils.universal.base.ResourceUtils
 import io.github.ppdzm.utils.universal.feature.LoanPattern
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.avro.Schema
 import org.apache.avro.file.{DataFileReader, DataFileWriter, SeekableByteArrayInput}
 import org.apache.avro.generic.{GenericData, GenericDatumReader, GenericDatumWriter, GenericRecord}
 import org.apache.avro.io.{BinaryEncoder, DecoderFactory, EncoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
-import org.sa.utils.universal.base.ResourceUtils
-import org.sa.utils.universal.feature.LoanPattern
-import org.sa.utils.universal.implicits.BasicConversions._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -35,28 +33,6 @@ object AvroUtils {
     }
 
     /**
-     * Avro字节数组转回Avro实体（类型未知，字节数组中不含Schema信息）
-     *
-     * @param bytes        Avro格式字节数组
-     * @param schemaString Avro Schema字符串
-     * @return
-     */
-    def bytes2Object(bytes: Array[Byte], schemaString: String): List[Object] = {
-        bytes2Generic[Object](bytes, schemaString)
-    }
-
-    /**
-     * Avro字节数组转回Avro实体（类型未知，字节数组中不含Schema信息）
-     *
-     * @param bytes  Avro格式字节数组
-     * @param schema Avro Schema
-     * @return
-     */
-    def bytes2Object(bytes: Array[Byte], schema: Schema): List[Object] = {
-        bytes2Generic[Object](bytes, schema)
-    }
-
-    /**
      * Avro字节数组转回Avro实体（GenericRecord/GenericData.Array）
      *
      * @param bytes Avro格式字节数组
@@ -75,6 +51,17 @@ object AvroUtils {
                 }
                 listBuffer.toList
         }
+    }
+
+    /**
+     * Avro字节数组转回Avro实体（类型未知，字节数组中不含Schema信息）
+     *
+     * @param bytes        Avro格式字节数组
+     * @param schemaString Avro Schema字符串
+     * @return
+     */
+    def bytes2Object(bytes: Array[Byte], schemaString: String): List[Object] = {
+        bytes2Generic[Object](bytes, schemaString)
     }
 
     /**
@@ -110,6 +97,17 @@ object AvroUtils {
             }
         }
         listBuffer.toList
+    }
+
+    /**
+     * Avro字节数组转回Avro实体（类型未知，字节数组中不含Schema信息）
+     *
+     * @param bytes  Avro格式字节数组
+     * @param schema Avro Schema
+     * @return
+     */
+    def bytes2Object(bytes: Array[Byte], schema: Schema): List[Object] = {
+        bytes2Generic[Object](bytes, schema)
     }
 
     /**
@@ -197,6 +195,44 @@ object AvroUtils {
     }
 
     /**
+     * 将Json String转换为Avro格式
+     *
+     * @param jsonString JsonString
+     * @param schema     Avro Schema
+     * @return
+     */
+    def json2Avro[T](jsonString: String, schema: Schema): List[T] = {
+        val buffer = ListBuffer[T]()
+        //        LoanPattern.using(new ByteArrayInputStream(jsonString.getBytes)) {
+        //            input =>
+        //                val reader = new GenericDatumReader[T](schema)
+        //                val decoder = DecoderFactory.get.jsonDecoder(schema, input)
+        //                var finished = false
+        //                while (!finished) {
+        //                    try {
+        //                        val datum = reader.read(null.asInstanceOf[T], decoder)
+        //                        buffer += datum
+        //                    } catch {
+        //                        case _: EOFException => finished = true
+        //                    }
+        //                }
+        //        }
+        val reader = new GenericDatumReader[T](schema)
+        val jsonDecoder = new ExtendedJsonDecoder(jsonString, schema)
+        var datum: T = null.asInstanceOf[T]
+        var finished = false
+        while (!finished) {
+            try {
+                datum = reader.read(datum, jsonDecoder)
+                buffer += datum
+            } catch {
+                case _: EOFException => finished = true
+            }
+        }
+        buffer.toList
+    }
+
+    /**
      * 将Json String转换为Avro格式字节数组（字节数组中无Schema信息）
      *
      * @param jsonString   JsonString
@@ -249,44 +285,6 @@ object AvroUtils {
     def json2AvroGenericRecord(jsonString: String, schema: Schema): List[GenericRecord] = {
         assert(schema.getType.getName == "record", "not an Avro record Schema")
         json2Avro[GenericRecord](jsonString, schema)
-    }
-
-    /**
-     * 将Json String转换为Avro格式
-     *
-     * @param jsonString JsonString
-     * @param schema     Avro Schema
-     * @return
-     */
-    def json2Avro[T](jsonString: String, schema: Schema): List[T] = {
-        val buffer = ListBuffer[T]()
-        //        LoanPattern.using(new ByteArrayInputStream(jsonString.getBytes)) {
-        //            input =>
-        //                val reader = new GenericDatumReader[T](schema)
-        //                val decoder = DecoderFactory.get.jsonDecoder(schema, input)
-        //                var finished = false
-        //                while (!finished) {
-        //                    try {
-        //                        val datum = reader.read(null.asInstanceOf[T], decoder)
-        //                        buffer += datum
-        //                    } catch {
-        //                        case _: EOFException => finished = true
-        //                    }
-        //                }
-        //        }
-        val reader = new GenericDatumReader[T](schema)
-        val jsonDecoder = new ExtendedJsonDecoder(jsonString, schema)
-        var datum: T = null.asInstanceOf[T]
-        var finished = false
-        while (!finished) {
-            try {
-                datum = reader.read(datum, jsonDecoder)
-                buffer += datum
-            } catch {
-                case _: EOFException => finished = true
-            }
-        }
-        buffer.toList
     }
 
     /**

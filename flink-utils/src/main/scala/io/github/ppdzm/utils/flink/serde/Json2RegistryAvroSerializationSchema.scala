@@ -6,7 +6,6 @@ import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.formats.avro.AvroUtils
 import org.apache.avro.Schema
 import org.apache.flink.formats.avro.{RegistryAvroSerializationSchema, SchemaCoder}
-import org.sa.utils.universal.feature.LoanPattern
 
 /**
  * Created by Stuart Alex on 2021/1/29.

@@ -6,7 +6,6 @@ import java.util.Properties
 
 import io.github.ppdzm.utils.universal.sql.ScriptAnalyser
 import org.apache.commons.io.FileUtils
-import org.sa.utils.universal.sql.ScriptAnalyser
 
 import scala.collection.JavaConversions._
 

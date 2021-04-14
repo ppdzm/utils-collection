@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.BarChartGrouping
 import org.apache.poi.ss.usermodel.charts.ChartDataSource
 import org.openxmlformats.schemas.drawingml.x2006.chart._
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.BarChartGrouping
 
 object BarChart {
 

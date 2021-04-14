@@ -1,14 +1,12 @@
 package io.github.ppdzm.utils.hadoop.hbase.implicts
 
+import io.github.ppdzm.utils.hadoop.hbase.{HBaseRow, Qualifier}
+import io.github.ppdzm.utils.universal.base.Symbols.lineSeparator
 import io.github.ppdzm.utils.universal.cli.PrettyBricks
-import io.github.ppdzm.utils.universal.config.Config
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.CellUtil
 import org.apache.hadoop.hbase.client.Result
 import org.apache.hadoop.hbase.util.Bytes
-import org.sa.utils.hadoop.hbase.{HBaseRow, Qualifier}
-import org.sa.utils.universal.base.Symbols.lineSeparator
-import org.sa.utils.universal.cli.{PrettyBricks, PrintConfig}
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 import scala.collection.mutable
 
@@ -267,6 +265,20 @@ object HBaseImplicits {
                 (tuple0, tuple1, tuple2, tuple3, tuple4)
         }
 
+        /**
+         * 获取HBase一行数据中指定单元格的数据
+         *
+         * @param qualifier io.github.ppdzm.universal.bigdata.spark.utils.hadoop.hbase.Qualifier
+         * @return
+         */
+        def getCellValue(qualifier: Qualifier): String = {
+            val cell = result.getColumnLatestCell(qualifier.cf.getBytes, qualifier.col.getBytes())
+            if (cell == null)
+                null
+            else
+                Bytes.toString(CellUtil.cloneValue(cell))
+        }
+
         def tuple6(fields: List[String], columns: Map[String, Qualifier], hasRowKey: Boolean) = {
             lazy val tuple = Bytes.toString(result.getRow)
             lazy val tuple0 = this.getCellValue(columns(fields.head))
@@ -384,20 +396,6 @@ object HBaseImplicits {
                 (tuple, tuple0, tuple1, tuple2, tuple3, tuple4, tuple5, tuple6, tuple7, tuple8, tuple9, tuple10)
             else
                 (tuple0, tuple1, tuple2, tuple3, tuple4, tuple5, tuple6, tuple7, tuple8, tuple9, tuple10, tuple11)
-        }
-
-        /**
-         * 获取HBase一行数据中指定单元格的数据
-         *
-         * @param qualifier org.sa.universal.bigdata.spark.utils.hadoop.hbase.Qualifier
-         * @return
-         */
-        def getCellValue(qualifier: Qualifier): String = {
-            val cell = result.getColumnLatestCell(qualifier.cf.getBytes, qualifier.col.getBytes())
-            if (cell == null)
-                null
-            else
-                Bytes.toString(CellUtil.cloneValue(cell))
         }
 
         def tuple13(fields: List[String], columns: Map[String, Qualifier], hasRowKey: Boolean) = {

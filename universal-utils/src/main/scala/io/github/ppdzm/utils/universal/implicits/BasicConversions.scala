@@ -1,11 +1,9 @@
 package io.github.ppdzm.utils.universal.implicits
 
+import io.github.ppdzm.utils.universal.base.Symbols._
 import io.github.ppdzm.utils.universal.base.{Mathematics, StringUtils}
 import io.github.ppdzm.utils.universal.cli.{Alignment, CliUtils, Renders}
-import org.sa.utils.universal.base.Symbols._
-import org.sa.utils.universal.base.{Mathematics, StringUtils}
-import org.sa.utils.universal.cli.{Alignment, CliUtils, Renders}
-import org.sa.utils.universal.implicits.UnitConversions._
+import io.github.ppdzm.utils.universal.implicits.UnitConversions._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Try
@@ -122,13 +120,6 @@ object BasicConversions {
          * @return
          */
         def notNullAndEmpty: Boolean = !isNullOrEmpty
-
-        /**
-         * 字符串是null或空字符串
-         *
-         * @return
-         */
-        def isNullOrEmpty: Boolean = string.isNull || string == ""
 
         /**
          * Unicode转文本
@@ -401,6 +392,8 @@ object BasicConversions {
 
         def prettyPrint(render: String): Unit = print(string.rendering(render))
 
+        def prettyPrintln(render: String): Unit = println(string.rendering(render))
+
         /**
          * 对文本进行颜色渲染
          *
@@ -414,7 +407,12 @@ object BasicConversions {
                 CliUtils.render(string, render.split(";").map(_.toInt).map(Renders.valueOf): _*)
         }
 
-        def prettyPrintln(render: String): Unit = println(string.rendering(render))
+        /**
+         * 字符串是null或空字符串
+         *
+         * @return
+         */
+        def isNullOrEmpty: Boolean = string.isNull || string == ""
 
         def splitDoubleQuotedString(splitter: String): Array[String] = StringUtils.split(string, splitter)
 

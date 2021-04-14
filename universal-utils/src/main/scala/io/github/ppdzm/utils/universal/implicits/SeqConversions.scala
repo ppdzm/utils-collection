@@ -1,11 +1,9 @@
 package io.github.ppdzm.utils.universal.implicits
 
+import io.github.ppdzm.utils.universal.base.Symbols._
 import io.github.ppdzm.utils.universal.cli.PrettyBricks
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
-import org.sa.utils.universal.base.Symbols._
-import org.sa.utils.universal.cli.PrettyBricks
-import org.sa.utils.universal.formats.json.JsonUtils
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 import scala.reflect.ClassTag
 

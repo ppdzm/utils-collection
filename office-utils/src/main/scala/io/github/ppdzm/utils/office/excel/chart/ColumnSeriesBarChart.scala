@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.{BarChartGrouping, Direction}
+import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.{BarChartGrouping, Direction}
-import org.sa.utils.office.excel.sheet.OOXMLSheet
 
 class ColumnSeriesBarChart(val ooxmlSheet: OOXMLSheet,
                            override val chartTitle: String,

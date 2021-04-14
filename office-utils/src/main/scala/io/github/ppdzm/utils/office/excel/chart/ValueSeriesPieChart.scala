@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.{Direction, Order}
+import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.openxmlformats.schemas.drawingml.x2006.chart.{CTPie3DChart, CTPieChart}
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.{Direction, Order}
-import org.sa.utils.office.excel.sheet.OOXMLSheet
 
 class ValueSeriesPieChart(val ooxmlSheet: OOXMLSheet,
                           override val chartTitle: String,

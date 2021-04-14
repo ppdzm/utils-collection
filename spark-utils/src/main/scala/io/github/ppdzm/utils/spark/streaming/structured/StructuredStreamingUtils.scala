@@ -2,9 +2,9 @@ package io.github.ppdzm.utils.spark.streaming.structured
 
 import org.apache.spark.sql.streaming.DataStreamWriter
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.sa.utils.spark.streaming.structured.reader.{KafkaStreamReader, SocketStreamReader, StreamReader}
-import org.sa.utils.spark.streaming.structured.source.InputSources._
-import org.sa.utils.spark.streaming.structured.writer.{ConsoleStreamWriter, KafkaStreamWriter, StreamWriter}
+import io.github.ppdzm.utils.spark.streaming.structured.reader.{KafkaStreamReader, SocketStreamReader, StreamReader}
+import io.github.ppdzm.utils.spark.streaming.structured.source.InputSources._
+import io.github.ppdzm.utils.spark.streaming.structured.writer.{ConsoleStreamWriter, KafkaStreamWriter, StreamWriter}
 
 import scala.reflect.ClassTag
 
@@ -14,16 +14,16 @@ object StructuredStreamingUtils extends App {
         this.readStream(sparkSession).inputSource(fileSource)
     }
 
-    def readStream(sparkSession: SparkSession): StreamReader = {
-        new StreamReader(sparkSession)
-    }
-
     def readFromKafka(sparkSession: SparkSession, brokers: String): KafkaStreamReader = {
         new KafkaStreamReader(sparkSession, brokers)
     }
 
     def readFromRate(sparkSession: SparkSession): StreamReader = {
         this.readStream(sparkSession).inputSource(rateSource)
+    }
+
+    def readStream(sparkSession: SparkSession): StreamReader = {
+        new StreamReader(sparkSession)
     }
 
     def readFromSocket(sparkSession: SparkSession, host: String, port: Int): SocketStreamReader = {

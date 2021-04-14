@@ -10,8 +10,6 @@ import org.apache.flink.api.common.time.Time
 import org.apache.flink.streaming.api.datastream.DataStreamSource
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.kafka.clients.consumer.OffsetResetStrategy
-import org.sa.utils.universal.alert.{Alerter, LoggerAlerter}
-import org.sa.utils.universal.config.{Config, FileConfig}
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

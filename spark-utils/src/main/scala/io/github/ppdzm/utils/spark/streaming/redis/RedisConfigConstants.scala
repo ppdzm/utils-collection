@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.streaming.redis
 
 import io.github.ppdzm.utils.universal.config.{ConfigItem, ConfigTrait}
-import org.sa.utils.universal.config.ConfigItem
+import io.github.ppdzm.utils.universal.config.ConfigItem
 
 trait RedisConfigConstants extends ConfigTrait {
     lazy val REDIS_CLUSTER_ENABLED: ConfigItem = ConfigItem("redis.cluster.enabled", false)

@@ -1,8 +1,7 @@
 package io.github.ppdzm.utils.universal.encryption
 
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
-import org.sa.utils.universal.formats.json.JsonUtils
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.scalatest.FunSuite
 
 /**

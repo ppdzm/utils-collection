@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.spark.streaming.structured.reader
 
 import io.github.ppdzm.utils.spark.streaming.structured.source.{Source, SourceOption}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.sa.utils.spark.streaming.structured.source.{Source, SourceOption}
+import io.github.ppdzm.utils.spark.streaming.structured.source.{Source, SourceOption}
 
 class StreamReader(private val sparkSession: SparkSession) {
     private val dataStreamReader = sparkSession.readStream

@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.universal.implicits
 
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
-import org.sa.utils.universal.config.Config
 import org.scalatest.FunSuite
 
 /**

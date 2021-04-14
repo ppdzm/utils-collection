@@ -5,7 +5,6 @@ import java.text.{ChoiceFormat, MessageFormat}
 import java.util.{Locale, ResourceBundle}
 
 import io.github.ppdzm.utils.universal.core.SystemProperties
-import org.sa.utils.universal.core.SystemProperties
 
 import scala.collection.mutable
 import scala.util.Try

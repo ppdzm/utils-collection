@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.hadoop.constants
 
 import io.github.ppdzm.utils.universal.config.{ConfigItem, ConfigTrait}
-import org.sa.utils.universal.config.ConfigItem
 
 trait ZookeeperConfigConstants extends ConfigTrait {
     lazy val ZOOKEEPER_CONNECTION: ConfigItem = ConfigItem("zookeeper.connection")

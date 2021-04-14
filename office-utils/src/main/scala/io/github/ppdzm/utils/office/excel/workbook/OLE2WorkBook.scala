@@ -2,8 +2,8 @@ package io.github.ppdzm.utils.office.excel.workbook
 
 import java.io.FileInputStream
 
+import io.github.ppdzm.utils.office.excel.sheet.OLE2Sheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.sa.utils.office.excel.sheet.OLE2Sheet
 
 case class OLE2WorkBook(excelFileName: String, private val createWhenNotExist: Boolean = true) extends WorkBook {
     this.checkExtension("xls")

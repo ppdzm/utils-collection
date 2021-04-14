@@ -5,7 +5,6 @@ import java.sql.ResultSet
 import io.github.ppdzm.utils.database.connection.MySQLConnection
 import io.github.ppdzm.utils.universal.base.{Logging, StringUtils}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
-import org.sa.utils.universal.base.{Logging, StringUtils}
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
 
@@ -24,33 +23,12 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 查询
-     *
-     * @param statement sql语句
-     * @return
-     */
-    def query(statement: String): ResultSet = {
-        MySQLConnection.getStatement(url, extraProperties).executeQuery(statement)
-    }
-
-    /**
      * 创建数据库
      *
      * @param database 数据库名称
      */
     def createDatabase(database: String): Unit = {
         execute(s"create database if not exists $database")
-    }
-
-    /**
-     * 执行sql语句
-     *
-     * @param statement sql语句
-     */
-    def execute(statement: String): Unit = {
-        LoanPattern.using(MySQLConnection.getStatement(url, extraProperties))(ps => {
-            ps.execute(statement)
-        })
     }
 
     /**
@@ -71,6 +49,17 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def createTable(database: String, table: String, columnDefinition: Map[String, String]): Unit = {
         execute(s"create table $database.$table(${columnDefinition.map(e => e._1 + " " + e._2).mkString(",")})")
+    }
+
+    /**
+     * 执行sql语句
+     *
+     * @param statement sql语句
+     */
+    def execute(statement: String): Unit = {
+        LoanPattern.using(MySQLConnection.getStatement(url, extraProperties))(ps => {
+            ps.execute(statement)
+        })
     }
 
     /**
@@ -210,6 +199,16 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def showCreateTable(database: String, table: String): String = {
         query(s"show create table $database.$table").singleColumnList(0).mkString(" ")
+    }
+
+    /**
+     * 查询
+     *
+     * @param statement sql语句
+     * @return
+     */
+    def query(statement: String): ResultSet = {
+        MySQLConnection.getStatement(url, extraProperties).executeQuery(statement)
     }
 
     /**

@@ -5,10 +5,7 @@ import java.util.Properties
 import io.github.ppdzm.utils.universal.base.Enum
 import io.github.ppdzm.utils.universal.config.Config
 import io.github.ppdzm.utils.universal.core.SystemProperties
-import org.sa.utils.universal.base.Enum
-import org.sa.utils.universal.config.Config
-import org.sa.utils.universal.core.SystemProperties
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 /**
  * Created by Stuart Alex on 2017/9/6.

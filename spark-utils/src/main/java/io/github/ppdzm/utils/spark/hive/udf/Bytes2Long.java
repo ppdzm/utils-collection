@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.hive.udf;
 
-import org.apache.hadoop.hive.ql.exec.UDF;
 import io.github.ppdzm.utils.universal.base.functions;
+import org.apache.hadoop.hive.ql.exec.UDF;
 
 /**
  * @author Stuart Alex

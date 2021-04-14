@@ -6,10 +6,9 @@ import java.util
 import java.util.Properties
 
 import io.github.ppdzm.utils.universal.base.ResourceUtils
-import org.sa.utils.universal.base.ResourceUtils
-import org.sa.utils.universal.core.CoreConstants._
-import org.sa.utils.universal.core.SystemProperties._
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.core.CoreConstants._
+import io.github.ppdzm.utils.universal.core.SystemProperties._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.yaml.snakeyaml.Yaml
 
 import scala.collection.JavaConversions._

@@ -5,7 +5,6 @@ import java.io.File
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.apache.avro.Schema
 import org.apache.avro.generic.{GenericData, GenericRecord}
-import org.sa.utils.universal.feature.LoanPattern
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

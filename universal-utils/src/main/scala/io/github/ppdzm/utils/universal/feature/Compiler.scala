@@ -4,7 +4,6 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 import io.github.ppdzm.utils.universal.base.Logging
-import org.sa.utils.universal.base.Logging
 
 import scala.collection.mutable
 import scala.reflect.internal.util.{AbstractFileClassLoader, BatchSourceFile}

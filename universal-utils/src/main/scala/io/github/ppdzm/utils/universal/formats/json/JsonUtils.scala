@@ -25,30 +25,6 @@ object JsonUtils {
     def compact(json: String): String = serialize(parse(json))
 
     /**
-     * 将JSON字符串反序列化为Class
-     *
-     * @param json JSON字符串
-     * @return
-     */
-    def deserialize[T](json: String, clazz: Class[T]): T = objectMapper.readValue(json, clazz)
-
-    /**
-     * 格式化JSON字符串
-     *
-     * @param json JSON字符串
-     * @return
-     */
-    def pretty(json: String): String = pretty(objectMapper.readTree(json))
-
-    /**
-     * 将Case Class序列化为美化格式JSON字符串
-     *
-     * @param anyRef AnyRef
-     * @return
-     */
-    def pretty(anyRef: AnyRef): String = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(anyRef)
-
-    /**
      * 将Java Class序列化为压缩格式JSON字符串
      *
      * @param anyRef AnyRef
@@ -60,6 +36,14 @@ object JsonUtils {
         else
             objectMapper.writeValueAsString(anyRef)
     }
+
+    /**
+     * 将Case Class序列化为美化格式JSON字符串
+     *
+     * @param anyRef AnyRef
+     * @return
+     */
+    def pretty(anyRef: AnyRef): String = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(anyRef)
 
     /**
      * 读取JSON String为JsonNode
@@ -78,6 +62,22 @@ object JsonUtils {
      * @return
      */
     def parse[T](json: String, returnType: Class[T]): T = objectMapper.readValue(json, returnType)
+
+    /**
+     * 将JSON字符串反序列化为Class
+     *
+     * @param json JSON字符串
+     * @return
+     */
+    def deserialize[T](json: String, clazz: Class[T]): T = objectMapper.readValue(json, clazz)
+
+    /**
+     * 格式化JSON字符串
+     *
+     * @param json JSON字符串
+     * @return
+     */
+    def pretty(json: String): String = pretty(objectMapper.readTree(json))
 
     /**
      * 读取Json文件为JsonNode
@@ -124,14 +124,6 @@ object JsonUtils {
     def deserialize4s[T](json: String)(implicit mf: Manifest[T]): T = Serialization.read[T](json)
 
     /**
-     * 将Case Class序列化为美化格式JSON字符串
-     *
-     * @param anyRef AnyRef
-     * @return
-     */
-    def pretty4s(anyRef: AnyRef): String = Serialization.writePretty(anyRef)
-
-    /**
      * 将Scala Class/Scala Case Class序列化为压缩格式JSON字符串
      *
      * @param anyRef AnyRef
@@ -143,5 +135,13 @@ object JsonUtils {
         else
             Serialization.write(anyRef)
     }
+
+    /**
+     * 将Case Class序列化为美化格式JSON字符串
+     *
+     * @param anyRef AnyRef
+     * @return
+     */
+    def pretty4s(anyRef: AnyRef): String = Serialization.writePretty(anyRef)
 
 }

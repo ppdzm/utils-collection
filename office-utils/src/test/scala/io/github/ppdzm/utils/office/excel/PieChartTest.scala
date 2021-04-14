@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel
 
+import io.github.ppdzm.utils.office.excel.chart.{ColumnSeriesPieChart, ValueSeriesPieChart}
+import io.github.ppdzm.utils.office.excel.workbook.OOXMLWorkBook
 import io.github.ppdzm.utils.universal.feature.LoanPattern
-import org.sa.utils.office.excel.chart.{ColumnSeriesPieChart, ValueSeriesPieChart}
-import org.sa.utils.office.excel.workbook.OOXMLWorkBook
 import org.scalatest.FunSuite
 
 class PieChartTest extends FunSuite {

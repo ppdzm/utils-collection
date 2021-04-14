@@ -1,15 +1,13 @@
 package io.github.ppdzm.utils.hadoop.hbase
 
+import io.github.ppdzm.utils.hadoop.constants.ZookeeperConfigConstants
+import io.github.ppdzm.utils.hadoop.hbase.implicts.HBaseImplicits._
+import io.github.ppdzm.utils.hadoop.hbase.pool.HBaseConnectionPool
 import io.github.ppdzm.utils.universal.cli.PrintConfig
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.apache.hadoop.hbase.TableName
 import org.apache.hadoop.hbase.client.Scan
-import org.sa.utils.hadoop.constants.ZookeeperConfigConstants
-import org.sa.utils.hadoop.hbase.implicts.HBaseImplicits._
-import org.sa.utils.hadoop.hbase.pool.HBaseConnectionPool
-import org.sa.utils.universal.cli.PrintConfig
-import org.sa.utils.universal.config.{Config, FileConfig}
 import org.scalatest.FunSuite
 
 /**

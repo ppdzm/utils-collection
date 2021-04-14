@@ -3,8 +3,7 @@ package io.github.ppdzm.utils.universal.config
 import java.nio.charset.StandardCharsets
 
 import io.github.ppdzm.utils.universal.base.StringUtils
-import org.sa.utils.universal.base.StringUtils
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 import scala.reflect.ClassTag
 
@@ -23,13 +22,6 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
 
     def bytesValue: Array[Byte] = this.stringValue.getBytes(StandardCharsets.UTF_8)
 
-    def stringValue: String = {
-        if (defaultValue.isNull)
-            config.getProperty(key, null)
-        else
-            config.getProperty(key, defaultValue.toString)
-    }
-
     /**
      * 调用rawValue时不会用到defaultValue
      *
@@ -41,6 +33,13 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
 
     def intValue: Int = this.stringValue.toInt
 
+    def stringValue: String = {
+        if (defaultValue.isNull)
+            config.getProperty(key, null)
+        else
+            config.getProperty(key, defaultValue.toString)
+    }
+
     def isDefined: Boolean = config.isDefined(key)
 
     def longValue: Long = this.stringValue.toLong
@@ -51,6 +50,10 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
             .filter(_.length == 2)
             .map(splits => splits(0) -> splits(1))
             .toMap
+    }
+
+    def arrayValue(separator: String = ","): Array[String] = {
+        StringUtils.split(stringValue, separator).filter(_.nonEmpty)
     }
 
     def mapListValue(fieldSeparator: String = ",", keyValueSeparator: String = ":", valueSeparator: String = "~"): Map[String, List[String]] = {
@@ -67,10 +70,6 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
                 .filter(_.length == 2)
                 .map(splits => splits(0) -> StringUtils.split(splits(1), valueSeparator).toList)
                 .toMap
-    }
-
-    def arrayValue(separator: String = ","): Array[String] = {
-        StringUtils.split(stringValue, separator).filter(_.nonEmpty)
     }
 
     def newValue(value: Any): Unit = {

@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.workbook
 
+import io.github.ppdzm.utils.office.excel.sheet.JxlSheet
 import jxl.{Workbook, WorkbookSettings}
 import org.apache.poi.ss.usermodel
-import org.sa.utils.office.excel.sheet.JxlSheet
 
 case class JxlWorkBook(excelFileName: String,
                        private val createWhenNotExist: Boolean = true) extends WorkBook {

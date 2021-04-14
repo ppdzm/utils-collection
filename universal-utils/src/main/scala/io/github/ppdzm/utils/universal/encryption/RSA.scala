@@ -9,7 +9,6 @@ import java.util.Base64
 
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import javax.crypto.Cipher
-import org.sa.utils.universal.feature.LoanPattern
 
 /**
  * Created by Stuart Alex on 2017/3/29.

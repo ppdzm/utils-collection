@@ -1,13 +1,10 @@
 package io.github.ppdzm.utils.hadoop.kafka
 
-import io.github.ppdzm.utils.hadoop.kafka.functions.ExitExceptionHandler
+import io.github.ppdzm.utils.hadoop.constants.KafkaConfigConstants
+import io.github.ppdzm.utils.hadoop.kafka.functions.{CountCondition, ExitExceptionHandler, TimeSleeper}
+import io.github.ppdzm.utils.hadoop.kafka.producer.SimpleKafkaProducer
 import io.github.ppdzm.utils.universal.base.{Logging, StringUtils}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
-import org.sa.utils.hadoop.constants.KafkaConfigConstants
-import org.sa.utils.hadoop.kafka.functions.{CountCondition, ExitExceptionHandler, NumberSubstitutor, TimeSleeper}
-import org.sa.utils.hadoop.kafka.producer.SimpleKafkaProducer
-import org.sa.utils.universal.base.Logging
-import org.sa.utils.universal.config.{Config, FileConfig}
 import org.scalatest.FunSuite
 
 /**
@@ -41,7 +38,7 @@ class KafkaSimpleProducerTest extends FunSuite with KafkaConfigConstants with Lo
             .withCondition(CountCondition(10))
             .withExceptionHandler(ExitExceptionHandler)
             .withSleeper(TimeSleeper(1000))
-//            .withSubstitutor(NumberSubstitutor("1cb00feb-456a-456c-85a7-b42e269b5d61"))
+            //            .withSubstitutor(NumberSubstitutor("1cb00feb-456a-456c-85a7-b42e269b5d61"))
             .withRandom(true)
             .start()
     }

@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.office.excel
 
+import io.github.ppdzm.utils.office.excel.workbook.{JxlWorkBook, OLE2WorkBook, OOXMLWorkBook}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
-import org.sa.utils.office.excel.workbook.{JxlWorkBook, OLE2WorkBook, OOXMLWorkBook}
 import org.scalatest.FunSuite
 
 class SimpleExcelTest extends FunSuite {

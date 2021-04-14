@@ -7,7 +7,6 @@ import java.util.concurrent.TimeoutException
 import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.apache.hadoop.fs.{FileSystem, LocatedFileStatus, Path}
-import org.sa.utils.universal.base.Logging
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -17,6 +16,16 @@ import scala.collection.mutable
  */
 trait FileSystemHandler extends Logging {
     protected val fileSystem: FileSystem
+
+    /**
+     * 向指定路径追加文本后换行
+     *
+     * @param line 文本
+     * @param path 路径
+     */
+    def appendLine(line: String, path: String): Unit = {
+        appendLine(line.getBytes(UTF_8), path)
+    }
 
     /**
      * 向指定路径追加字节数组后换行
@@ -42,26 +51,6 @@ trait FileSystemHandler extends Logging {
     }
 
     /**
-     * 向指定路径追加文本
-     *
-     * @param line 文本
-     * @param path 路径
-     */
-    def append(line: String, path: String): Unit = {
-        append(line.getBytes(UTF_8), path)
-    }
-
-    /**
-     * 向指定路径追加文本后换行
-     *
-     * @param line 文本
-     * @param path 路径
-     */
-    def appendLine(line: String, path: String): Unit = {
-        appendLine(line.getBytes(UTF_8), path)
-    }
-
-    /**
      * 向指定路径追加多行文本
      *
      * @param lines 多行文本
@@ -69,6 +58,16 @@ trait FileSystemHandler extends Logging {
      */
     def appendLines(lines: Array[String], path: String): Unit = {
         append(lines.mkString(System.lineSeparator()), path)
+    }
+
+    /**
+     * 向指定路径追加文本
+     *
+     * @param line 文本
+     * @param path 路径
+     */
+    def append(line: String, path: String): Unit = {
+        append(line.getBytes(UTF_8), path)
     }
 
     /**
@@ -193,30 +192,6 @@ trait FileSystemHandler extends Logging {
     }
 
     /**
-     * 向指定路径写入字节数组
-     *
-     * @param bytes 字节数组
-     * @param path  路径
-     */
-    def write(bytes: Array[Byte], path: String): Unit = {
-        LoanPattern.using(this.fileSystem.create(new Path(path))) {
-            fsDataOutputStream =>
-                fsDataOutputStream.write(bytes)
-                fsDataOutputStream.flush()
-        }
-    }
-
-    /**
-     * 向指定路径写入文本
-     *
-     * @param line 文本
-     * @param path 路径
-     */
-    def write(line: String, path: String): Unit = {
-        write(line.getBytes(UTF_8), path)
-    }
-
-    /**
      * 向指定路径写入文本后换行
      *
      * @param line 文本
@@ -234,6 +209,30 @@ trait FileSystemHandler extends Logging {
      */
     def writeLines(lines: Array[String], path: String): Unit = {
         write(lines.mkString(System.lineSeparator()), path)
+    }
+
+    /**
+     * 向指定路径写入文本
+     *
+     * @param line 文本
+     * @param path 路径
+     */
+    def write(line: String, path: String): Unit = {
+        write(line.getBytes(UTF_8), path)
+    }
+
+    /**
+     * 向指定路径写入字节数组
+     *
+     * @param bytes 字节数组
+     * @param path  路径
+     */
+    def write(bytes: Array[Byte], path: String): Unit = {
+        LoanPattern.using(this.fileSystem.create(new Path(path))) {
+            fsDataOutputStream =>
+                fsDataOutputStream.write(bytes)
+                fsDataOutputStream.flush()
+        }
     }
 
     /**

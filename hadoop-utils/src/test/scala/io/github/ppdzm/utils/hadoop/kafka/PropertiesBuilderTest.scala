@@ -4,7 +4,6 @@ import java.lang
 
 import io.github.ppdzm.utils.hadoop.kafka.config.KafkaConsumerProperties
 import io.github.ppdzm.utils.universal.config.FileConfig
-import org.sa.utils.hadoop.kafka.config.KafkaConsumerProperties
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

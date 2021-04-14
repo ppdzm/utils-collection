@@ -4,7 +4,6 @@ import java.sql.ResultSet
 
 import io.github.ppdzm.utils.universal.cli.{CliUtils, PrintConfig, Renders}
 import io.github.ppdzm.utils.universal.config.Config
-import org.sa.utils.universal.cli._
 
 /**
  * Created by Stuart Alex on 2021/4/8.
@@ -119,17 +118,17 @@ class ConfiguredConversions(implicit val config: Config) extends PrintConfig {
         def prettyPrint(): Unit = print(string.rendering())
 
         /**
+         * 渲染后输出
+         */
+        def prettyPrintln(): Unit = println(string.rendering())
+
+        /**
          * 对文本进行颜色渲染
          *
          * @param render 渲染参数
          * @return
          */
         def rendering(render: String = render): String = CliUtils.render(string, render.split(";").map(_.toInt).map(Renders.valueOf): _*)
-
-        /**
-         * 渲染后输出
-         */
-        def prettyPrintln(): Unit = println(string.rendering())
 
     }
 

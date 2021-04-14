@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.spark.udaf
 
-import org.sa.utils.spark.SparkUtils
-import org.sa.utils.spark.file.SparkFile
-import org.sa.utils.spark.sql.SparkSQL
+import io.github.ppdzm.utils.spark.SparkUtils
+import io.github.ppdzm.utils.spark.file.SparkFile
+import io.github.ppdzm.utils.spark.sql.SparkSQL
 import org.scalatest.FunSuite
 
 /**

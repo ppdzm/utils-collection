@@ -2,8 +2,8 @@ package io.github.ppdzm.utils.universal.formats.avro
 
 import java.io.File
 
-import org.apache.avro.Schema
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import org.apache.avro.Schema
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

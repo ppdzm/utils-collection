@@ -2,11 +2,11 @@ package io.github.ppdzm.utils.hadoop.kafka.config
 
 import java.util.Properties
 
-import org.apache.kafka.common.config.AbstractConfig
+import _root_.io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import org.apache.kafka.common.config.AbstractConfig
 
 import scala.reflect._
-import _root_.io.github.ppdzm.utils.universal.base.Logging
 
 /**
  * Created by Stuart Alex on 2021/1/28.

@@ -1,8 +1,7 @@
 package io.github.ppdzm.utils.universal.implicits
 
 import io.github.ppdzm.utils.universal.cli.Renders
-import org.sa.utils.universal.cli.Renders
-import org.sa.utils.universal.implicits.LoggerExtensions._
+import io.github.ppdzm.utils.universal.implicits.LoggerExtensions._
 import org.scalatest.FunSuite
 import org.slf4j.{Logger, LoggerFactory}
 

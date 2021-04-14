@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.universal.feature
 
-import SyntaxSugar._
+import io.github.ppdzm.utils.universal.feature.SyntaxSugar._
 
 object IF {
     def apply[T](expression: => Boolean, trueValue: => T, falseValue: => T) = new IF(expression, () => trueValue, () => falseValue)

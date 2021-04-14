@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.office.excel.chart
 
+import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.Order
 import org.apache.poi.ss.usermodel.charts.{ChartDataSource, DataSources}
 import org.apache.poi.ss.util.CellRangeAddress
-import org.sa.utils.office.excel.enumeration.ExcelEnumerations.Order
 
 trait ValueSeries extends Series {
     val yAxisColumnName: String

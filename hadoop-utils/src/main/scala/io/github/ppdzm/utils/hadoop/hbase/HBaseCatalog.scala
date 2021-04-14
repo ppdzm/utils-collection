@@ -5,9 +5,7 @@ import java.util.Properties
 import io.github.ppdzm.utils.universal.config.{Config, ConfigItem}
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
-import org.sa.utils.universal.config.{Config, ConfigItem}
-import org.sa.utils.universal.feature.ExceptionGenerator
-import org.sa.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 /**
  * Created by Stuart Alex on 2016/12/14.

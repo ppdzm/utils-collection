@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.hadoop.constants
 
 import io.github.ppdzm.utils.universal.config.{ConfigItem, ConfigTrait}
-import org.sa.utils.universal.config.ConfigItem
 
 trait KafkaConfigConstants extends ConfigTrait {
     lazy val KAFKA_BROKERS: ConfigItem = ConfigItem("kafka.brokers")

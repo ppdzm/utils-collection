@@ -4,15 +4,14 @@ import java.io.File
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
+import io.github.ppdzm.utils.hadoop.constants.KafkaConfigConstants
+import io.github.ppdzm.utils.hadoop.kafka.producer.RegistryAvroKafkaProducer
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.kafka.clients.consumer.OffsetResetStrategy
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.sa.utils.hadoop.constants.KafkaConfigConstants
-import org.sa.utils.hadoop.kafka.producer.RegistryAvroKafkaProducer
-import org.sa.utils.universal.config.{Config, FileConfig}
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

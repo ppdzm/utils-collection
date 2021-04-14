@@ -8,13 +8,8 @@ import io.github.ppdzm.utils.universal.cli.Renders.Render
 import io.github.ppdzm.utils.universal.cli.{CliUtils, ParameterOption, Renders}
 import io.github.ppdzm.utils.universal.core.CoreConstants
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
+import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.commons.cli.{CommandLine, DefaultParser, Options}
-import org.sa.utils.universal.base.Logging
-import org.sa.utils.universal.cli.Renders.Render
-import org.sa.utils.universal.cli.{CliUtils, ParameterOption, Renders}
-import org.sa.utils.universal.core.CoreConstants
-import org.sa.utils.universal.feature.ExceptionGenerator
-import org.sa.utils.universal.implicits.BasicConversions._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -26,24 +21,9 @@ import scala.reflect.{ClassTag, classTag}
  * 读取resources下的配置文件，只读取被激活（active）的配置
  */
 trait Config extends Logging with Serializable {
-    private val replaceRegex = """\$\{[^#\}$]+\}""".r
     protected val properties: Properties = initialize()
     protected val configKeyValues: mutable.HashMap[String, AnyRef] = mutable.HashMap[String, AnyRef]()
-
-    protected def initialize(): Properties
-
-    protected def refresh(): Unit
-
-    /**
-     * 添加配置项
-     *
-     * @param property 配置项名称
-     * @param value    配置项值
-     * @return
-     */
-    def addProperty(property: String, value: Any): Unit = {
-        properties.put(property, value.toString)
-    }
+    private val replaceRegex = """\$\{[^#\}$]+\}""".r
 
     def getProperties: Properties = properties
 
@@ -86,6 +66,30 @@ trait Config extends Logging with Serializable {
             printConfig(property, plainValue)
         }
         plainValue
+    }
+
+    private def findReferences(plainValue: String, missingRefs: mutable.MutableList[String]): List[String] = {
+        replaceRegex.findAllMatchIn(plainValue)
+            .map { `match` => `match`.group(0) }
+            .filterNot { ref => missingRefs.contains(ref) }
+            .toList
+    }
+
+    private def printConfig[T: ClassTag](property: String, plainValue: AnyRef): Unit = {
+        val messages = mutable.MutableList[(String, Render)]()
+        messages += "Value of configuration " -> Renders.GREEN
+        messages += property -> Renders.CYAN
+        if (!configKeyValues.contains(property)) {
+            configKeyValues(property) = plainValue
+            messages += " is " -> Renders.GREEN
+            messages += plainValue.toString -> Renders.CYAN
+            logInfo(messages.toArray)
+        } else if (configKeyValues(property) != plainValue) {
+            configKeyValues(property) = plainValue
+            messages += " is changed, now is " -> Renders.GREEN
+            messages += plainValue.toString -> Renders.RED
+            logInfo(messages.toArray)
+        }
     }
 
     /**
@@ -176,6 +180,17 @@ trait Config extends Logging with Serializable {
     }
 
     /**
+     * 添加配置项
+     *
+     * @param property 配置项名称
+     * @param value    配置项值
+     * @return
+     */
+    def addProperty(property: String, value: Any): Unit = {
+        properties.put(property, value.toString)
+    }
+
+    /**
      * 移除指定配置项，并返回该配置项的值
      *
      * @param property 配置项名称
@@ -185,27 +200,7 @@ trait Config extends Logging with Serializable {
         properties.remove(property)
     }
 
-    private def findReferences(plainValue: String, missingRefs: mutable.MutableList[String]): List[String] = {
-        replaceRegex.findAllMatchIn(plainValue)
-            .map { `match` => `match`.group(0) }
-            .filterNot { ref => missingRefs.contains(ref) }
-            .toList
-    }
+    protected def initialize(): Properties
 
-    private def printConfig[T: ClassTag](property: String, plainValue: AnyRef): Unit = {
-        val messages = mutable.MutableList[(String, Render)]()
-        messages += "Value of configuration " -> Renders.GREEN
-        messages += property -> Renders.CYAN
-        if (!configKeyValues.contains(property)) {
-            configKeyValues(property) = plainValue
-            messages += " is " -> Renders.GREEN
-            messages += plainValue.toString -> Renders.CYAN
-            logInfo(messages.toArray)
-        } else if (configKeyValues(property) != plainValue) {
-            configKeyValues(property) = plainValue
-            messages += " is changed, now is " -> Renders.GREEN
-            messages += plainValue.toString -> Renders.RED
-            logInfo(messages.toArray)
-        }
-    }
+    protected def refresh(): Unit
 }

@@ -5,8 +5,6 @@ import java.util
 import com.typesafe.config.ConfigFactory
 import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.core.CoreConstants
-import org.sa.utils.universal.base.Logging
-import org.sa.utils.universal.core.CoreConstants
 import org.scalatest.FunSuite
 
 import scala.collection.JavaConversions._

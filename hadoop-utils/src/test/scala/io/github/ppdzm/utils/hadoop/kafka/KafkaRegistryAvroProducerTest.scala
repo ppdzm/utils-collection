@@ -1,14 +1,11 @@
 package io.github.ppdzm.utils.hadoop.kafka
 
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.github.ppdzm.utils.hadoop.kafka.functions.ExitExceptionHandler
+import io.github.ppdzm.utils.hadoop.kafka.functions.{CountCondition, ExitExceptionHandler, NumberSubstitutor, TimeSleeper}
+import io.github.ppdzm.utils.hadoop.kafka.producer.RegistryAvroKafkaProducer
 import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.config.{Config, ConfigTrait, FileConfig}
 import io.github.ppdzm.utils.universal.formats.avro.AvroUtils
-import org.sa.utils.hadoop.kafka.functions.{CountCondition, ExitExceptionHandler, NumberSubstitutor, TimeSleeper}
-import org.sa.utils.hadoop.kafka.producer.RegistryAvroKafkaProducer
-import org.sa.utils.universal.base.Logging
-import org.sa.utils.universal.config.{Config, ConfigTrait, FileConfig}
 import org.scalatest.FunSuite
 
 /**

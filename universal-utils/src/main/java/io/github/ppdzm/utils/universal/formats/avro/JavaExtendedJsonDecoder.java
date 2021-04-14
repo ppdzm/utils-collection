@@ -25,18 +25,13 @@ import java.util.*;
  * Created by Stuart Alex on 2021/3/24.
  */
 public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.ActionHandler {
-    private JsonParser in;
+    static final String CHARSET = "ISO-8859-1";
+    private static final JsonElement NULL_JSON_ELEMENT = new JsonElement(null);
     private static JsonFactory jsonFactory = new JsonFactory();
+    private final Schema schema;
     Stack<ReorderBuffer> reorderBuffers = new Stack<ReorderBuffer>();
     ReorderBuffer currentReorderBuffer;
-    private final Schema schema;
-
-    private static class ReorderBuffer {
-        public Map<String, List<JsonElement>> savedFields = new HashMap<String, List<JsonElement>>();
-        public JsonParser origParser = null;
-    }
-
-    static final String CHARSET = "ISO-8859-1";
+    private JsonParser in;
 
     public JavaExtendedJsonDecoder(InputStream in, Schema schema) throws IOException {
         super(getSymbol(schema));
@@ -55,6 +50,63 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
             throw new NullPointerException("Schema cannot be null!");
         }
         return new JsonGrammarGenerator().generate(schema);
+    }
+
+    private static List<JsonElement> getVaueAsTree(JsonParser in) throws IOException {
+        int level = 0;
+        List<JsonElement> result = new ArrayList<JsonElement>();
+        do {
+            JsonToken t = in.getCurrentToken();
+            switch (t) {
+                case START_OBJECT:
+                case START_ARRAY:
+                    level++;
+                    result.add(new JsonElement(t));
+                    break;
+                case END_OBJECT:
+                case END_ARRAY:
+                    level--;
+                    result.add(new JsonElement(t));
+                    break;
+                case FIELD_NAME:
+                case VALUE_STRING:
+                case VALUE_NUMBER_INT:
+                case VALUE_NUMBER_FLOAT:
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                case VALUE_NULL:
+                    result.add(new JsonElement(t, in.getText()));
+                    break;
+            }
+            in.nextToken();
+        } while (level != 0);
+        result.add(new JsonElement(null));
+        return result;
+    }
+
+    private static Field findField(Schema schema, String name) {
+        if (schema.getField(name) != null) {
+            return schema.getField(name);
+        }
+
+        Field foundField = null;
+
+        for (Field field : schema.getFields()) {
+            Schema fieldSchema = field.schema();
+            if (Type.RECORD.equals(fieldSchema.getType())) {
+                foundField = findField(fieldSchema, name);
+            } else if (Type.ARRAY.equals(fieldSchema.getType())) {
+                foundField = findField(fieldSchema.getElementType(), name);
+            } else if (Type.MAP.equals(fieldSchema.getType())) {
+                foundField = findField(fieldSchema.getValueType(), name);
+            }
+
+            if (foundField != null) {
+                return foundField;
+            }
+        }
+
+        return foundField;
     }
 
     public JavaExtendedJsonDecoder configure(InputStream in) throws IOException {
@@ -225,8 +277,8 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
         Symbol.IntCheckAction top = (Symbol.IntCheckAction) parser.popSymbol();
         if (size != top.size) {
             throw new AvroTypeException(
-                    "Incorrect length for fixed binary: expected " +
-                            top.size + " but received " + size + " bytes.");
+                "Incorrect length for fixed binary: expected " +
+                    top.size + " but received " + size + " bytes.");
         }
     }
 
@@ -238,7 +290,7 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
             in.nextToken();
             if (result.length != len) {
                 throw new AvroTypeException("Expected fixed length " + len
-                        + ", but got" + result.length);
+                    + ", but got" + result.length);
             }
             System.arraycopy(result, 0, bytes, start, len);
         } else {
@@ -258,7 +310,7 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
             in.nextToken();
             if (result.length != length) {
                 throw new AvroTypeException("Expected fixed length " + length
-                        + ", but got" + result.length);
+                    + ", but got" + result.length);
             }
         } else {
             throw error("fixed");
@@ -378,12 +430,12 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
         if (in.getCurrentToken() == JsonToken.VALUE_NULL) {
             label = "null";
         } else if (in.getCurrentToken() == JsonToken.START_OBJECT &&
-                in.nextToken() == JsonToken.FIELD_NAME) {
+            in.nextToken() == JsonToken.FIELD_NAME) {
             label = in.getText();
             in.nextToken();
             parser.pushSymbol(Symbol.UNION_END);
         } else if (a.size() == 2 &&
-                ("null".equals(a.getLabel(0)) || "null".equals(a.getLabel(1)))) {
+            ("null".equals(a.getLabel(0)) || "null".equals(a.getLabel(1)))) {
             label = ("null".equals(a.getLabel(0)) ? a.getLabel(1) : a.getLabel(0));
         } else {
             throw error("start-union");
@@ -463,52 +515,6 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
             throw new AvroTypeException("Unknown action symbol " + top);
         }
         return null;
-    }
-
-    private static class JsonElement {
-        public final JsonToken token;
-        public final String value;
-
-        public JsonElement(JsonToken t, String value) {
-            this.token = t;
-            this.value = value;
-        }
-
-        public JsonElement(JsonToken t) {
-            this(t, null);
-        }
-    }
-
-    private static List<JsonElement> getVaueAsTree(JsonParser in) throws IOException {
-        int level = 0;
-        List<JsonElement> result = new ArrayList<JsonElement>();
-        do {
-            JsonToken t = in.getCurrentToken();
-            switch (t) {
-                case START_OBJECT:
-                case START_ARRAY:
-                    level++;
-                    result.add(new JsonElement(t));
-                    break;
-                case END_OBJECT:
-                case END_ARRAY:
-                    level--;
-                    result.add(new JsonElement(t));
-                    break;
-                case FIELD_NAME:
-                case VALUE_STRING:
-                case VALUE_NUMBER_INT:
-                case VALUE_NUMBER_FLOAT:
-                case VALUE_TRUE:
-                case VALUE_FALSE:
-                case VALUE_NULL:
-                    result.add(new JsonElement(t, in.getText()));
-                    break;
-            }
-            in.nextToken();
-        } while (level != 0);
-        result.add(new JsonElement(null));
-        return result;
     }
 
     private JsonParser makeParser(final List<JsonElement> elements) throws IOException {
@@ -656,7 +662,7 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
 
             @Override
             public byte[] getBinaryValue(Base64Variant b64variant)
-                    throws IOException {
+                throws IOException {
                 throw new UnsupportedOperationException();
             }
 
@@ -709,10 +715,8 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
 
     private AvroTypeException error(String type) {
         return new AvroTypeException("Expected " + type +
-                ". Got " + in.getCurrentToken());
+            ". Got " + in.getCurrentToken());
     }
-
-    private static final JsonElement NULL_JSON_ELEMENT = new JsonElement(null);
 
     private void injectDefaultValueIfAvailable(final JsonParser in, String fieldName) throws IOException {
         /*
@@ -748,28 +752,22 @@ public class JavaExtendedJsonDecoder extends ParsingDecoder implements Parser.Ac
         this.in = makeParser(result);
     }
 
-    private static Field findField(Schema schema, String name) {
-        if (schema.getField(name) != null) {
-            return schema.getField(name);
+    private static class ReorderBuffer {
+        public Map<String, List<JsonElement>> savedFields = new HashMap<String, List<JsonElement>>();
+        public JsonParser origParser = null;
+    }
+
+    private static class JsonElement {
+        public final JsonToken token;
+        public final String value;
+
+        public JsonElement(JsonToken t, String value) {
+            this.token = t;
+            this.value = value;
         }
 
-        Field foundField = null;
-
-        for (Field field : schema.getFields()) {
-            Schema fieldSchema = field.schema();
-            if (Type.RECORD.equals(fieldSchema.getType())) {
-                foundField = findField(fieldSchema, name);
-            } else if (Type.ARRAY.equals(fieldSchema.getType())) {
-                foundField = findField(fieldSchema.getElementType(), name);
-            } else if (Type.MAP.equals(fieldSchema.getType())) {
-                foundField = findField(fieldSchema.getValueType(), name);
-            }
-
-            if (foundField != null) {
-                return foundField;
-            }
+        public JsonElement(JsonToken t) {
+            this(t, null);
         }
-
-        return foundField;
     }
 }
