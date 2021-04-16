@@ -4,7 +4,17 @@ import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.LineChar
 import org.apache.poi.ss.usermodel.charts._
 import org.openxmlformats.schemas.drawingml.x2006.chart._
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 object LineChart {
+    /**
+     * 填充数据
+     *
+     * @param ctLineChart   CTLineChart
+     * @param xAxisValues   x轴数据序列
+     * @param seriesMapping 系列数据
+     */
     def paddingData(ctLineChart: CTLineChart, labeled: Boolean, xAxisValues: Array[String], seriesMapping: Map[String, ChartDataSource[Number]]): Unit = {
         val seriesNames = seriesMapping.keys.toArray
         for (index <- seriesNames.indices) {
@@ -39,6 +49,11 @@ trait LineChart extends Chart {
     protected val grouping: Value
     protected val labeled: Boolean
 
+    /**
+     * 绘图
+     *
+     * @return
+     */
     override def plot(): this.type = {
         logInfo(s"start plot ${if (labeled) "labeled" else ""} ${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
         this.setTitle(ctChart)
@@ -58,6 +73,11 @@ trait LineChart extends Chart {
         ctLineChart.addNewAxId().setVal(123457)
     }
 
+    /**
+     * 填充数据
+     *
+     * @param ctLineChart CTLineChart
+     */
     protected def paddingData(ctLineChart: CTLineChart): Unit
 
     private def createNewLineChart(): CTLineChart = {

@@ -6,6 +6,9 @@ import org.apache.poi.ss.usermodel._
 
 import scala.util.Try
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 trait PoiSheet extends Logging {
     protected val workbook: Workbook
     protected val sheetName: String
@@ -21,6 +24,12 @@ trait PoiSheet extends Logging {
     textCellStyle.setAlignment(HorizontalAlignment.CENTER)
     textCellStyle.setVerticalAlignment(VerticalAlignment.CENTER)
 
+    /**
+     * 获取sheet
+     *
+     * @param overwrite 复写
+     * @return
+     */
     def getSheet(overwrite: Boolean): Sheet = {
         if (workbook.getSheet(sheetName) != null) {
             val s = workbook.getSheet(sheetName)
@@ -35,6 +44,12 @@ trait PoiSheet extends Logging {
             workbook.createSheet(sheetName)
     }
 
+    /**
+     * 写入列标题
+     *
+     * @param headers 列标题
+     * @return
+     */
     def writeColumnHeader(headers: List[String]): this.type = {
         if (headers.nonEmpty) {
             this.headers = headers
@@ -50,6 +65,12 @@ trait PoiSheet extends Logging {
         this
     }
 
+    /**
+     * 列标题是否发生变化
+     *
+     * @param headers 列标题
+     * @return
+     */
     def headerChanged(headers: List[String]): Boolean = {
         sheet.getRow(0).getLastCellNum < headers.length ||
             headers.indices.exists {
@@ -57,6 +78,11 @@ trait PoiSheet extends Logging {
             }
     }
 
+    /**
+     * 写入数据
+     *
+     * @param rows 数据
+     */
     def writeData(rows: List[List[Any]]): Unit = {
         val rowsCount = sheet.getLastRowNum + 1
         for (x <- rows.indices) {
@@ -69,6 +95,14 @@ trait PoiSheet extends Logging {
         }
     }
 
+    /**
+     * 向单个单元格写入数据
+     *
+     * @param excelRow   一行数据
+     * @param colIndex   列号
+     * @param rawValue   原始数据
+     * @param columnName 列标题
+     */
     def writeCell(excelRow: Row, colIndex: Int, rawValue: Any, columnName: String = ""): Unit = {
         val cell = excelRow.createCell(colIndex)
         if (rawValue == null)

@@ -4,6 +4,9 @@ import org.apache.poi.ss.usermodel.charts.{ChartDataSource, DataSources}
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFSheet
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 trait ColumnSeries extends Series {
     //  protected lazy val xAxis: ChartDataSource[String] = {
     //    val sheet: XSSFSheet = ooxmlSheet.sheet

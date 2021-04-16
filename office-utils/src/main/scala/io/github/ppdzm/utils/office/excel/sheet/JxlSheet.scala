@@ -6,6 +6,9 @@ import jxl.write.biff.CellValue
 
 import scala.util.Try
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 case class JxlSheet(private val workbook: WritableWorkbook,
                     private val sheetName: String,
                     private val overwrite: scala.Boolean = false) {
@@ -23,6 +26,12 @@ case class JxlSheet(private val workbook: WritableWorkbook,
     private var rowsCount: Int = sheet.getRows
     private var columns = List[String]()
 
+    /**
+     * 写入列标题
+     *
+     * @param columns 列标题
+     * @return
+     */
     def writeColumnHeader(columns: List[String]): this.type = {
         if (columns.nonEmpty) {
             this.columns = columns
@@ -44,26 +53,49 @@ case class JxlSheet(private val workbook: WritableWorkbook,
         this
     }
 
+    /**
+     * 写入数据
+     *
+     * @param rows 数据
+     */
     def writeData(rows: List[List[Any]]): Unit = {
         for (rowIndex <- rows.indices; rowData = rows(rowIndex)) {
             for (colIndex <- rowData.indices) {
-                this.writeCell(rowIndex + rowsCount, colIndex, rowData(colIndex), Try(columns(colIndex)).getOrElse(""))
+                this.writeCell(rowIndex + rowsCount, colIndex, Try(columns(colIndex)).getOrElse(""), rowData(colIndex))
             }
         }
     }
 
-    def writeCell(row: Int, col: Int, value: Any, columnName: String = ""): Unit = {
+    /**
+     *
+     * 写单元格
+     *
+     * @param row        行号
+     * @param col        列号
+     * @param columnName 列标题
+     * @param value      值
+     */
+    def writeCell(row: Int, col: Int, columnName: String = "", value: Any): Unit = {
         if (value != null) {
             val cell = getCell(col, row, columnName, value.toString)
             this.sheet.addCell(cell)
         }
     }
 
-    def getCell(col: Int, row: Int, colName: String, value: String): CellValue = {
+    /**
+     * 读取单元格的值
+     *
+     * @param row        行号
+     * @param col        列号
+     * @param value      值
+     * @param columnName 列标题
+     * @return
+     */
+    def getCell(col: Int, row: Int, columnName: String, value: String): CellValue = {
         if (value == null)
             new Label(col, row, "")
         else if (value.contains(".") && Try(value.toDouble).isSuccess) {
-            val numberFormat = if (colName.endsWith("率") || colName.endsWith("比"))
+            val numberFormat = if (columnName.endsWith("率") || columnName.endsWith("比"))
                 NumberFormats.PERCENT_FLOAT
             else
                 NumberFormats.FLOAT

@@ -314,7 +314,7 @@ object AvroUtils {
     /**
      * 将Avro Record转换为Map
      *
-     * @param record            Avro Record: [[GenericRecord]]
+     * @param record            Avro Record
      * @param reserveParentName 是否保留父一级名称
      * @return
      */

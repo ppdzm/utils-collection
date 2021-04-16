@@ -4,6 +4,9 @@ import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.Directio
 import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.openxmlformats.schemas.drawingml.x2006.chart.{CTPie3DChart, CTPieChart}
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 class ColumnSeriesPieChart(val ooxmlSheet: OOXMLSheet,
                            override val chartTitle: String,
                            val direction: Direction.Value = Direction.vertical,

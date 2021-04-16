@@ -34,5 +34,9 @@ trait JavaFlinkStreaming[T] extends FlinkStreaming[T] {
         }
     }
 
+    /**
+     * 操作dataStreamSource
+     * @param dataStreamSource DataStreamSource[T]
+     */
     def execute(dataStreamSource: DataStreamSource[T]): Unit
 }

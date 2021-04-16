@@ -3,7 +3,7 @@ package io.github.ppdzm.utils.office.excel.enumeration
 import io.github.ppdzm.utils.universal.base.Enum
 
 /**
- * Created by Stuart Alex on 2021/2/24.
+ * @author Created by Stuart Alex on 2019/3/29
  */
 object ExcelEnumerations {
 

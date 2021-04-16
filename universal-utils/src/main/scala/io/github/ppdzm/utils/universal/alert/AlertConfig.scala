@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.universal.alert
 
-import io.github.ppdzm.utils.universal.config.{Config, ConfigItem, ConfigTrait}
+import io.github.ppdzm.utils.universal.config.{Config, ConfigItem, ConfigTrait, FileConfig}
 
 /**
  * Created by Stuart Alex on 2021/4/12.
@@ -22,6 +22,6 @@ trait AlertConfig extends ConfigTrait {
 
 object AlertConfig {
     def apply(implicit config: Config): AlertConfig = new AlertConfig {
-        override implicit protected val config: Config = config
+        override implicit protected val config: Config = FileConfig()
     }
 }

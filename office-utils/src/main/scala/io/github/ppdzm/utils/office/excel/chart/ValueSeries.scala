@@ -4,6 +4,9 @@ import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.Order
 import org.apache.poi.ss.usermodel.charts.{ChartDataSource, DataSources}
 import org.apache.poi.ss.util.CellRangeAddress
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 trait ValueSeries extends Series {
     val yAxisColumnName: String
     val seriesValueColumn: String

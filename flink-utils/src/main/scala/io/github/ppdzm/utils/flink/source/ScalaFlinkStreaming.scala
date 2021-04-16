@@ -32,5 +32,8 @@ trait ScalaFlinkStreaming[T] extends FlinkStreaming[T] {
         }
     }
 
+    /**
+     * 操作dataStream
+     */
     def execute(): Unit
 }

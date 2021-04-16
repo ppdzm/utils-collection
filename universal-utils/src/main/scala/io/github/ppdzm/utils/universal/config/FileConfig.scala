@@ -8,7 +8,6 @@ import java.util.Properties
 import io.github.ppdzm.utils.universal.base.ResourceUtils
 import io.github.ppdzm.utils.universal.core.CoreConstants._
 import io.github.ppdzm.utils.universal.core.SystemProperties._
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.yaml.snakeyaml.Yaml
 
 import scala.collection.JavaConversions._
@@ -82,13 +81,13 @@ class FileConfig(name: String, extension: String) extends Config {
         properties
     }
 
-    private def flat(parent: String, obj: AnyRef): mutable.Map[String, AnyRef] = {
-        val mutableMap = mutable.Map[String, AnyRef]()
+    private def flat(parent: AnyRef, obj: AnyRef): mutable.Map[AnyRef, AnyRef] = {
+        val mutableMap = mutable.Map[AnyRef, AnyRef]()
         obj match {
-            case m: util.HashMap[String, AnyRef] =>
+            case m: util.HashMap[AnyRef, AnyRef] =>
                 m.foreach {
                     case (k, v) =>
-                        val newParent = if (parent.isNullOrEmpty)
+                        val newParent = if (parent == null || parent.toString == "")
                             k
                         else
                             parent + "." + k

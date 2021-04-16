@@ -3,8 +3,18 @@ package io.github.ppdzm.utils.office.excel.chart
 import org.apache.poi.ss.usermodel.charts.ChartDataSource
 import org.openxmlformats.schemas.drawingml.x2006.chart.{CTPie3DChart, CTPieChart, CTPieSer}
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 object PieChart {
 
+    /**
+     * 填充数据
+     *
+     * @param ctPieSeries   CTPieSer
+     * @param xAxisValues   x轴数据序列
+     * @param seriesMapping 系列数据
+     */
     def paddingData(ctPieSeries: CTPieSer, xAxisValues: Array[String], seriesMapping: Map[String, ChartDataSource[Number]]): Unit = {
         // 饼图只有一个图例（系列），如果take指定3、2、1，恰好是取倒数第3、2、1个系列
         val seriesName = seriesMapping.keys.head
@@ -31,6 +41,11 @@ trait PieChart extends Chart {
     protected val is3D: Boolean
     protected val labeled: Boolean
 
+    /**
+     * 绘图
+     *
+     * @return
+     */
     override def plot(): PieChart.this.type = {
         logInfo(s"start plot ${if (labeled) "labeled " else ""}${if (is3D) "3D " else ""}${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
         this.setTitle(ctChart)
@@ -49,8 +64,18 @@ trait PieChart extends Chart {
         this
     }
 
+    /**
+     * 填充数据
+     *
+     * @param ctPieChart CTPieChart
+     */
     protected def paddingData(ctPieChart: CTPieChart): Unit
 
+    /**
+     * 填充数据
+     *
+     * @param ctPie3DChart CTPie3DChart
+     */
     protected def paddingData(ctPie3DChart: CTPie3DChart): Unit
 
     private def createNewPieChart(): CTPieChart = {

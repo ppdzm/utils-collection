@@ -4,6 +4,9 @@ import io.github.ppdzm.utils.office.excel.sheet.JxlSheet
 import jxl.{Workbook, WorkbookSettings}
 import org.apache.poi.ss.usermodel
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 case class JxlWorkBook(excelFileName: String,
                        private val createWhenNotExist: Boolean = true) extends WorkBook {
     override val workbook: usermodel.Workbook = null
@@ -20,6 +23,15 @@ case class JxlWorkBook(excelFileName: String,
         }
     }
 
+    /**
+     * 写sheet
+     *
+     * @param sheetName sheet名称
+     * @param overwrite 复写
+     * @param columns   列标题
+     * @param rows      行数据
+     * @return
+     */
     def writeSheet(sheetName: String, overwrite: Boolean, columns: List[String] = List[String](), rows: List[List[Any]]): this.type = {
         try {
             JxlSheet(this.jxlWorkbook, sheetName, overwrite)

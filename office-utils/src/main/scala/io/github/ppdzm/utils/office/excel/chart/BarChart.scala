@@ -4,8 +4,18 @@ import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.BarChart
 import org.apache.poi.ss.usermodel.charts.ChartDataSource
 import org.openxmlformats.schemas.drawingml.x2006.chart._
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 object BarChart {
 
+    /**
+     * 填充数据
+     *
+     * @param ctBarChart    CTBarChart
+     * @param xAxisValues   x轴数据序列
+     * @param seriesMapping 系列数据
+     */
     def paddingData(ctBarChart: CTBarChart, xAxisValues: Array[String], seriesMapping: Map[String, ChartDataSource[Number]]): Unit = {
         val seriesNames = seriesMapping.keys.toArray
         for (index <- seriesNames.indices) {
@@ -32,6 +42,11 @@ trait BarChart extends Chart {
     protected val labeled: Boolean
     protected val grouping: BarChartGrouping.Value
 
+    /**
+     * 绘图
+     *
+     * @return
+     */
     override def plot(): this.type = {
         logInfo(s"start plot ${if (labeled) "labeled" else ""} ${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
         this.setTitle(ctChart)
@@ -51,6 +66,11 @@ trait BarChart extends Chart {
         ctBarChart.addNewAxId().setVal(123457)
     }
 
+    /**
+     * 填充数据
+     *
+     * @param ctBarChart CTBarChart
+     */
     protected def paddingData(ctBarChart: CTBarChart): Unit
 
     private def createNewBarChart() = {

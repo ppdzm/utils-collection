@@ -4,6 +4,9 @@ import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.{BarChar
 import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart
 
+/**
+ * @author Created by Stuart Alex on 2019/3/29
+ */
 class ValueSeriesBarChart(val ooxmlSheet: OOXMLSheet,
                           override val chartTitle: String,
                           val direction: Direction.Value = Direction.vertical,

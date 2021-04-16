@@ -4,8 +4,7 @@ import io.github.ppdzm.utils.universal.base.functions;
 import org.apache.hadoop.hive.ql.exec.UDF;
 
 /**
- * @author Stuart Alex
- * @date 2017/11/29
+ * @author Created by Stuart Alex on 2017/11/29
  */
 public class Bytes2Long extends UDF {
 
