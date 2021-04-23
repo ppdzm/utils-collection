@@ -335,7 +335,7 @@ object SparkHiveUtils extends RDBHandler with Logging {
      * @param parameters sql语句参数
      * @return
      */
-    def query(statement: String, parameters: Array[String]): ResultSet = {
+    def query(statement: String, parameters: Array[Any]): ResultSet = {
         throw new UnsupportedOperationException("not supported")
     }
 

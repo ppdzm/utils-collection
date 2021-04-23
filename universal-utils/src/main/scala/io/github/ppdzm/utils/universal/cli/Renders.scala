@@ -1,11 +1,9 @@
 package io.github.ppdzm.utils.universal.cli
 
-import io.github.ppdzm.utils.universal.base.Enum
-
 /**
  * @author StuartAlex on 2019-07-26 18:16
  */
-object Renders extends Enum {
+object Renders {
     /**
      * 重置所有设置
      */

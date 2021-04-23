@@ -78,7 +78,11 @@ case class Compiler(targetDirectory: Option[String]) extends Logging {
      * @tparam T 期望的返回值类型
      * @return
      */
-    def evaluate[T](expression: String): T = this.compileExpression(expression).getConstructor().newInstance().asInstanceOf[() => Any].apply().asInstanceOf[T]
+    def evaluate[T](expression: String): T = {
+        synchronized[T] {
+            this.compileExpression(expression).getConstructor().newInstance().asInstanceOf[() => Any].apply().asInstanceOf[T]
+        }
+    }
 
     /**
      * 动态编译字符串形式的可执行代码，例如: 1 + 2

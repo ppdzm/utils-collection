@@ -1,6 +1,7 @@
 package io.github.ppdzm.utils.database.handler
 
-import java.sql.ResultSet
+import java.sql.{ResultSet, ResultSetMetaData}
+import java.util
 
 import io.github.ppdzm.utils.database.connection.MySQLConnection
 import io.github.ppdzm.utils.universal.base.{Logging, StringUtils}
@@ -8,8 +9,11 @@ import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
 
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
 /**
- * Created by jingsz on 4/28/18.
+ * Created by Stuart Alex on 2018-04-18
  */
 case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) extends RDBHandler with Logging {
 
@@ -20,6 +24,42 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def binlogFormat(): String = {
         query("show variables like 'binlog_format'").scalar(0, 1)
+    }
+
+    /**
+     * 检查主键类型与值是否匹配
+     *
+     * @param primaryKeyName  主键字段名称
+     * @param primaryKeyValue 主键值
+     * @param primaryKeyType  主键类型
+     * @return
+     */
+    def checkPrimaryKeyType(primaryKeyName: String, primaryKeyValue: Any, primaryKeyType: String): Boolean = {
+        val valid = checkColumnType(primaryKeyValue, primaryKeyType)
+        if (!valid) {
+            logInfo(s"pk $primaryKeyName $primaryKeyValue not match $primaryKeyType")
+        }
+        valid
+    }
+
+    /**
+     * 检查值与类型是否匹配
+     *
+     * @param value      字段值
+     * @param columnType 字段类型
+     * @return
+     */
+    def checkColumnType(value: Any, columnType: String): Boolean = {
+        columnType match {
+            case "varchar" => value.isInstanceOf[String]
+            case "bigint" => value.isInstanceOf[Long]
+            case "int" => value.isInstanceOf[Int]
+            case "tinyint" => value.isInstanceOf[Int]
+            case "boolean" => value.isInstanceOf[Boolean]
+            case "float" => value.isInstanceOf[Float]
+            case "double" => value.isInstanceOf[Double]
+            case otherType => throw new Exception(s"$otherType is not processed")
+        }
     }
 
     /**
@@ -63,6 +103,41 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
+     * 使用主键删除单条数据
+     *
+     * @param table           表名称
+     * @param primaryKeyName  主键字段名称
+     * @param primaryKeyValue 主键值
+     */
+    def delete(table: String, primaryKeyName: String, primaryKeyValue: Any): Unit = {
+        val sql = s"delete from $table where $primaryKeyName=?"
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+            ps =>
+                ps
+                    .setParameter(1, primaryKeyValue)
+                    .executeUpdate()
+        }
+    }
+
+    /**
+     * 使用主键删除单条数据
+     *
+     * @param table           表名称
+     * @param primaryKeyName  主键字段名称
+     * @param primaryKeyValue 主键值
+     * @param primaryKeyType  主键类型
+     */
+    def delete(table: String, primaryKeyName: String, primaryKeyValue: Any, primaryKeyType: String): Unit = {
+        val sql = s"delete from $table where $primaryKeyName=?"
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+            ps =>
+                ps
+                    .setParameter(1, primaryKeyValue, primaryKeyType)
+                    .executeUpdate()
+        }
+    }
+
+    /**
      * 删除数据库
      *
      * @param database 数据库名称
@@ -90,10 +165,14 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return Boolean（是否成功）
      */
     def execute(statement: String, parameters: Array[String]): Boolean = {
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = statement))(ps => {
-            parameters.indices.filter(parameters(_) != null).foreach(i => ps.setObject(i + 1, parameters(i)))
-            ps.execute()
-        })
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = statement)) {
+            ps =>
+                parameters
+                    .zipWithIndex
+                    .filter { case (v, _) => v != null }
+                    .foreach { case (v, i) => ps.setObject(i + 1, v) }
+                ps.execute()
+        }
     }
 
     /**
@@ -107,6 +186,154 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
+     * 判断某张表是否存在
+     *
+     * @param database 数据库名称
+     * @param table    表名称
+     * @return
+     */
+    def exists(database: String, table: String): Boolean = {
+        listTables(database).contains(table)
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param resultSetMetaData ResultSetMetaData
+     * @return
+     */
+    def getColumnsType(resultSetMetaData: ResultSetMetaData): Map[String, String] = {
+        val columnCount = resultSetMetaData.getColumnCount
+        (1 to columnCount).map {
+            columnIndex =>
+                val columnName = resultSetMetaData.getColumnName(columnIndex)
+                val columnType = resultSetMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
+                (columnName, columnType)
+        }.toMap
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param tableName 表名称
+     * @return
+     */
+    def getColumnsType(tableName: String): Map[String, String] = {
+        val sql = s"select * from $tableName where 1<0"
+        val conn = MySQLConnection.getConnection(url, extraProperties)
+        val stmt = conn.createStatement()
+        val res = stmt.executeQuery(sql)
+        getColumnsType(res.getMetaData)
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param tableName 表名称
+     * @return
+     */
+    def getColumnsType4Java(tableName: String): util.Map[String, String] = {
+        getColumnsType(tableName).asJava
+    }
+
+    /**
+     * 生成 insert or update 语句
+     *
+     * @param table              表名称
+     * @param columnNameValueMap 字段——值Map
+     */
+    def generateInsertOrUpdateString(table: String, columnNameValueMap: Map[String, Any]): String = {
+        val sortedColumns = columnNameValueMap.keySet.toList.sorted
+        val columnsCount = sortedColumns.length
+        s"""
+           |insert into $table (${sortedColumns.mkString(",")})
+           |values (${Array.fill(columnsCount)("?").mkString(",")})
+           |on duplicate key
+           |update ${sortedColumns.map { key => s"$key=?" }.mkString(", ")}
+           """.stripMargin
+    }
+
+    /**
+     * 查询global binlog_format
+     *
+     * @return
+     */
+    def globalBinlogFormat(): String = {
+        query("show global variables like 'binlog_format'").scalar(0, 1)
+    }
+
+    /**
+     * 批量插入或更新数据
+     *
+     * @param table              表名称
+     * @param primaryKeyName     主键字段名称
+     * @param columnNameValueMap （（字段——值）对）列表
+     * @param columnNameTypePair （字段——类型）对
+     * @return
+     */
+    def insertOrUpdate(table: String,
+                       primaryKeyName: String,
+                       columnNameValueMap: util.Map[String, Any],
+                       columnNameTypePair: util.Map[String, String]): Int = {
+        insertOrUpdate(table, primaryKeyName, columnNameValueMap.asScala, columnNameTypePair.asScala)
+    }
+
+    /**
+     * 批量插入或更新数据
+     *
+     * @param table              表名称
+     * @param primaryKeyName     主键字段名称
+     * @param columnNameValueMap （字段——值）对
+     * @param columnNameTypePair （字段——类型）对
+     * @return
+     */
+    def insertOrUpdate(table: String,
+                       primaryKeyName: String,
+                       columnNameValueMap: Map[String, Any],
+                       columnNameTypePair: Map[String, String]): Int = {
+        val validColumnNameValuePair = columnNameValueMap.filter(_._2 != null)
+        if (!validColumnNameValuePair.contains(primaryKeyName)) {
+            return 0
+        }
+        val columnsCount = validColumnNameValuePair.keys.size
+        val sql = generateInsertOrUpdateString(table, validColumnNameValuePair)
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+            ps =>
+                ps
+                    .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
+                    .setParameters(validColumnNameValuePair, columnNameTypePair, columnsCount + 1)
+                    .executeUpdate()
+        }
+    }
+
+    /**
+     * 批量插入或更新数据
+     *
+     * @param table                   表名称
+     * @param columnNameValuePairList （（字段——值）对）列表
+     * @param columnNameTypePair      （字段——类型）对
+     */
+    def insertOrUpdateInBatch(table: String, columnNameValuePairList: List[Map[String, Any]], columnNameTypePair: Map[String, String]): List[Int] = {
+        if (columnNameValuePairList.isEmpty) {
+            return List()
+        }
+        val columnNameValueMap = columnNameValuePairList.head
+        val columnsCount = columnNameValueMap.keys.size
+        val sql = generateInsertOrUpdateString(table, columnNameValueMap)
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+            ps =>
+                columnNameValuePairList.foreach {
+                    columnNameValuePair =>
+                        ps
+                            .setParameters(columnNameValuePair, columnNameTypePair, 1)
+                            .setParameters(columnNameValuePair, columnNameTypePair, columnsCount + 1)
+                            .addBatch()
+                }
+                ps.executeBatch().toList
+        }
+    }
+
+    /**
      * 列出所有数据库
      *
      * @return
@@ -116,17 +343,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
             query("show databases").singleColumnList(0).filter(_.matches(regexp))
         else
             query("show databases").singleColumnList(0)
-    }
-
-    /**
-     * 判断某张表是否存在
-     *
-     * @param database 数据库名称
-     * @param table    表名称
-     * @return
-     */
-    def exists(database: String, table: String): Boolean = {
-        listTables(database).contains(table)
     }
 
     /**
@@ -145,27 +361,80 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 查询global binlog_format
+     * 查询
      *
+     * @param sql        sql语句
+     * @param parameters sql语句参数
      * @return
      */
-    def globalBinlogFormat(): String = {
-        query("show global variables like 'binlog_format'").scalar(0, 1)
+    def query(sql: String, parameters: Array[Any]): ResultSet = {
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = sql)) {
+            ps =>
+                ps
+                    .setParameters(parameters)
+                    .executeQuery()
+        }
     }
 
     /**
      * 查询
      *
-     * @param statement  sql语句
-     * @param parameters sql语句参数
+     * @param sql sql语句
      * @return
      */
-    def query(statement: String, parameters: Array[String]): ResultSet = {
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = statement)) {
-            ps =>
-                parameters.indices.filterNot(parameters(_).isNull).foreach(i => ps.setObject(i + 1, parameters(i)))
-                ps.executeQuery()
+    def query(sql: String): ResultSet = {
+        query(sql, null)
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql     sql语句
+     * @param columns 所需结果字段
+     * @return
+     */
+    def query(sql: String, columns: Iterable[String]): Iterator[Map[String, Any]] = {
+        LoanPattern.using(query(sql)) {
+            resultSet =>
+                val columnNameTypePair = getColumnsType(resultSet.getMetaData)
+
+                new Iterator[Map[String, Any]] {
+                    def hasNext: Boolean = resultSet.next()
+
+                    def next(): Map[String, Any] = {
+                        columns.map {
+                            column =>
+                                val columnType = columnNameTypePair(column)
+                                val value =
+                                    columnType match {
+                                        case "varchar" => resultSet.getString(column)
+                                        case "bigint" => resultSet.getLong(column)
+                                        case "int" => resultSet.getLong(column)
+                                        case "tinyint" => resultSet.getInt(column)
+                                        case "boolean" => resultSet.getBoolean(column)
+                                        case "float" => resultSet.getFloat(column)
+                                        case "double" => resultSet.getDouble(column)
+                                        case otherType =>
+                                            throw new Exception(s"$otherType is not processed")
+                                    }
+                                (column, value)
+                        }.toMap
+                    }
+                }
         }
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql     sql语句
+     * @param columns 所需结果字段
+     * @return
+     */
+    def query(sql: String, columns: util.Collection[String]): util.Iterator[util.Map[String, Any]] = {
+        query(sql, columns.toList)
+            .map { e => e.asJava }
+            .asJava
     }
 
     /**
@@ -181,9 +450,9 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
             val statement = s"insert into $table(${columns.mkString(",")}) values (${List.fill(columns.length)("?").mkString(",")})"
             val ps = connection.prepareStatement(statement)
             (1 to count).foreach(_ => {
-                val rsa = Array.fill(columns.length)(StringUtils.randomString(20))
-                rsa.indices.foreach(j => ps.setObject(j + 1, rsa(j)))
-                ps.addBatch()
+                ps
+                    .setParameters(Array.fill(columns.length)(StringUtils.randomString(20)))
+                    .addBatch()
             })
             ps.executeBatch()
             connection.commit()
@@ -202,16 +471,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 查询
-     *
-     * @param statement sql语句
-     * @return
-     */
-    def query(statement: String): ResultSet = {
-        MySQLConnection.getStatement(url, extraProperties).executeQuery(statement)
-    }
-
-    /**
      * 清空表
      *
      * @param database 数据库名称
@@ -221,303 +480,100 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
         execute(s"truncate table $database.$table")
     }
 
-    //  def update(url: String,
-    //             table: String,
-    //             pkName: String,
-    //             columnsMapList: List[Map[String, Any]],
-    //             columnsType: Map[String, String]): Unit = {
-    //    columnsMapList.map {
-    //      columnsMap =>
-    //        val validColumnsMap = columnsMap.filter(_._2 != null)
-    //        val updateStr =
-    //          fieldsMapToUpdateStr(validColumnsMap.keys.toList.sorted)
-    //        (updateStr, validColumnsMap)
-    //    }
-    //      .groupBy(_._1)
-    //      .mapValues(_.map(_._2))
-    //      .foreach {
-    //        case (updateStr, subColumnsMapList) =>
-    //          val sql = s"update $table set $updateStr where $pkName=?"
-    //          val ps = MySQLConnection.getPreparedStatement(url, sql)
-    //
-    //          subColumnsMapList
-    //            .filter { columnsMap =>
-    //              columnsMap.contains(pkName)
-    //            }
-    //            .foreach { columnsMap =>
-    //              var i = 1
-    //              columnsMap.toSeq.sortBy(_._1).foreach {
-    //                case (k, v) =>
-    //                  val columnType = columnsType(k)
-    //                  preparedStatementSetValue(ps, i, v, columnType)
-    //                  i += 1
-    //              }
-    //
-    //              val pkValue = columnsMap(pkName)
-    //              val pkType = columnsType(pkName)
-    //              preparedStatementSetValue(ps, i, pkValue, pkType)
-    //              ps.addBatch()
-    //            }
-    //          ps.executeBatch()
-    //          ps.clearBatch()
-    //      }
-    //  }
-    //
-    //  def insertOrUpdateBatch(url: String,
-    //                          table: String,
-    //                          columnsMaps: List[Map[String, Any]],
-    //                          columnsType: Map[String, String]): List[Int] = {
-    //    if (columnsMaps.isEmpty) {
-    //      return List()
-    //    }
-    //
-    //    val columnsMapSample = columnsMaps.head
-    //    val keysString = columnsMapSample.keySet.toList.sorted.mkString(",")
-    //    val valuesString = columnsMapSample.toSeq.sortBy(_._1).map(_ => "?").mkString(",")
-    //    val updateStr = fieldsMapToUpdateStr(columnsMapSample.keys.toList.sorted)
-    //    val sql =
-    //      s"""
-    //         |insert into $table ($keysString) values ($valuesString)
-    //         |on duplicate key update $updateStr
-    //       """.stripMargin
-    //    val ps = MySQLConnection.getPreparedStatement(url, sql)
-    //
-    //    columnsMaps.foreach {
-    //      columnsMap =>
-    //        var i = 1
-    //        (1 to 2).foreach {
-    //          _ =>
-    //            columnsMap.toSeq.sortBy(_._1).foreach {
-    //              case (k, v) =>
-    //                val columnType = columnsType(k)
-    //                preparedStatementSetValue(ps, i, v, columnType)
-    //                i += 1
-    //            }
-    //        }
-    //        ps.addBatch()
-    //    }
-    //    ps.executeBatch().toList
-    //  }
-    //
-    //  def delete(url: String,
-    //             table: String,
-    //             pkName: String,
-    //             pkValue: Any,
-    //             pkType: String): Unit = {
-    //    val sql = s"delete from $table where $pkName=?"
-    //    val ps = MySQLConnection.getPreparedStatement(url, sql)
-    //    preparedStatementSetValue(ps, 1, pkValue, pkType)
-    //    ps.executeUpdate
-    //  }
-    //
-    //  def checkPkType(pkName: String, pkValue: Any, pkType: String): Boolean = {
-    //    val valid = checkType(pkValue, pkType)
-    //    if (!valid) {
-    //      this.logInfo(s"pk $pkName $pkValue not match $pkType", out = true)
-    //    }
-    //    valid
-    //  }
-    //
-    //  def checkType(value: Any, columnType: String): Boolean = {
-    //    columnType match {
-    //      case "varchar" => value.isInstanceOf[String]
-    //      case "bigint" => value.isInstanceOf[Long]
-    //      case "int" => value.isInstanceOf[Int]
-    //      case "tinyint" => value.isInstanceOf[Int]
-    //      case "boolean" => value.isInstanceOf[Boolean]
-    //      case "float" => value.isInstanceOf[Float]
-    //      case "double" => value.isInstanceOf[Double]
-    //      case otherType => throw new Exception(s"$otherType is not processed")
-    //    }
-    //  }
-    //
-    //  /**
-    //   * for java
-    //   */
-    //
-    //  def update(url: String,
-    //             table: String,
-    //             pkName: String,
-    //             columnsMap: java.util.Map[String, Any],
-    //             columnsType: java.util.Map[String, String]): Int = {
-    //    update(url, table, pkName, columnsMap.toMap, columnsType.toMap)
-    //  }
-    //
-    //  def update(url: String,
-    //             table: String,
-    //             pkName: String,
-    //             columnsMap: Map[String, Any],
-    //             columnsType: Map[String, String]): Int = {
-    //    val validColumnsMap = columnsMap.filter(_._2 != null)
-    //    if (!validColumnsMap.contains(pkName)) {
-    //      return 0
-    //    }
-    //    val updateStr = fieldsMapToUpdateStr(validColumnsMap.keys.toList.sorted)
-    //    val sql = s"update $table set $updateStr where $pkName=?"
-    //
-    //    val ps = MySQLConnection.getPreparedStatement(url, sql)
-    //    var i = 1
-    //
-    //    validColumnsMap.toSeq.sortBy(_._1).foreach {
-    //      case (k, v) =>
-    //        val columnType = columnsType(k)
-    //        preparedStatementSetValue(ps, i, v, columnType)
-    //        i += 1
-    //    }
-    //    val pkValue = validColumnsMap(pkName)
-    //    val pkType = columnsType(pkName)
-    //    preparedStatementSetValue(ps, i, pkValue, pkType)
-    //    ps.executeUpdate
-    //  }
-    //
-    //  private def fieldsMapToUpdateStr(fields: Iterable[String]) = {
-    //    fields
-    //      .map { key =>
-    //        s"$key=?"
-    //      }
-    //      .mkString(", ")
-    //  }
-    //
-    //  private def preparedStatementSetValue(ps: PreparedStatement,
-    //                                        parameterIndex: Int,
-    //                                        value: Any,
-    //                                        columnType: String) = {
-    //    columnType match {
-    //      case "varchar" =>
-    //        ps.setString(parameterIndex, value.asInstanceOf[String])
-    //      case "bigint" => ps.setLong(parameterIndex, value.asInstanceOf[Long])
-    //      case "int" => ps.setLong(parameterIndex, value.asInstanceOf[Int])
-    //      case "tinyint" =>
-    //        val intValue =
-    //          value match {
-    //            case b: Boolean => if (b) 1 else 0
-    //            case _: Int => value
-    //          }
-    //        ps.setInt(parameterIndex, intValue.asInstanceOf[Int])
-    //      case "boolean" =>
-    //        ps.setBoolean(parameterIndex, value.asInstanceOf[Boolean])
-    //      case "float" => ps.setFloat(parameterIndex, value.asInstanceOf[Float])
-    //      case "double" => ps.setDouble(parameterIndex, value.asInstanceOf[Double])
-    //      case otherType => throw new Exception(s"$otherType is not processed")
-    //    }
-    //  }
-    //
-    //  def insertOrUpdate(url: String,
-    //                     table: String,
-    //                     pkName: String,
-    //                     columnsMap: java.util.Map[String, Any],
-    //                     columnsType: java.util.Map[String, String]): Int = {
-    //    insertOrUpdate(url, table, pkName, columnsMap.toMap, columnsType.toMap)
-    //  }
-    //
-    //  def insertOrUpdate(url: String,
-    //                     table: String,
-    //                     pkName: String,
-    //                     columnsMap: Map[String, Any],
-    //                     columnsType: Map[String, String]): Int = {
-    //    val validColumnsMap = columnsMap.filter(_._2 != null)
-    //    if (!validColumnsMap.contains(pkName)) {
-    //      return 0
-    //    }
-    //    val keysString = validColumnsMap.keySet.toList.sorted.mkString(",")
-    //    val valuesString = validColumnsMap.toSeq.sortBy(_._1).map(_ => "?").mkString(",")
-    //    val updateStr = fieldsMapToUpdateStr(validColumnsMap.keys.toList.sorted)
-    //
-    //    val sql =
-    //      s"""
-    //         |insert into $table ($keysString) values ($valuesString)
-    //         |on duplicate key update $updateStr
-    //       """.stripMargin
-    //    val ps = MySQLConnection.getPreparedStatement(url, sql)
-    //    var i = 1
-    //    (1 to 2).foreach {
-    //      _ =>
-    //        validColumnsMap.toSeq.sortBy(_._1).foreach {
-    //          case (k, v) =>
-    //            val columnType = columnsType(k)
-    //            preparedStatementSetValue(ps, i, v, columnType)
-    //            i += 1
-    //        }
-    //    }
-    //    ps.executeUpdate
-    //  }
-    //
-    //  def query(mysqlUrl: String,
-    //            sql: String,
-    //            columns: java.util.Collection[String]): java.util.Iterator[java.util.Map[String, Any]] = {
-    //    val res = query(mysqlUrl, sql, columns.toList)
-    //    asJavaIterator(res.map(mapAsJavaMap))
-    //  }
-    //
-    //  def query(mysqlUrl: String,
-    //            sql: String,
-    //            columns: Iterable[String]): Iterator[Map[String, Any]] = {
-    //    val conn = MySQLConnection.getConnection(mysqlUrl)
-    //    val stmt = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-    //    stmt.setFetchSize(Integer.MIN_VALUE)
-    //    val resultSet = stmt.executeQuery(sql)
-    //    val columnsType = getColumnsType(resultSet.getMetaData)
-    //
-    //    new Iterator[Map[String, Any]] {
-    //      def hasNext: Boolean = resultSet.next()
-    //
-    //      def next(): Map[String, Any] = {
-    //        columns.map {
-    //          column =>
-    //            val columnType = columnsType(column)
-    //            val value =
-    //              columnType match {
-    //                case "varchar" => resultSet.getString(column)
-    //                case "bigint" => resultSet.getLong(column)
-    //                case "int" => resultSet.getLong(column)
-    //                case "tinyint" => resultSet.getInt(column)
-    //                case "boolean" => resultSet.getBoolean(column)
-    //                case "float" => resultSet.getFloat(column)
-    //                case "double" => resultSet.getDouble(column)
-    //                case otherType =>
-    //                  throw new Exception(s"$otherType is not processed")
-    //              }
-    //            (column, value)
-    //        }.toMap
-    //      }
-    //    }
-    //  }
-    //
-    //  def getColumnsType(resMetaData: ResultSetMetaData): Map[String, String] = {
-    //    val columnCount = resMetaData.getColumnCount
-    //    (1 to columnCount).map {
-    //      columnIndex =>
-    //        val columnName = resMetaData.getColumnName(columnIndex)
-    //        val columnType = resMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
-    //        (columnName, columnType)
-    //    }.toMap
-    //  }
-    //
-    //  def getColumnsTypeForJava(mysqlUrl: String, tableName: String): java.util.Map[String, String] = {
-    //    mapAsJavaMap(getColumnsType(mysqlUrl, tableName))
-    //  }
-    //
-    //  def getColumnsType(mysqlUrl: String, tableName: String): Map[String, String] = {
-    //    val sql = s"select * from $tableName where 1<0"
-    //    val conn = MySQLConnection.getConnection(mysqlUrl)
-    //    val stmt = conn.createStatement()
-    //    val res = stmt.executeQuery(sql)
-    //    val resMetaData = res.getMetaData
-    //    val columnCount = resMetaData.getColumnCount
-    //    (1 to columnCount).map {
-    //      columnIndex =>
-    //        val columnName = resMetaData.getColumnName(columnIndex)
-    //        val columnType = resMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
-    //        (columnName, columnType)
-    //    }.toMap
-    //  }
-    //
-    //  def convertMapValueToString(m: java.util.Map[String, Any]): java.util.Map[String, String] = {
-    //    val nm = new java.util.HashMap[String, String]()
-    //    m.foreach {
-    //      case (k, v) => nm.put(k, v.toString)
-    //    }
-    //    nm
-    //  }
+    /**
+     * 更新数据
+     *
+     * @param table                   表名称
+     * @param singlePrimaryKey        主键字段名称
+     * @param columnNameValuePairList （（字段——值）对）列表
+     * @param columnNameTypePair      （字段——类型）对
+     */
+    def update(url: String,
+               table: String,
+               singlePrimaryKey: String,
+               columnNameValuePairList: util.Map[String, Any],
+               columnNameTypePair: util.Map[String, String]): Int = {
+        update(url, table, singlePrimaryKey, columnNameValuePairList.asScala, columnNameTypePair.asScala)
+    }
+
+    /**
+     * 更新数据
+     *
+     * @param table               表名称
+     * @param singlePrimaryKey    主键字段名称
+     * @param columnNameValuePair （（字段——值）对）列表
+     * @param columnNameTypePair  （字段——类型）对
+     * @return
+     */
+    def update(table: String,
+               singlePrimaryKey: String,
+               columnNameValuePair: Map[String, Any],
+               columnNameTypePair: Map[String, String]): Int = {
+        val validColumnNameValuePair = columnNameValuePair.filter(_._2 != null)
+        if (!validColumnNameValuePair.contains(singlePrimaryKey)) {
+            return 0
+        }
+        val updateString = fieldsMapToUpdateString(validColumnNameValuePair.keys.toList.sorted)
+        val sql = s"update $table set $updateString where $singlePrimaryKey=?"
+        val columnsCount = validColumnNameValuePair.keys.size
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+            ps =>
+                val primaryKeyValue = validColumnNameValuePair(singlePrimaryKey)
+                val primaryKeyType = columnNameTypePair(singlePrimaryKey)
+                ps
+                    .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
+                    .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
+                    .executeUpdate
+
+        }
+    }
+
+    /**
+     * 更新数据
+     *
+     * @param table                   表名称
+     * @param singlePrimaryKey        主键字段名称
+     * @param columnNameValuePairList （（字段——值）对）列表
+     * @param columnNameTypePair      （字段——类型）对
+     */
+    def updateInBatch(table: String,
+                      singlePrimaryKey: String,
+                      columnNameValuePairList: List[Map[String, Any]],
+                      columnNameTypePair: Map[String, String]): Unit = {
+        columnNameValuePairList
+            .map {
+                columnNameValuePair =>
+                    val validColumnNameValuePair = columnNameValuePair.filter(_._2 != null)
+                    val updateString = fieldsMapToUpdateString(validColumnNameValuePair.keys.toList.sorted)
+                    (updateString, validColumnNameValuePair)
+            }
+            .groupBy(_._1)
+            .mapValues(_.map(_._2))
+            .foreach {
+                case (updateString, columnNameValuePair) =>
+                    val sql = s"update $table set $updateString where $singlePrimaryKey=?"
+                    LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
+                        ps =>
+                            columnNameValuePair
+                                .filter { columnNameValuePair => columnNameValuePair.contains(singlePrimaryKey) }
+                                .foreach {
+                                    columnNameValuePair =>
+                                        val columnsCount = columnNameValuePair.keys.toList.length
+                                        val primaryKeyValue = columnNameValuePair(singlePrimaryKey)
+                                        val primaryKeyType = columnNameTypePair(singlePrimaryKey)
+                                        ps
+                                            .setParameters(columnNameValuePair, columnNameTypePair, 1)
+                                            .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
+                                            .addBatch()
+                                }
+                            ps.executeBatch()
+                            ps.clearBatch()
+                    }
+            }
+    }
+
+    private def fieldsMapToUpdateString(fields: Iterable[String]) = {
+        fields.map { key => s"$key=?" }.mkString(", ")
+    }
 
 }

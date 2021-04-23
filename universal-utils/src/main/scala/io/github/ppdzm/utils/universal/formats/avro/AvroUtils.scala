@@ -116,9 +116,19 @@ object AvroUtils {
      * @param schemaFileName Schema文件名
      * @return
      */
-    def getSchema(schemaFileName: String): Schema = {
+    def getSchemaFromFile(schemaFileName: String): Schema = {
         val schemaInputStream = ResourceUtils.locateAsInputStream(schemaFileName)
         parser.parse(schemaInputStream)
+    }
+
+    /**
+     * 从字符串获取Avro Schema
+     *
+     * @param schemaString Schema文件名
+     * @return
+     */
+    def getSchemaFromString(schemaString: String): Schema = {
+        parser.parse(schemaString)
     }
 
     /**
@@ -312,13 +322,35 @@ object AvroUtils {
     }
 
     /**
+     * 展平带有子列表的GenericRecord
+     *
+     * @param record      GenericRecord
+     * @param independent 独立字段名称
+     * @param sub         含有子级列表字段名称
+     * @return
+     */
+    def flatRecordWithSubRecordList(record: GenericRecord, independent: String, sub: String): List[Map[String, Any]] = {
+        val parentRecord = record.get(independent).asInstanceOf[GenericRecord]
+        val parentMap = parseRecord2Map(parentRecord, reserveParentName = false)
+        record.get(sub)
+            .asInstanceOf[GenericData.Array[GenericRecord]]
+            .map {
+                event =>
+                    val eventMap = parseRecord2Map(event, reserveParentName = false)
+                    eventMap.putAll(parentMap)
+                    eventMap.toMap
+            }
+            .toList
+    }
+
+    /**
      * 将Avro Record转换为Map
      *
      * @param record            Avro Record
      * @param reserveParentName 是否保留父一级名称
      * @return
      */
-    def parseRecord2Map(record: GenericRecord, reserveParentName: Boolean): mutable.Map[String, String] = {
+    def parseRecord2Map(record: GenericRecord, reserveParentName: Boolean): mutable.Map[String, Any] = {
         parseRecord2Map(record, reserveParentName, null)
     }
 
@@ -330,8 +362,8 @@ object AvroUtils {
      * @param parentName        父一级名称
      * @return
      */
-    private def parseRecord2Map(record: GenericRecord, reserveParentName: Boolean, parentName: String): mutable.Map[String, String] = {
-        val map = mutable.Map[String, String]()
+    private def parseRecord2Map(record: GenericRecord, reserveParentName: Boolean, parentName: String): mutable.Map[String, Any] = {
+        val map = mutable.Map[String, Any]()
         record.getSchema.getFields.foreach {
             f =>
                 val name = f.name()
@@ -354,9 +386,9 @@ object AvroUtils {
                             }
                     case _ =>
                         if (reserveParentName && parentName.notNullAndEmpty)
-                            map.put(parentName.toLowerCase + "." + name.toLowerCase, record.get(name).n2e)
+                            map.put(parentName.toLowerCase + "." + name.toLowerCase, record.get(name))
                         else
-                            map.put(name.toLowerCase, record.get(name).n2e)
+                            map.put(name.toLowerCase, record.get(name))
                 }
         }
         map

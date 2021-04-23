@@ -4,19 +4,19 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Properties
 
-import io.github.ppdzm.utils.universal.sql.ScriptAnalyser
+import io.github.ppdzm.utils.universal.base.SQLAnalyser
 import org.apache.commons.io.FileUtils
 
 import scala.collection.JavaConversions._
 
 object DFDGenerator {
-    private lazy val variableRegex = "set (?<variable>.*?)=(?<value>.*?)$".r
-    private lazy val pattern = """[#\$]\{[^#\}\$]+\}""".r
-    private lazy val sourceRegex = "(from|join) (?<table>[a-zA-Z]{1}[^ ]*?\\.[^ ]+)".r("op", "table")
-    private lazy val temporaryRegex = " (?<table>tmp\\..+?) ".r("table")
-    private lazy val destinationRegex = "insert (overwrite|into) table (?<table>[a-zA-Z]{1}.*?) ".r("op", "table")
-    private lazy val destinationRegex2 = "create table (?<table>[a-zA-Z]{1}.*?) ".r("table")
-    private lazy val sqoopRegex = "--table[ ]*(?<m>[^ ]+).*hcatalog-database[ ]*(?<d>[^ ]+).*hcatalog-table[ ]*(?<h>[^ ]+)".r("m", "d", "h")
+    private val variableRegex = "set (?<variable>.*?)=(?<value>.*?)$".r
+    private val pattern = """[#\$]\{[^#\}\$]+\}""".r
+    private val sourceRegex = "(from|join) (?<table>[a-zA-Z]{1}[^ ]*?\\.[^ ]+)".r("op", "table")
+    private val temporaryRegex = " (?<table>tmp\\..+?) ".r("table")
+    private val destinationRegex = "insert (overwrite|into) table (?<table>[a-zA-Z]{1}.*?) ".r("op", "table")
+    private val destinationRegex2 = "create table (?<table>[a-zA-Z]{1}.*?) ".r("table")
+    private val sqoopRegex = "--table[ ]*(?<m>[^ ]+).*hcatalog-database[ ]*(?<d>[^ ]+).*hcatalog-table[ ]*(?<h>[^ ]+)".r("m", "d", "h")
 
     def generate(file: File, overwrite: Boolean): Unit = {
         if (file.isDirectory) {
@@ -52,7 +52,7 @@ object DFDGenerator {
     }
 
     private def analyseHQLScript(hiveMySQLMapping: Map[String, String], mySQLMapping: Map[String, String], file: File, group: Int) = {
-        val scripts = ScriptAnalyser.analyse(file, new Properties, squeeze = true)
+        val scripts = SQLAnalyser.analyse(file, new Properties, squeeze = true)
         //当前脚本中涉及的临时表
         val temporaryTables = scripts.flatMap(this.temporaryRegex.findAllMatchIn(_).map(_.group("table"))).sorted.toSet
         //临时表及编号映射

@@ -1,10 +1,9 @@
-package io.github.ppdzm.utils.universal.sql
+package io.github.ppdzm.utils.universal.base
 
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Properties
 
-import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.cli.CliUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.commons.io.FileUtils
@@ -13,7 +12,10 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
 
-object ScriptAnalyser extends Logging {
+/**
+ * @author Created by Stuart Alex on 2021/4/19.
+ */
+object SQLAnalyser extends Logging {
     type Readable = {def readLine(hint: String): String}
     private lazy val pattern: Regex = """[#$]\{[^#\}$]+\}""".r
 
@@ -22,6 +24,7 @@ object ScriptAnalyser extends Logging {
      *
      * @param sql        SQL 语句
      * @param properties 参数配置
+     * @param squeeze    是否压缩SQL
      * @return
      */
     def analyse(sql: String, properties: Properties, squeeze: Boolean): String = {
@@ -51,6 +54,14 @@ object ScriptAnalyser extends Logging {
             .map(s => if (squeeze) this.squeeze(s) else s)
             .filter(_.nonEmpty) //筛掉空行
     }
+
+    /**
+     * 压缩SQL脚本
+     *
+     * @param scripts SQL脚本(s)
+     * @return
+     */
+    def squeeze(scripts: Array[String]): Array[String] = scripts.map(squeeze)
 
     /**
      * 压缩SQL脚本
@@ -101,14 +112,6 @@ object ScriptAnalyser extends Logging {
         }
         temp
     }
-
-    /**
-     * 压缩SQL脚本
-     *
-     * @param scripts SQL脚本(s)
-     * @return
-     */
-    def squeeze(scripts: Array[String]): Array[String] = scripts.map(squeeze)
 
     /**
      * 将参数替换为实际值

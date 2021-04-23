@@ -108,7 +108,7 @@ class Json2AvroTest extends FunSuite {
     }
 
     test("h5-in-ios") {
-        val schema = AvroUtils.getSchema("../data/avsc/schema-all.json")
+        val schema = AvroUtils.getSchemaFromFile("../data/avsc/schema-all.json")
         val content = FileUtils.readLines(new File("../data/json/ios/h5-in-ios.json"), StandardCharsets.UTF_8).mkString
         val avro = AvroUtils.json2AvroBytesWithoutSchema(content, schema)
         println(new String(avro))

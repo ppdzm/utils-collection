@@ -1,4 +1,4 @@
-#GPG
+# GPG
 - gpg --gen-key
 - gpg --list-keys
 - gpg --keyserver hkp://pool.sks-keyservers.net --send-keys

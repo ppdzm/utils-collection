@@ -68,7 +68,7 @@ object Mathematics {
     /**
      * 按指定精度取不大于某个数的最大数
      *
-     * @param numeric   数
+     * @param numeric   数值
      * @param precision 精度
      * @return
      */
@@ -84,7 +84,7 @@ object Mathematics {
     /**
      * 按指定精度取不小于某个数的最小数
      *
-     * @param numeric   数
+     * @param numeric   数值
      * @param precision 精度
      * @return
      */
@@ -100,7 +100,7 @@ object Mathematics {
     /**
      * 按指定精度四舍五入
      *
-     * @param numeric   数
+     * @param numeric   数值
      * @param precision 精度
      * @return
      */

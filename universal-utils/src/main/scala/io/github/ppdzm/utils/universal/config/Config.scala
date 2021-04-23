@@ -20,7 +20,7 @@ import scala.reflect.{ClassTag, classTag}
  * Created by Stuart Alex on 2016/4/7.
  * 读取resources下的配置文件，只读取被激活（active）的配置
  */
-trait Config extends Logging with Serializable {
+trait Config extends Logging {
     protected val properties: Properties = initialize()
     protected val configKeyValues: mutable.HashMap[String, AnyRef] = mutable.HashMap[String, AnyRef]()
     private val replaceRegex = """\$\{[^#\}$]+\}""".r
@@ -155,9 +155,7 @@ trait Config extends Logging with Serializable {
      */
     def parseArguments(args: Array[String]): Unit = {
         CliUtils.parseArguments(args).foreach {
-            case (key, value) =>
-                addProperty(key, value)
-                logInfo(s"parsed key $key, value $value")
+            case (key, value) => addProperty(key, value)
         }
     }
 

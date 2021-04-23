@@ -17,7 +17,7 @@ class KafkaRegistryAvroProducerTest extends FunSuite with ConfigTrait with Loggi
         val schemaRegistryUrl = config.newConfigItem("kafka.schemaRegistry.hosts").stringValue
         val destinationBrokers = config.newConfigItem("kafka.brokers").stringValue
         val destinationTopic = "data_buffer_uat_dc_sdk_dev"
-        val schema = AvroUtils.getSchema("../data/json/schema-all.json")
+        val schema = AvroUtils.getSchemaFromFile("../data/json/schema-all.json")
         RegistryAvroKafkaProducer[AnyRef](schema)
             .fromDirectoryFileLines("../data/json/ios")
             .toKafka(destinationTopic)

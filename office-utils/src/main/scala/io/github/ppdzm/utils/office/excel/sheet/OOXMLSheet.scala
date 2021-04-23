@@ -10,9 +10,9 @@ import scala.util.Try
  * @author Created by Stuart Alex on 2019/3/29
  */
 case class OOXMLSheet(workbook: XSSFWorkbook, sheetName: String, overwrite: Boolean = false) extends PoiSheet {
-    protected lazy val firstDataRowIndex = 1
-    protected lazy val lastDataRowIndex: Int = sheet.getLastRowNum
     override val sheet: XSSFSheet = getSheet(overwrite).asInstanceOf[XSSFSheet]
+    protected val firstDataRowIndex = 1
+    protected val lastDataRowIndex: Int = sheet.getLastRowNum
 
     /**
      * 获取一列数据

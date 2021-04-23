@@ -28,7 +28,7 @@
     <groupId>io.github.ppdzm</groupId>
     <artifactId>utils-collection</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
     <modules>
         <module>database-utils</module>
         <module>examples</module>
@@ -46,7 +46,7 @@
         <cdh.version>cdh6.2.0</cdh.version>
         <codehaus.jackson>1.9.13</codehaus.jackson>
         <druid.version>1.1.12</druid.version>
-        <flink.version>1.12.0</flink.version>
+        <flink.version>1.12.2</flink.version>
         <guava.version>16.0.1</guava.version>
         <hadoop.version>2.7.5</hadoop.version>
         <hbase.version>2.1.0</hbase.version>
@@ -101,20 +101,20 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.3.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-scaladocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>doc-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>net.alchim31.maven</groupId>-->
+<!--                <artifactId>scala-maven-plugin</artifactId>-->
+<!--                <version>3.3.2</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-scaladocs</id>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>doc-jar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <!-- 用以使maven能够编译、测试、运行scala项目 -->
             <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -155,40 +155,40 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <configuration>
-                    <javadocExecutable>/usr/bin/javadoc</javadocExecutable>
-                    <includes>
-                        <include>*.java</include>
-                        <include>*.scala</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--                <version>2.9.1</version>-->
+            <!--                <configuration>-->
+            <!--                    <javadocExecutable>/usr/bin/javadoc</javadocExecutable>-->
+            <!--                    <includes>-->
+            <!--                        <include>*.java</include>-->
+            <!--                        <include>*.scala</include>-->
+            <!--                    </includes>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>attach-javadocs</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>jar</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-gpg-plugin</artifactId>-->
+            <!--                <version>1.5</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>sign-artifacts</id>-->
+            <!--                        <phase>verify</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>sign</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -225,35 +225,45 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>oss</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.sonatype.plugins</groupId>-->
+            <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
+            <!--                <version>1.6.7</version>-->
+            <!--                <extensions>true</extensions>-->
+            <!--                <configuration>-->
+            <!--                    <serverId>oss</serverId>-->
+            <!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+            <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
     <profiles>
+        <!--        <profile>-->
+        <!--            <id>oss</id>-->
+        <!--            <properties>-->
+        <!--                <profiles.active>oss</profiles.active>-->
+        <!--                <gpg.executable>gpg2</gpg.executable>-->
+        <!--                <gpg.passphrase>C54419723407236694BE0D4DB983D31B5BDE996E</gpg.passphrase>-->
+        <!--            </properties>-->
+        <!--            <distributionManagement>-->
+        <!--                <snapshotRepository>-->
+        <!--                    <id>oss</id>-->
+        <!--                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--                </snapshotRepository>-->
+        <!--                <repository>-->
+        <!--                    <id>oss</id>-->
+        <!--                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+        <!--                </repository>-->
+        <!--            </distributionManagement>-->
+        <!--        </profile>-->
         <profile>
-            <id>oss</id>
-            <properties>
-                <profiles.active>oss</profiles.active>
-                <gpg.executable>gpg2</gpg.executable>
-                <gpg.passphrase>C54419723407236694BE0D4DB983D31B5BDE996E</gpg.passphrase>
-            </properties>
+            <id>chinapex</id>
             <distributionManagement>
-                <snapshotRepository>
-                    <id>oss</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
                 <repository>
-                    <id>oss</id>
-                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <id>nexus-releases</id>
+                    <name>Local Nexus Repository</name>
+                    <url>http://mav.chinapex.com.cn/repository/maven-releases/</url>
                 </repository>
             </distributionManagement>
         </profile>

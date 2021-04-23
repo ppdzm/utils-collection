@@ -23,12 +23,12 @@ object FileConfig extends Serializable {
 }
 
 class FileConfig(name: String, extension: String) extends Config {
-    private lazy val fixedExtension =
+    private val fixedExtension =
         if (!extension.startsWith("."))
             "." + extension
         else
             extension
-    private lazy val profileName = {
+    private val profileName = {
         val active = if (System.getProperty(profileActiveKey) == null) {
             // 若系统变量中没有设置，则尝试从默认配置文件中读取
             val maybeInHere = name + fixedExtension

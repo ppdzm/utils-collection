@@ -7,7 +7,6 @@ import java.util.Properties
  * Created by Stuart Alex on 2021/4/6.
  */
 trait RDBConnection {
-    val defaultProperties: Properties
 
     def getConnection(url: String, properties: Map[String, AnyRef]): Connection
 

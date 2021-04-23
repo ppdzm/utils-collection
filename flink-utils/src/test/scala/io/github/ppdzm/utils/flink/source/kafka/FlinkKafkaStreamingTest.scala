@@ -24,7 +24,7 @@ class FlinkKafkaStreamingTest extends FunSuite with AvroArrayRecordFlinkKafkaStr
     override protected val checkpointEnabled: Boolean = false
     override protected val offsetResetStrategy: OffsetResetStrategy = OffsetResetStrategy.EARLIEST
     override protected val restartStrategyConfiguration: RestartStrategies.RestartStrategyConfiguration = RestartStrategies.fixedDelayRestart(2, Time.seconds(2))
-    override protected val schema: Schema = AvroUtils.getSchema("../data/avsc/schema-all.json")
+    override protected val schema: Schema = AvroUtils.getSchemaFromFile("../data/avsc/schema-all.json")
     override protected val schemaRegistryUrl: String = "http://10.25.21.41:8081"
     override protected val kafkaSourceTopic: String = "data_buffer_uat_dc_sdk_dev"
     override protected val kafkaBrokers: String = "10.25.21.41:9092,10.25.21.42:9092,10.25.21.43:9092"

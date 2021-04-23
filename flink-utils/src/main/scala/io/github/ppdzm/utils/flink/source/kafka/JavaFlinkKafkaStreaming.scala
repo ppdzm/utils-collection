@@ -13,7 +13,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 /**
  * Created by Stuart Alex on 2021/4/3.
  */
-trait CommonFlinkKafkaStreaming[T] extends JavaFlinkStreaming[T] {
+trait JavaFlinkKafkaStreaming[T] extends JavaFlinkStreaming[T] {
     /**
      * Kafka消费者配置
      */

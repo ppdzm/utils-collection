@@ -15,7 +15,7 @@ import scala.collection.JavaConversions._
 class Avro2JsonTest extends FunSuite {
 
     test("integration-test") {
-        val schema = AvroUtils.getSchema("../data/avsc/schema-all.json")
+        val schema = AvroUtils.getSchemaFromFile("../data/avsc/schema-all.json")
         val file = new File("../data/json/wechat/10.25.21.70_3029_1335.json.raw.txt")
         val bytesArray = FileUtils.readLines(file, UTF_8)
             .map(fix)

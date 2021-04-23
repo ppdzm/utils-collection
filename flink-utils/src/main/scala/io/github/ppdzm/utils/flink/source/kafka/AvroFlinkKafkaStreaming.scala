@@ -6,7 +6,7 @@ import org.apache.avro.Schema
 /**
  * Created by Stuart Alex on 2021/4/6.
  */
-trait AvroFlinkKafkaStreaming[T] extends CommonFlinkKafkaStreaming[T] {
+trait AvroFlinkKafkaStreaming[T] extends JavaFlinkKafkaStreaming[T] {
     /**
      * [[org.apache.flink.formats.avro.SchemaCoder.SchemaCoderProvider]]
      */

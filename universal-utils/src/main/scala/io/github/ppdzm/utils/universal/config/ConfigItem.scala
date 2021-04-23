@@ -23,7 +23,7 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
     def bytesValue: Array[Byte] = this.stringValue.getBytes(StandardCharsets.UTF_8)
 
     /**
-     * 调用rawValue时不会用到defaultValue
+     * 调用specificValue时不会用到defaultValue
      *
      * @return
      */
@@ -58,12 +58,9 @@ class ConfigItem private[config](config: Config, key: String, defaultValue: Any)
 
     def mapListValue(fieldSeparator: String = ",", keyValueSeparator: String = ":", valueSeparator: String = "~"): Map[String, List[String]] = {
         if (valueSeparator == null)
-            arrayValue(fieldSeparator)
-                .map(StringUtils.split(_, keyValueSeparator))
-                .filter(_.length == 2)
-                .map(splits => splits(0) -> splits(1))
+            mapValue(fieldSeparator,keyValueSeparator)
                 .groupBy(_._1)
-                .map { e => e._1 -> e._2.map(_._2).toList }
+                .map { e => e._1 -> e._2.values.toList }
         else
             arrayValue(fieldSeparator)
                 .map(StringUtils.split(_, keyValueSeparator))
