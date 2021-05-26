@@ -1,10 +1,10 @@
 package io.github.ppdzm.utils.spark.implicits
 
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.types._
 import io.github.ppdzm.utils.universal.base.Symbols._
 import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types._
 
 object DataFrameConversions {
 

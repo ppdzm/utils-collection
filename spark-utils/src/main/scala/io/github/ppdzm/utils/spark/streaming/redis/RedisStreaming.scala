@@ -1,8 +1,6 @@
 package io.github.ppdzm.utils.spark.streaming.redis
 
 import io.github.ppdzm.utils.spark.common.SparkStreamingEnvironment
-import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, RDDProcessor, ResultProcessor}
-import io.github.ppdzm.utils.spark.common.SparkStreamingEnvironment
 import io.github.ppdzm.utils.spark.streaming.redis.receiver.RedisReceiverInputDStream
 import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, RDDProcessor, ResultProcessor}
 

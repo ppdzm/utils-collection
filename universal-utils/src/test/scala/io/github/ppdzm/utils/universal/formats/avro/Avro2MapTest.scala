@@ -16,17 +16,20 @@ import scala.io.Source
 class Avro2MapTest extends FunSuite {
 
     test("avro2map") {
-        val schema = new Schema.Parser().parse(new File("../data/json/schema-all.json"))
-        new File("../data/json/log").listFiles().foreach {
-            file =>
-                val json = LoanPattern.using(Source.fromFile(file, "utf-8")) { bs => bs.mkString }
-                val genericRecordArray = AvroUtils.json2Avro[GenericData.Array[GenericRecord]](json, schema)
-                genericRecordArray.flatten.foreach {
-                    record =>
-                        val map = AvroUtils.parseRecord2Map(record, reserveParentName = true)
-                        println(map.mkString(","))
-                }
-        }
+        val schema = new Schema.Parser().parse(new File("../data/avsc/schema-all.json"))
+        val file = new File("../data/json/wechat.json")
+        val json = LoanPattern.using(Source.fromFile(file, "utf-8")) { bs => bs.mkString }
+        val genericRecordArray = AvroUtils.json2Avro[GenericData.Array[GenericRecord]](json, schema)
+        genericRecordArray
+            .flatten
+            .foreach {
+                record =>
+                    val map = AvroUtils.parseRecord2Map(record, true)
+                    map.foreach {
+                        case (key, value) =>
+                            println(key + " => " + String.valueOf(value))
+                    }
+            }
     }
 
 }

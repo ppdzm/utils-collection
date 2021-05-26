@@ -2,6 +2,8 @@ package io.github.ppdzm.utils.universal.implicits
 
 import java.util.Properties
 
+import io.github.ppdzm.utils.universal.base.ExceptionUtils
+
 import scala.collection.JavaConversions._
 
 /**
@@ -19,20 +21,7 @@ object ExtendedJavaConversions {
 
     implicit class ThrowableImplicits(throwable: Throwable) {
         def toDetailedString: String = {
-            val message = new StringBuilder
-            message.append(throwable.toString)
-            for (element <- throwable.getStackTrace) {
-                message.append("\n\tat ").append(element.toString)
-            }
-            message.append("\n")
-            for (throwable <- throwable.getSuppressed) {
-                message.append(throwable.toDetailedString)
-            }
-            message.append("\n")
-            val cause = throwable.getCause
-            if (cause != null)
-                message.append(cause.toDetailedString)
-            return message.toString
+            ExceptionUtils.exceptionToString(throwable)
         }
     }
 

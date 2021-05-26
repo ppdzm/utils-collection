@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
 class PropertiesBuilderTest extends FunSuite {
 
     test("build-consumer-config") {
-        val config = FileConfig()
+        val config = new FileConfig()
         val dynamicParameters =
             config.newConfigItem("config.dynamic")
                 .arrayValue()

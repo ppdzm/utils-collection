@@ -72,31 +72,6 @@ case class Compiler(targetDirectory: Option[String]) extends Logging {
     }
 
     /**
-     * 表达式求值
-     *
-     * @param expression 可执行代码字符串
-     * @tparam T 期望的返回值类型
-     * @return
-     */
-    def evaluate[T](expression: String): T = {
-        synchronized[T] {
-            this.compileExpression(expression).getConstructor().newInstance().asInstanceOf[() => Any].apply().asInstanceOf[T]
-        }
-    }
-
-    /**
-     * 动态编译字符串形式的可执行代码，例如: 1 + 2
-     *
-     * @param expression 可执行代码字符串
-     * @return
-     */
-    def compileExpression(expression: String): Class[_] = {
-        val className = getClassName(expression)
-        val code = Compiler.wrapExpressionInClass(className, expression)
-        compileClass(code, className)
-    }
-
-    /**
      * 动态编译类
      *
      * @param classDefinition 类定义
@@ -163,6 +138,31 @@ case class Compiler(targetDirectory: Option[String]) extends Logging {
         } else {
             "sha" + new BigInteger(1, MessageDigest.getInstance("SHA-1").digest(code.getBytes)).toString(16)
         }
+    }
+
+    /**
+     * 表达式求值
+     *
+     * @param expression 可执行代码字符串
+     * @tparam T 期望的返回值类型
+     * @return
+     */
+    def evaluate[T](expression: String): T = {
+        synchronized[T] {
+            this.compileExpression(expression).getConstructor().newInstance().asInstanceOf[() => Any].apply().asInstanceOf[T]
+        }
+    }
+
+    /**
+     * 动态编译字符串形式的可执行代码，例如: 1 + 2
+     *
+     * @param expression 可执行代码字符串
+     * @return
+     */
+    def compileExpression(expression: String): Class[_] = {
+        val className = getClassName(expression)
+        val code = Compiler.wrapExpressionInClass(className, expression)
+        compileClass(code, className)
     }
 
 }

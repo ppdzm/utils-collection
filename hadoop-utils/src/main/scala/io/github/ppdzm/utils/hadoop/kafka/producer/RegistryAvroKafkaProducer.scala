@@ -6,6 +6,8 @@ import org.apache.avro.Schema
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 
+import scala.collection.JavaConversions._
+
 /**
  * Created by Stuart Alex on 2021/2/25.
  */
@@ -17,10 +19,12 @@ case class RegistryAvroKafkaProducer[T](schema: Schema) extends EasyKafkaProduce
      * @param datum 字符串数据
      */
     override def send(datum: String): Unit = {
-        AvroUtils.json2Avro[T](datum, schema).foreach {
-            avro =>
-                val producerRecord = new ProducerRecord[String, T](destinationTopic, avro)
-                kafkaProducer.send(producerRecord)
-        }
+        AvroUtils
+            .json2Avro[T](datum, schema)
+            .foreach {
+                avro =>
+                    val producerRecord = new ProducerRecord[String, T](destinationTopic, avro)
+                    kafkaProducer.send(producerRecord)
+            }
     }
 }

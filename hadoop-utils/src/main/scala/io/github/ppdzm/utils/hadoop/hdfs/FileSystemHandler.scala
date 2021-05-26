@@ -38,19 +38,6 @@ trait FileSystemHandler extends Logging {
     }
 
     /**
-     * 向指定路径追加字节数组
-     *
-     * @param bytes 字节数组
-     * @param path  路径
-     */
-    def append(bytes: Array[Byte], path: String): Unit = {
-        LoanPattern.using(fileSystem.append(new Path(path))) {
-            fsDataOutputStream =>
-                fsDataOutputStream.write(bytes)
-        }
-    }
-
-    /**
      * 向指定路径追加多行文本
      *
      * @param lines 多行文本
@@ -84,6 +71,19 @@ trait FileSystemHandler extends Logging {
     }
 
     /**
+     * 向指定路径追加字节数组
+     *
+     * @param bytes 字节数组
+     * @param path  路径
+     */
+    def append(bytes: Array[Byte], path: String): Unit = {
+        LoanPattern.using(fileSystem.append(new Path(path))) {
+            fsDataOutputStream =>
+                fsDataOutputStream.write(bytes)
+        }
+    }
+
+    /**
      * 删除指定路径（文件或文件夹）
      *
      * @param path 路径（文件或文件夹）
@@ -95,6 +95,10 @@ trait FileSystemHandler extends Logging {
         listFileStatus(path, recursive).filter(_.isFile).map(_.getPath.getName)
     }
 
+    def listDirectories(path: String, recursive: Boolean): List[String] = {
+        listFileStatus(path, recursive).filter(_.isDirectory).map(_.getPath.getName)
+    }
+
     private def listFileStatus(path: String, recursive: Boolean): List[LocatedFileStatus] = {
         val listBuffer = mutable.ListBuffer[LocatedFileStatus]()
         val remoteIterator = this.fileSystem.listFiles(new Path(path), recursive)
@@ -103,10 +107,6 @@ trait FileSystemHandler extends Logging {
             listBuffer.add(fileStatus)
         }
         listBuffer.toList
-    }
-
-    def listDirectories(path: String, recursive: Boolean): List[String] = {
-        listFileStatus(path, recursive).filter(_.isDirectory).map(_.getPath.getName)
     }
 
     /**
@@ -156,14 +156,6 @@ trait FileSystemHandler extends Logging {
     }
 
     /**
-     * 判断指定路径（文件或文件夹是否存在）
-     *
-     * @param path 路径（文件或文件夹）
-     * @return
-     */
-    def exists(path: String): Boolean = this.fileSystem.exists(new Path(path))
-
-    /**
      * 等待所有路径（文件或文件夹）存在
      *
      * @param paths   （1个或多个）路径（文件或文件夹）
@@ -180,6 +172,14 @@ trait FileSystemHandler extends Logging {
             }
         }
     }
+
+    /**
+     * 判断指定路径（文件或文件夹是否存在）
+     *
+     * @param path 路径（文件或文件夹）
+     * @return
+     */
+    def exists(path: String): Boolean = this.fileSystem.exists(new Path(path))
 
     /**
      * 向指定路径写入字节数组后换行

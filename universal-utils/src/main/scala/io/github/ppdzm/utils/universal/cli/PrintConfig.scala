@@ -6,22 +6,22 @@ import io.github.ppdzm.utils.universal.config.{ConfigItem, ConfigTrait}
  * Created by Stuart Alex on 2017/12/1.
  */
 trait PrintConfig extends ConfigTrait {
-    lazy val PRINT_ALIGNMENT: ConfigItem = ConfigItem("print.alignment", "center")
-    lazy val PRINT_BORDER_FLANK: ConfigItem = ConfigItem("print.border.flank", true)
-    lazy val PRINT_BORDER_TRANSVERSE: ConfigItem = ConfigItem("print.border.transverse", true)
-    lazy val PRINT_BORDER_VERTICAL: ConfigItem = ConfigItem("print.border.vertical", true)
-    lazy val PRINT_COVER: ConfigItem = ConfigItem("print.cover", true)
-    lazy val PRINT_EXPLODE: ConfigItem = ConfigItem("print.explode", true)
-    lazy val PRINT_FORMAT: ConfigItem = ConfigItem("print.format", "default")
-    lazy val PRINT_JSON_PRETTY: ConfigItem = ConfigItem("print.json.pretty", false)
-    lazy val PRINT_LENGTH: ConfigItem = ConfigItem("print.length", 0)
-    lazy val PRINT_LINEFEED: ConfigItem = ConfigItem("print.linefeed", 0)
-    lazy val PRINT_PADDING: ConfigItem = ConfigItem("print.padding", true)
-    lazy val PRINT_PAGE_SIZE: ConfigItem = ConfigItem("print.pageSize", 20)
-    lazy val PRINT_NULL2EMPTY: ConfigItem = ConfigItem("print.null2empty", false)
-    lazy val PRINT_RENDER: ConfigItem = ConfigItem("print.render", "0;32")
-    lazy val PRINT_TRUNCATE: ConfigItem = ConfigItem("print.truncate", false)
-    lazy val PRINT_TRUNCATE_LENGTH: ConfigItem = ConfigItem("print.truncate.length", 17)
+    lazy val PRINT_ALIGNMENT: ConfigItem = new ConfigItem(config, "print.alignment", "center")
+    lazy val PRINT_BORDER_FLANK: ConfigItem = new ConfigItem(config, "print.border.flank", true)
+    lazy val PRINT_BORDER_TRANSVERSE: ConfigItem = new ConfigItem(config, "print.border.transverse", true)
+    lazy val PRINT_BORDER_VERTICAL: ConfigItem = new ConfigItem(config, "print.border.vertical", true)
+    lazy val PRINT_COVER: ConfigItem = new ConfigItem(config, "print.cover", true)
+    lazy val PRINT_EXPLODE: ConfigItem = new ConfigItem(config, "print.explode", true)
+    lazy val PRINT_FORMAT: ConfigItem = new ConfigItem(config, "print.format", "default")
+    lazy val PRINT_JSON_PRETTY: ConfigItem = new ConfigItem(config, "print.json.pretty", false)
+    lazy val PRINT_LENGTH: ConfigItem = new ConfigItem(config, "print.length", 0)
+    lazy val PRINT_LINEFEED: ConfigItem = new ConfigItem(config, "print.linefeed", 0)
+    lazy val PRINT_PADDING: ConfigItem = new ConfigItem(config, "print.padding", true)
+    lazy val PRINT_PAGE_SIZE: ConfigItem = new ConfigItem(config, "print.pageSize", 20)
+    lazy val PRINT_NULL2EMPTY: ConfigItem = new ConfigItem(config, "print.null2empty", false)
+    lazy val PRINT_RENDER: ConfigItem = new ConfigItem(config, "print.render", "0;32")
+    lazy val PRINT_TRUNCATE: ConfigItem = new ConfigItem(config, "print.truncate", false)
+    lazy val PRINT_TRUNCATE_LENGTH: ConfigItem = new ConfigItem(config, "print.truncate.length", 17)
 
     def alignment: String = PRINT_ALIGNMENT.stringValue
 

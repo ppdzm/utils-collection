@@ -59,25 +59,6 @@ object YarnUtils {
     }
 
     /**
-     * Spark应用详情Json
-     *
-     * @param id Spark应用id
-     * @return
-     */
-    def sparkAppJson(id: String, resourceManagerAddresses: Array[String]): String = {
-        this.checkID(id)
-        val attachableAddress = findAttachableUrl(resourceManagerAddresses)
-        LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps/$id", "utf-8"))(_.mkString)
-    }
-
-    /**
-     * 检查id的合法性
-     *
-     * @param id Spark应用id
-     */
-    private def checkID(id: String): Unit = assert(id.matches("""application_\d+_\d+"""), s"$id is not correct Yarn Application format")
-
-    /**
      * 获取Executor日志
      *
      * @param address    日志主地址
@@ -112,31 +93,6 @@ object YarnUtils {
         )
         (columns, new Regex(regex, columns: _*).findAllMatchIn(html).filter(m => Try(m.group("序号").toInt).isSuccess)
             .map(m => columns.map(m.group)).toList.sortWith((a: List[String], b: List[String]) => a.head.toInt < b.head.toInt))
-    }
-
-    /**
-     * 获取Executors页面的html
-     *
-     * @param id Spark应用id
-     * @return
-     */
-    def executorsPageHtml(id: String, resourceManagerAddresses: Array[String]): String = {
-        val trackingUrl = findTrackingUrl(id, resourceManagerAddresses)
-        LoanPattern.using(Source.fromURL(s"$trackingUrl/executors", "utf-8"))(_.mkString)
-    }
-
-    /**
-     * 找到tracking url
-     *
-     * @param id                       yarn application id
-     * @param resourceManagerAddresses resource manager地址
-     * @return
-     */
-    def findTrackingUrl(id: String, resourceManagerAddresses: Array[String]): String = {
-        val json = this.sparkAppJson(id, resourceManagerAddresses)
-        new Regex(""""trackingUrl":"(.*?)"""", "url")
-            .findFirstMatchIn(json)
-            .getOrElse(throw new NoSuchFieldException(this.fieldMsgFormatter("trackingUrl", JsonUtils.pretty(json)))).group("url")
     }
 
     /**
@@ -183,6 +139,52 @@ object YarnUtils {
     }
 
     /**
+     * 找到tracking url
+     *
+     * @param id                       yarn application id
+     * @param resourceManagerAddresses resource manager地址
+     * @return
+     */
+    def findTrackingUrl(id: String, resourceManagerAddresses: Array[String]): String = {
+        val json = this.sparkAppJson(id, resourceManagerAddresses)
+        new Regex(""""trackingUrl":"(.*?)"""", "url")
+            .findFirstMatchIn(json)
+            .getOrElse(throw new NoSuchFieldException(this.fieldMsgFormatter("trackingUrl", JsonUtils.pretty(json)))).group("url")
+    }
+
+    /**
+     * Spark应用详情Json
+     *
+     * @param id Spark应用id
+     * @return
+     */
+    def sparkAppJson(id: String, resourceManagerAddresses: Array[String]): String = {
+        this.checkID(id)
+        val attachableAddress = findAttachableUrl(resourceManagerAddresses)
+        LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps/$id", "utf-8"))(_.mkString)
+    }
+
+    /**
+     * 检查id的合法性
+     *
+     * @param id Spark应用id
+     */
+    private def checkID(id: String): Unit = assert(id.matches("""application_\d+_\d+"""), s"$id is not correct Yarn Application format")
+
+    /**
+     * 找到可连接的url
+     *
+     * @param urls 一组url
+     * @return
+     */
+    def findAttachableUrl(urls: Array[String]): String = {
+        val attachableUrl = urls.find(url => Try(Source.fromURL(s"http://$url", "utf8")).isSuccess)
+        if (attachableUrl.isEmpty)
+            throw ExceptionGenerator.newException("NoAttachableUrl", "no attachable resource manager found")
+        attachableUrl.get
+    }
+
+    /**
      * 根据关键字和应用状态搜索Spark应用
      *
      * @param keyWord 关键字
@@ -190,7 +192,11 @@ object YarnUtils {
      * @return
      */
     def sparkApps(keyWord: String, resourceManagerAddresses: Array[String], state: ApplicationState.Value = ApplicationState.all): List[JsonNode] = {
-        JsonUtils.parse(this.allYarnApps(resourceManagerAddresses)).get("apps").get("app").elements()
+        JsonUtils
+            .parse(this.allYarnApps(resourceManagerAddresses))
+            .get("apps")
+            .get("app")
+            .elements()
             .filter(_.get("applicationType").asText.toLowerCase == "spark")
             .filter(e => e.get("name").asText.matches(keyWord) || e.get("name").asText.contains(keyWord))
             .filter(e => {
@@ -211,19 +217,6 @@ object YarnUtils {
     private def allYarnApps(resourceManagerAddresses: Array[String]): String = {
         val attachableAddress = findAttachableUrl(resourceManagerAddresses)
         LoanPattern.using(Source.fromURL(s"http://$attachableAddress/ws/v1/cluster/apps", "utf-8"))(_.mkString)
-    }
-
-    /**
-     * 找到可连接的url
-     *
-     * @param urls 一组url
-     * @return
-     */
-    def findAttachableUrl(urls: Array[String]): String = {
-        val attachableUrl = urls.find(url => Try(Source.fromURL(s"http://$url", "utf8")).isSuccess)
-        if (attachableUrl.isEmpty)
-            throw ExceptionGenerator.newException("NoAttachableUrl", "no attachable resource manager found")
-        attachableUrl.get
     }
 
     /**
@@ -249,5 +242,16 @@ object YarnUtils {
         val file = new File("/tmp/" + UUID.randomUUID().toString + ".html")
         FileUtils.write(file, html, StandardCharsets.UTF_8)
         this.saveMsgFormatter(file.getAbsolutePath).prettyPrintln(null)
+    }
+
+    /**
+     * 获取Executors页面的html
+     *
+     * @param id Spark应用id
+     * @return
+     */
+    def executorsPageHtml(id: String, resourceManagerAddresses: Array[String]): String = {
+        val trackingUrl = findTrackingUrl(id, resourceManagerAddresses)
+        LoanPattern.using(Source.fromURL(s"$trackingUrl/executors", "utf-8"))(_.mkString)
     }
 }

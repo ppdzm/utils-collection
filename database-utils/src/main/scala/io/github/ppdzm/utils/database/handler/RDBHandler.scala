@@ -147,29 +147,6 @@ trait RDBHandler {
         /**
          * 设置PreparedStatement的参数
          *
-         * @param columnNameValuePair 参数，也即字段名称——字段值对
-         * @param columnNameTypePair  字段名称——类型对
-         * @param startIndex          起始索引
-         * @return
-         */
-        def setParameters(columnNameValuePair: Map[String, Any], columnNameTypePair: Map[String, String], startIndex: Int): PreparedStatement = {
-            if (columnNameValuePair == null)
-                return ps
-            columnNameValuePair
-                .toList
-                .sortBy(_._1)
-                .zipWithIndex
-                .foreach {
-                    case ((k, v), i) =>
-                        val columnType = columnNameTypePair(k)
-                        ps.setParameter(startIndex + i, v, columnType)
-                }
-            ps
-        }
-
-        /**
-         * 设置PreparedStatement的参数
-         *
          * @param parameterIndex 参数位置
          * @param value          参数值
          * @return
@@ -203,6 +180,29 @@ trait RDBHandler {
                 case "double" => ps.setDouble(parameterIndex, value.asInstanceOf[Double])
                 case _ => ps.setObject(parameterIndex, value)
             }
+            ps
+        }
+
+        /**
+         * 设置PreparedStatement的参数
+         *
+         * @param columnNameValuePair 参数，也即字段名称——字段值对
+         * @param columnNameTypePair  字段名称——类型对
+         * @param startIndex          起始索引
+         * @return
+         */
+        def setParameters(columnNameValuePair: Map[String, Any], columnNameTypePair: Map[String, String], startIndex: Int): PreparedStatement = {
+            if (columnNameValuePair == null)
+                return ps
+            columnNameValuePair
+                .toList
+                .sortBy(_._1)
+                .zipWithIndex
+                .foreach {
+                    case ((k, v), i) =>
+                        val columnType = columnNameTypePair(k)
+                        ps.setParameter(startIndex + i, v, columnType)
+                }
             ps
         }
 

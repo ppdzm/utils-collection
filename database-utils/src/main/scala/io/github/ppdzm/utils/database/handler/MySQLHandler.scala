@@ -92,17 +92,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 执行sql语句
-     *
-     * @param statement sql语句
-     */
-    def execute(statement: String): Unit = {
-        LoanPattern.using(MySQLConnection.getStatement(url, extraProperties))(ps => {
-            ps.execute(statement)
-        })
-    }
-
-    /**
      * 使用主键删除单条数据
      *
      * @param table           表名称
@@ -186,6 +175,18 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
+     * 列出所有数据库
+     *
+     * @return
+     */
+    def listDatabases(regexp: String = null): List[String] = {
+        if (regexp.notNullAndEmpty)
+            query("show databases").singleColumnList(0).filter(_.matches(regexp))
+        else
+            query("show databases").singleColumnList(0)
+    }
+
+    /**
      * 判断某张表是否存在
      *
      * @param database 数据库名称
@@ -197,19 +198,28 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 获取字段类型
+     * 列出所有表
      *
-     * @param resultSetMetaData ResultSetMetaData
+     * @param database 数据库名称
      * @return
      */
-    def getColumnsType(resultSetMetaData: ResultSetMetaData): Map[String, String] = {
-        val columnCount = resultSetMetaData.getColumnCount
-        (1 to columnCount).map {
-            columnIndex =>
-                val columnName = resultSetMetaData.getColumnName(columnIndex)
-                val columnType = resultSetMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
-                (columnName, columnType)
-        }.toMap
+    def listTables(database: String, regexp: String = null): List[String] = {
+        val database = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"))
+        val sql = s"select table_name from information_schema.tables where table_schema='$database'"
+        if (regexp.notNullAndEmpty)
+            query(sql).singleColumnList(0).filter(_.matches(regexp))
+        else
+            query(sql).singleColumnList(0)
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param tableName 表名称
+     * @return
+     */
+    def getColumnsType4Java(tableName: String): util.Map[String, String] = {
+        getColumnsType(tableName).asJava
     }
 
     /**
@@ -229,28 +239,17 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     /**
      * 获取字段类型
      *
-     * @param tableName 表名称
+     * @param resultSetMetaData ResultSetMetaData
      * @return
      */
-    def getColumnsType4Java(tableName: String): util.Map[String, String] = {
-        getColumnsType(tableName).asJava
-    }
-
-    /**
-     * 生成 insert or update 语句
-     *
-     * @param table              表名称
-     * @param columnNameValueMap 字段——值Map
-     */
-    def generateInsertOrUpdateString(table: String, columnNameValueMap: Map[String, Any]): String = {
-        val sortedColumns = columnNameValueMap.keySet.toList.sorted
-        val columnsCount = sortedColumns.length
-        s"""
-           |insert into $table (${sortedColumns.mkString(",")})
-           |values (${Array.fill(columnsCount)("?").mkString(",")})
-           |on duplicate key
-           |update ${sortedColumns.map { key => s"$key=?" }.mkString(", ")}
-           """.stripMargin
+    def getColumnsType(resultSetMetaData: ResultSetMetaData): Map[String, String] = {
+        val columnCount = resultSetMetaData.getColumnCount
+        (1 to columnCount).map {
+            columnIndex =>
+                val columnName = resultSetMetaData.getColumnName(columnIndex)
+                val columnType = resultSetMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
+                (columnName, columnType)
+        }.toMap
     }
 
     /**
@@ -260,6 +259,32 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def globalBinlogFormat(): String = {
         query("show global variables like 'binlog_format'").scalar(0, 1)
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql sql语句
+     * @return
+     */
+    def query(sql: String): ResultSet = {
+        query(sql, null)
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql        sql语句
+     * @param parameters sql语句参数
+     * @return
+     */
+    def query(sql: String, parameters: Array[Any]): ResultSet = {
+        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = sql)) {
+            ps =>
+                ps
+                    .setParameters(parameters)
+                    .executeQuery()
+        }
     }
 
     /**
@@ -307,6 +332,23 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
+     * 生成 insert or update 语句
+     *
+     * @param table              表名称
+     * @param columnNameValueMap 字段——值Map
+     */
+    def generateInsertOrUpdateString(table: String, columnNameValueMap: Map[String, Any]): String = {
+        val sortedColumns = columnNameValueMap.keySet.toList.sorted
+        val columnsCount = sortedColumns.length
+        s"""
+           |insert into $table (${sortedColumns.mkString(",")})
+           |values (${Array.fill(columnsCount)("?").mkString(",")})
+           |on duplicate key
+           |update ${sortedColumns.map { key => s"$key=?" }.mkString(", ")}
+           """.stripMargin
+    }
+
+    /**
      * 批量插入或更新数据
      *
      * @param table                   表名称
@@ -334,56 +376,16 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
-     * 列出所有数据库
-     *
-     * @return
-     */
-    def listDatabases(regexp: String = null): List[String] = {
-        if (regexp.notNullAndEmpty)
-            query("show databases").singleColumnList(0).filter(_.matches(regexp))
-        else
-            query("show databases").singleColumnList(0)
-    }
-
-    /**
-     * 列出所有表
-     *
-     * @param database 数据库名称
-     * @return
-     */
-    def listTables(database: String, regexp: String = null): List[String] = {
-        val database = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"))
-        val sql = s"select table_name from information_schema.tables where table_schema='$database'"
-        if (regexp.notNullAndEmpty)
-            query(sql).singleColumnList(0).filter(_.matches(regexp))
-        else
-            query(sql).singleColumnList(0)
-    }
-
-    /**
      * 查询
      *
-     * @param sql        sql语句
-     * @param parameters sql语句参数
+     * @param sql     sql语句
+     * @param columns 所需结果字段
      * @return
      */
-    def query(sql: String, parameters: Array[Any]): ResultSet = {
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = sql)) {
-            ps =>
-                ps
-                    .setParameters(parameters)
-                    .executeQuery()
-        }
-    }
-
-    /**
-     * 查询
-     *
-     * @param sql sql语句
-     * @return
-     */
-    def query(sql: String): ResultSet = {
-        query(sql, null)
+    def query(sql: String, columns: util.Collection[String]): util.Iterator[util.Map[String, Any]] = {
+        query(sql, columns.toList)
+            .map { e => e.asJava }
+            .asJava
     }
 
     /**
@@ -422,19 +424,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
                     }
                 }
         }
-    }
-
-    /**
-     * 查询
-     *
-     * @param sql     sql语句
-     * @param columns 所需结果字段
-     * @return
-     */
-    def query(sql: String, columns: util.Collection[String]): util.Iterator[util.Map[String, Any]] = {
-        query(sql, columns.toList)
-            .map { e => e.asJava }
-            .asJava
     }
 
     /**
@@ -478,6 +467,17 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def truncate(database: String, table: String): Unit = {
         execute(s"truncate table $database.$table")
+    }
+
+    /**
+     * 执行sql语句
+     *
+     * @param statement sql语句
+     */
+    def execute(statement: String): Unit = {
+        LoanPattern.using(MySQLConnection.getStatement(url, extraProperties))(ps => {
+            ps.execute(statement)
+        })
     }
 
     /**
@@ -528,6 +528,10 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
         }
     }
 
+    private def fieldsMapToUpdateString(fields: Iterable[String]) = {
+        fields.map { key => s"$key=?" }.mkString(", ")
+    }
+
     /**
      * 更新数据
      *
@@ -570,10 +574,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
                             ps.clearBatch()
                     }
             }
-    }
-
-    private def fieldsMapToUpdateString(fields: Iterable[String]) = {
-        fields.map { key => s"$key=?" }.mkString(", ")
     }
 
 }

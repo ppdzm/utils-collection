@@ -1,10 +1,10 @@
 package io.github.ppdzm.utils.spark.streaming.structured
 
-import org.apache.spark.sql.streaming.DataStreamWriter
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import io.github.ppdzm.utils.spark.streaming.structured.reader.{KafkaStreamReader, SocketStreamReader, StreamReader}
 import io.github.ppdzm.utils.spark.streaming.structured.source.InputSources._
 import io.github.ppdzm.utils.spark.streaming.structured.writer.{ConsoleStreamWriter, KafkaStreamWriter, StreamWriter}
+import org.apache.spark.sql.streaming.DataStreamWriter
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 import scala.reflect.ClassTag
 

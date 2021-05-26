@@ -8,7 +8,7 @@ import org.scalatest.FunSuite
  * Created by Stuart Alex on 2021/2/25.
  */
 class KafkaUtilsTest extends FunSuite with KafkaConfigConstants {
-    override protected val config: Config = FileConfig()
+    override protected val config: Config = new FileConfig()
     test("get topic list") {
         KafkaUtils.getTopicList(KAFKA_BROKERS.stringValue).foreach(println)
     }

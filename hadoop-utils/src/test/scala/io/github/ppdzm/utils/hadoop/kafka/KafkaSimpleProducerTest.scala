@@ -11,7 +11,7 @@ import org.scalatest.FunSuite
  * Created by Stuart Alex on 2017/4/1.
  */
 class KafkaSimpleProducerTest extends FunSuite with KafkaConfigConstants with Logging {
-    override protected val config: Config = FileConfig()
+    override protected val config: Config = new FileConfig()
 
     test("kafka-pooled-producer") {
         val brokers = KAFKA_BROKERS.stringValue

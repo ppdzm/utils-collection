@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
  * Created by Stuart Alex on 2021/4/6.
  */
 class SeqConversionTest extends FunSuite {
-    implicit protected val config: Config = FileConfig()
+    implicit protected val config: Config = new FileConfig()
 
     test("console-table") {
         val configuredConversions = new ConfiguredConversions()

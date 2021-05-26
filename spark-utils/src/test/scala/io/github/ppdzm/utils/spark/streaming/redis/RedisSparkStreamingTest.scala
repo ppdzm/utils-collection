@@ -4,11 +4,9 @@ import io.github.ppdzm.utils.spark.streaming.kafka.{PP, RP}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
-import io.github.ppdzm.utils.spark.streaming.kafka.{PP, RP}
-import io.github.ppdzm.utils.universal.config.Config
 
 object RedisSparkStreamingTest extends RedisStreaming[String, Int] with App {
-    override protected val config: Config = FileConfig()
+    override protected val config: Config = new FileConfig()
     override protected val sparkConf: SparkConf = new SparkConf()
     override protected val sparkSessionConf: Map[String, String] = Map[String, String]()
 

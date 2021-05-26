@@ -31,12 +31,12 @@
     <version>1.1</version>
     <modules>
         <module>database-utils</module>
-        <module>examples</module>
         <module>flink-utils</module>
         <module>hadoop-utils</module>
         <module>office-utils</module>
-        <module>universal-utils</module>
         <module>spark-utils</module>
+        <module>universal-utils</module>
+        <module>examples</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -101,20 +101,20 @@
     </dependencies>
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>net.alchim31.maven</groupId>-->
-<!--                <artifactId>scala-maven-plugin</artifactId>-->
-<!--                <version>3.3.2</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-scaladocs</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>doc-jar</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>net.alchim31.maven</groupId>-->
+            <!--                <artifactId>scala-maven-plugin</artifactId>-->
+            <!--                <version>3.3.2</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>attach-scaladocs</id>-->
+            <!--                        <phase>verify</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>doc-jar</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <!-- 用以使maven能够编译、测试、运行scala项目 -->
             <plugin>
                 <groupId>org.scala-tools</groupId>

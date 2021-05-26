@@ -17,7 +17,7 @@ import org.scalatest.FunSuite
 import scala.collection.JavaConversions._
 
 class KafkaIntegrationTest extends FunSuite with KafkaConfigConstants {
-    override protected val config: Config = FileConfig()
+    override protected val config: Config = new FileConfig()
 
     test("consumer json-string from kafka then producer to kafka with avro format") {
         val schemaRegistryUrl = config.newConfigItem("kafka.schemaRegistry.hosts").stringValue

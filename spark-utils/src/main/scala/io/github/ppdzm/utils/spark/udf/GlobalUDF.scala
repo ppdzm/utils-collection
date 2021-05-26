@@ -1,8 +1,8 @@
 package io.github.ppdzm.utils.spark.udf
 
 import io.github.ppdzm.utils.universal.base.functions
-import org.apache.spark.sql.functions._
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import org.apache.spark.sql.functions._
 
 /**
  * Created by Stuart Alex on 2016/5/26.

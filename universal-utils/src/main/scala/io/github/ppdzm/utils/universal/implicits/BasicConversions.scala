@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.universal.implicits
 
 import io.github.ppdzm.utils.universal.base.Symbols._
 import io.github.ppdzm.utils.universal.base.{Mathematics, StringUtils}
-import io.github.ppdzm.utils.universal.cli.{Alignment, CliUtils, Renders}
+import io.github.ppdzm.utils.universal.cli.{Alignment, CliUtils, Render}
 import io.github.ppdzm.utils.universal.implicits.UnitConversions._
 
 import scala.collection.mutable.ArrayBuffer
@@ -365,17 +365,17 @@ object BasicConversions {
 
         def trim(s: String): String = this.trimStart(s).trimEnd(s).trim
 
-        def cyan: String = CliUtils.render(string, Renders.RESET, Renders.CYAN)
+        def cyan: String = CliUtils.rendering(string, Render.RESET, Render.CYAN)
 
-        def green: String = CliUtils.render(string, Renders.RESET, Renders.GREEN)
+        def green: String = CliUtils.rendering(string, Render.RESET, Render.GREEN)
 
-        def red: String = CliUtils.render(string, Renders.RESET, Renders.RED)
+        def red: String = CliUtils.rendering(string, Render.RESET, Render.RED)
 
-        def yellow: String = CliUtils.render(string, Renders.RESET, Renders.YELLOW)
+        def yellow: String = CliUtils.rendering(string, Render.RESET, Render.YELLOW)
 
-        def boldGreen: String = CliUtils.render(string, Renders.RESET, Renders.BOLD, Renders.GREEN_B)
+        def boldGreen: String = CliUtils.rendering(string, Render.RESET, Render.BOLD, Render.GREEN_B)
 
-        def boldRed: String = CliUtils.render(string, Renders.RESET, Renders.BOLD, Renders.RED_B)
+        def boldRed: String = CliUtils.rendering(string, Render.RESET, Render.BOLD, Render.RED_B)
 
         /**
          * 把MySQL字段的数据类型转换为Hive字段的数据类型
@@ -392,8 +392,6 @@ object BasicConversions {
 
         def prettyPrint(render: String): Unit = print(string.rendering(render))
 
-        def prettyPrintln(render: String): Unit = println(string.rendering(render))
-
         /**
          * 对文本进行颜色渲染
          *
@@ -404,7 +402,7 @@ object BasicConversions {
             if (render.isNullOrEmpty)
                 string
             else
-                CliUtils.render(string, render.split(";").map(_.toInt).map(Renders.valueOf): _*)
+                CliUtils.rendering(string, render.split(";").map(_.toInt).map(Render.valueOf): _*)
         }
 
         /**
@@ -413,6 +411,8 @@ object BasicConversions {
          * @return
          */
         def isNullOrEmpty: Boolean = string.isNull || string == ""
+
+        def prettyPrintln(render: String): Unit = println(string.rendering(render))
 
         def splitDoubleQuotedString(splitter: String): Array[String] = StringUtils.split(string, splitter)
 

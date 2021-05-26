@@ -14,7 +14,7 @@ import org.scalatest.FunSuite
  * Created by Stuart Alex on 2017/1/11.
  */
 class HBaseTest extends FunSuite with ZookeeperConfigConstants with PrintConfig {
-    override implicit protected val config: Config = FileConfig()
+    override implicit protected val config: Config = new FileConfig()
 
     test("hbase-display") {
         LoanPattern.using(HBaseConnectionPool(ZOOKEEPER_QUORUM.stringValue, ZOOKEEPER_PORT.intValue).borrowObject())(connection => {

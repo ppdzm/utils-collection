@@ -13,7 +13,7 @@ object KafkaConsumerProperties {
         new Builder()
     }
 
-    private[KafkaConsumerProperties] class Builder extends PropertiesBuilder[ConsumerConfig] {
+    class Builder extends PropertiesBuilder[ConsumerConfig] {
 
         import org.apache.kafka.clients.consumer.ConsumerConfig._
 

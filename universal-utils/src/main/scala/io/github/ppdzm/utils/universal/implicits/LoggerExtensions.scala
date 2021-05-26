@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import io.github.ppdzm.utils.universal.cli.Renders.Render
-import io.github.ppdzm.utils.universal.cli.{CliUtils, Renders}
+import io.github.ppdzm.utils.universal.cli.{CliUtils, Render, ScalaCliUtils}
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 object LoggerExtensions {
@@ -12,40 +11,40 @@ object LoggerExtensions {
             if (renders.isEmpty)
                 logger.debug(message.green)
             else
-                logger.debug(CliUtils.render(message, renders: _*))
+                logger.debug(CliUtils.rendering(message, renders: _*))
         }
 
         def logInfo(messages: Array[(String, Render)]): Unit = {
-            logger.logInfo(CliUtils.render(messages))
+            logger.logInfo(ScalaCliUtils.rendering(messages))
         }
 
         def logInfo(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
                 logger.info(message.green)
             else
-                logger.info(CliUtils.render(message, renders: _*))
+                logger.info(CliUtils.rendering(message, renders: _*))
         }
 
         def logWarning(messages: Array[(String, Render)]): Unit = {
-            logger.logWarning(CliUtils.render(messages))
+            logger.logWarning(ScalaCliUtils.rendering(messages))
         }
 
         def logWarning(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
-                logger.warn(CliUtils.render(message, Renders.YELLOW))
+                logger.warn(CliUtils.rendering(message, Render.YELLOW))
             else
-                logger.warn(CliUtils.render(message, renders: _*))
+                logger.warn(CliUtils.rendering(message, renders: _*))
         }
 
         def logError(messages: Array[(String, Render)]): Unit = {
-            logger.logError(CliUtils.render(messages))
+            logger.logError(ScalaCliUtils.rendering(messages))
         }
 
         def logError(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
                 logger.error(message.red)
             else
-                logger.error(CliUtils.render(message, renders: _*))
+                logger.error(CliUtils.rendering(message, renders: _*))
         }
 
         def logError(message: => String, throwable: Throwable): Unit = {
@@ -59,40 +58,40 @@ object LoggerExtensions {
             if (renders.isEmpty)
                 logger.debug(message.green)
             else
-                logger.debug(CliUtils.render(message, renders: _*))
+                logger.debug(CliUtils.rendering(message, renders: _*))
         }
 
         def logInfo(messages: Array[(String, Render)]): Unit = {
-            logger.logInfo(CliUtils.render(messages))
+            logger.logInfo(ScalaCliUtils.rendering(messages))
         }
 
         def logInfo(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
                 logger.info(message.green)
             else
-                logger.info(CliUtils.render(message, renders: _*))
+                logger.info(CliUtils.rendering(message, renders: _*))
         }
 
         def logWarning(messages: Array[(String, Render)]): Unit = {
-            logger.logWarning(CliUtils.render(messages))
+            logger.logWarning(ScalaCliUtils.rendering(messages))
         }
 
         def logWarning(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
-                logger.warn(CliUtils.render(message, Renders.YELLOW))
+                logger.warn(CliUtils.rendering(message, Render.YELLOW))
             else
-                logger.warn(CliUtils.render(message, renders: _*))
+                logger.warn(CliUtils.rendering(message, renders: _*))
         }
 
         def logError(messages: Array[(String, Render)]): Unit = {
-            logger.logError(CliUtils.render(messages))
+            logger.logError(ScalaCliUtils.rendering(messages))
         }
 
         def logError(message: => String, renders: Render*): Unit = {
             if (renders.isEmpty)
                 logger.error(message.red)
             else
-                logger.error(CliUtils.render(message, renders: _*))
+                logger.error(CliUtils.rendering(message, renders: _*))
         }
 
         def logError(message: => String, throwable: Throwable): Unit = {

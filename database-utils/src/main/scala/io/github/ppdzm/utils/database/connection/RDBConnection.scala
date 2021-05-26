@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.database.connection
 
 import java.sql.{Connection, PreparedStatement, Statement}
-import java.util.Properties
 
 /**
  * Created by Stuart Alex on 2021/4/6.

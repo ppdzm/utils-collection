@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.sql
 
-import org.apache.spark.sql.DataFrame
 import io.github.ppdzm.utils.spark.SparkUtils
+import org.apache.spark.sql.DataFrame
 
 /**
  * Created by Stuart Alex on 2016/5/26.

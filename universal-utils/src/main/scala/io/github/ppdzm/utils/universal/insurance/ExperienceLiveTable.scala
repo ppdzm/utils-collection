@@ -32,8 +32,6 @@ trait ExperienceLiveTable {
 
     def a(x: Int, n: Int): Double = (m(x) - m(x + n)) / d(x)
 
-    def d(x: Int): Double = Math.pow(v, x) * rows(x).l
-
     def p(x: Int, n: Int): Double = 1 - q(x, n)
 
     def q(x: Int, n: Int): Double = Mathematics.round(rows.slice(x, x + n).values.map(_.d).sum * 1.0 / rows(x).l, 6)
@@ -49,6 +47,8 @@ trait ExperienceLiveTable {
     def s(x: Int): Double = (x to maxAge).map(n).sum
 
     def n(x: Int): Double = (x to maxAge).map(d).sum
+
+    def d(x: Int): Double = Math.pow(v, x) * rows(x).l
 
 }
 

@@ -229,6 +229,20 @@ object HBaseImplicits {
                 (tuple0, tuple1)
         }
 
+        /**
+         * 获取HBase一行数据中指定单元格的数据
+         *
+         * @param qualifier io.github.ppdzm.universal.bigdata.spark.utils.hadoop.hbase.Qualifier
+         * @return
+         */
+        def getCellValue(qualifier: Qualifier): String = {
+            val cell = result.getColumnLatestCell(qualifier.cf.getBytes, qualifier.col.getBytes())
+            if (cell == null)
+                null
+            else
+                Bytes.toString(CellUtil.cloneValue(cell))
+        }
+
         def tuple3(fields: List[String], columns: Map[String, Qualifier], hasRowKey: Boolean) = {
             val tuple = Bytes.toString(result.getRow)
             val tuple0 = this.getCellValue(columns(fields.head))
@@ -263,20 +277,6 @@ object HBaseImplicits {
                 (tuple, tuple0, tuple1, tuple2, tuple3)
             else
                 (tuple0, tuple1, tuple2, tuple3, tuple4)
-        }
-
-        /**
-         * 获取HBase一行数据中指定单元格的数据
-         *
-         * @param qualifier io.github.ppdzm.universal.bigdata.spark.utils.hadoop.hbase.Qualifier
-         * @return
-         */
-        def getCellValue(qualifier: Qualifier): String = {
-            val cell = result.getColumnLatestCell(qualifier.cf.getBytes, qualifier.col.getBytes())
-            if (cell == null)
-                null
-            else
-                Bytes.toString(CellUtil.cloneValue(cell))
         }
 
         def tuple6(fields: List[String], columns: Map[String, Qualifier], hasRowKey: Boolean) = {

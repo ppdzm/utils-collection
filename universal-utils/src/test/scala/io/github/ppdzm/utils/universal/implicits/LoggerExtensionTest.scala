@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import io.github.ppdzm.utils.universal.cli.Renders
+import io.github.ppdzm.utils.universal.cli.Render
 import io.github.ppdzm.utils.universal.implicits.LoggerExtensions._
 import org.scalatest.FunSuite
 import org.slf4j.{Logger, LoggerFactory}
@@ -13,7 +13,7 @@ class LoggerExtensionTest extends FunSuite {
     test("logging") {
         val logger: Logger = LoggerFactory.getLogger(this.getClass)
         logger.logInfo("aaa")
-        logger.logInfo("bbb", Renders.RED)
+        logger.logInfo("bbb", Render.RED)
     }
 
 }

@@ -1,11 +1,14 @@
 package io.github.ppdzm.utils.hadoop.kafka.config
 
+import java.util
 import java.util.Properties
 
 import _root_.io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.kafka.common.config.AbstractConfig
 
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.reflect._
 
 /**
@@ -27,6 +30,12 @@ private[config] abstract class PropertiesBuilder[T <: AbstractConfig : ClassTag]
     }
 
     def invoke(parameters: Map[String, AnyRef]): this.type = {
+        if (parameters != null)
+            invoke(parameters.asJava)
+        this
+    }
+
+    def invoke(parameters: util.Map[String, AnyRef]): this.type = {
         if (parameters == null)
             return this
         parameters.foreach {

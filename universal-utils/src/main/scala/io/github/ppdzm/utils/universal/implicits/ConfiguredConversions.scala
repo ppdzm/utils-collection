@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.universal.implicits
 
 import java.sql.ResultSet
 
-import io.github.ppdzm.utils.universal.cli.{CliUtils, PrintConfig, Renders}
+import io.github.ppdzm.utils.universal.cli.{CliUtils, PrintConfig, Render}
 import io.github.ppdzm.utils.universal.config.Config
 
 /**
@@ -12,7 +12,7 @@ class ConfiguredConversions(implicit val config: Config) extends PrintConfig {
 
     implicit class CArrayArrayImplicits[T](array: Array[Array[T]]) {
 
-        import ArrayConversions._
+        import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
 
         private lazy val columns = (0 until array.map(_.length).max).map("col" + _).toArray
 
@@ -128,7 +128,7 @@ class ConfiguredConversions(implicit val config: Config) extends PrintConfig {
          * @param render 渲染参数
          * @return
          */
-        def rendering(render: String = render): String = CliUtils.render(string, render.split(";").map(_.toInt).map(Renders.valueOf): _*)
+        def rendering(render: String = render): String = CliUtils.rendering(string, render.split(";").map(_.toInt).map(Render.valueOf): _*)
 
     }
 

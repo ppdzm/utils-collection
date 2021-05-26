@@ -3,14 +3,13 @@ package io.github.ppdzm.utils.spark.sql
 import java.util.Properties
 
 import io.github.ppdzm.utils.database.common.DatabaseConstants
-import io.github.ppdzm.utils.database.connection.MySQLConnection
-import io.github.ppdzm.utils.universal.base.Logging
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.types.StructType
 import io.github.ppdzm.utils.spark.SparkUtils
 import io.github.ppdzm.utils.spark.implicits.DataFrameConversions._
+import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
 import io.github.ppdzm.utils.universal.implicits.UnitConversions._
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.StructType
 
 object SparkMySQLUtils extends Logging {
     private lazy val defaultProperties: Properties = DatabaseConstants.mySQLDefaultProperties

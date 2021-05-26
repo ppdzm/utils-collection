@@ -5,9 +5,8 @@ import java.util.Properties
 
 import io.github.ppdzm.utils.database.common.Drivers
 import io.github.ppdzm.utils.database.pool.jdbc.HikariConnectionPool
-import org.apache.spark.sql.DataFrame
-import io.github.ppdzm.utils.database.common.Drivers
 import io.github.ppdzm.utils.spark.SparkUtils
+import org.apache.spark.sql.DataFrame
 
 object SparkSQLServerUtils {
 

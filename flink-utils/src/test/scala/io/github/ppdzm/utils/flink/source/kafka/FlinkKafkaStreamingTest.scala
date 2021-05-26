@@ -1,5 +1,6 @@
 package io.github.ppdzm.utils.flink.source.kafka
 
+import io.github.ppdzm.utils.flink.scala.streaming.kafka.JavaAvroArrayRecordFlinkKafkaStreaming
 import io.github.ppdzm.utils.universal.alert.{Alerter, LoggerAlerter}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import io.github.ppdzm.utils.universal.formats.avro.AvroUtils
@@ -17,10 +18,9 @@ import scala.collection.JavaConversions._
 /**
  * Created by Stuart Alex on 2021/4/13.
  */
-class FlinkKafkaStreamingTest extends FunSuite with AvroArrayRecordFlinkKafkaStreaming {
+class FlinkKafkaStreamingTest extends FunSuite with JavaAvroArrayRecordFlinkKafkaStreaming {
     override protected val applicationName: String = "flink-kafka-streaming-test"
     override protected val alerter: Alerter = new LoggerAlerter()
-    override protected val config: Config = FileConfig()
     override protected val checkpointEnabled: Boolean = false
     override protected val offsetResetStrategy: OffsetResetStrategy = OffsetResetStrategy.EARLIEST
     override protected val restartStrategyConfiguration: RestartStrategies.RestartStrategyConfiguration = RestartStrategies.fixedDelayRestart(2, Time.seconds(2))

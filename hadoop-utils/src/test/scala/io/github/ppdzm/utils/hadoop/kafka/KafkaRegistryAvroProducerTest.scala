@@ -12,7 +12,7 @@ import org.scalatest.FunSuite
  * Created by Stuart Alex on 2021/1/29.
  */
 class KafkaRegistryAvroProducerTest extends FunSuite with ConfigTrait with Logging {
-    override protected val config: Config = FileConfig()
+    override protected val config: Config = new FileConfig()
     test("from-file-to-kafka") {
         val schemaRegistryUrl = config.newConfigItem("kafka.schemaRegistry.hosts").stringValue
         val destinationBrokers = config.newConfigItem("kafka.brokers").stringValue

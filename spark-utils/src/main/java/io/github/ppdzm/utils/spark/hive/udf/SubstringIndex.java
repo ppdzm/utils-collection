@@ -1,5 +1,6 @@
 package io.github.ppdzm.utils.spark.hive.udf;
 
+import io.github.ppdzm.utils.universal.base.StringUtils;
 import io.github.ppdzm.utils.universal.base.functions;
 import org.apache.hadoop.hive.ql.exec.UDF;
 
@@ -10,7 +11,7 @@ import org.apache.hadoop.hive.ql.exec.UDF;
 public class SubstringIndex extends UDF {
 
     public String evaluate(String source, String delimiter, int count) {
-        return functions.substringIndex(source, delimiter, count);
+        return StringUtils.substringIndex(source, delimiter, count);
     }
 
 }

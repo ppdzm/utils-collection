@@ -58,14 +58,6 @@ object SQLAnalyser extends Logging {
     /**
      * 压缩SQL脚本
      *
-     * @param scripts SQL脚本(s)
-     * @return
-     */
-    def squeeze(scripts: Array[String]): Array[String] = scripts.map(squeeze)
-
-    /**
-     * 压缩SQL脚本
-     *
      * @param script SQL脚本
      * @return
      */
@@ -112,6 +104,14 @@ object SQLAnalyser extends Logging {
         }
         temp
     }
+
+    /**
+     * 压缩SQL脚本
+     *
+     * @param scripts SQL脚本(s)
+     * @return
+     */
+    def squeeze(scripts: Array[String]): Array[String] = scripts.map(squeeze)
 
     /**
      * 将参数替换为实际值

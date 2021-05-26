@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.streaming.structured.reader
 
-import org.apache.spark.sql.SparkSession
 import io.github.ppdzm.utils.spark.streaming.structured.source.InputSources.socketSource
+import org.apache.spark.sql.SparkSession
 
 case class SocketStreamReader(sparkSession: SparkSession, host: String, port: Int) extends StreamReader(sparkSession: SparkSession) {
     inputSource(socketSource)

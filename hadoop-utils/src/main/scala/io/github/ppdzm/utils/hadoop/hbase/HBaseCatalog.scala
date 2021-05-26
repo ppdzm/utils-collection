@@ -32,39 +32,17 @@ object HBaseCatalog {
      * @return
      */
     def apply(implicit config: Config): HBaseCatalog = {
-        val namespace = ConfigItem("hbase.namespace", "default").stringValue
-        val table = ConfigItem("hbase.table").stringValue
+        val namespace = new ConfigItem(config, "hbase.namespace", "default").stringValue
+        val table = new ConfigItem(config, "hbase.table").stringValue
         assert(table.notNullAndEmpty, "parameter hbase.table is missing")
-        val rowKeyAlias = ConfigItem("hbase.rowkey.alias", "rowkey").stringValue
-        val family = ConfigItem("hbase.family.default", "data").stringValue
-        val columnsDefinitions = ConfigItem("hbase.columns").arrayValue(",").map(c => {
-            val fnt = ConfigItem(s"hbase.column.$c", s"$family:$c:string").stringValue.split(":")
+        val rowKeyAlias = new ConfigItem(config, "hbase.rowkey.alias", "rowkey").stringValue
+        val family = new ConfigItem(config, "hbase.family.default", "data").stringValue
+        val columnsDefinitions = new ConfigItem(config, "hbase.columns").arrayValue(",").map(c => {
+            val fnt = new ConfigItem(config, s"hbase.column.$c", s"$family:$c:string").stringValue.split(":")
             fnt.length match {
                 case 2 => c -> (fnt(0), fnt(1), "string")
                 case 3 => c -> (fnt(0), fnt(1), fnt(2))
                 case _ => throw ExceptionGenerator.newException("PropertyFormatError", s"Format of property hbase.column.$c is wrong, correct format is like family_name:column_name:data_type or family_name:column_name")
-            }
-        }).toMap
-        HBaseCatalog(namespace, table, rowKeyAlias, columnsDefinitions)
-    }
-
-    /**
-     * 由配置生成HBaseCatalog
-     *
-     * @param properties Properties
-     * @return
-     */
-    def apply(properties: Properties): HBaseCatalog = {
-        val namespace = properties.getProperty("hbase.namespace", "default")
-        val table = properties.getProperty("hbase.table")
-        assert(table.notNullAndEmpty, "parameter hbase.table is missing")
-        val rowKeyAlias = properties.getProperty("hbase.rowkey.alias", "rowkey")
-        val columnsDefinitions = properties.getProperty("hbase.columns").split(",").map(_.trim).filter(_.notNullAndEmpty).map(c => {
-            val fnt = properties.getProperty(s"hbase.column.$c", s"data:$c:string").split(":")
-            fnt.length match {
-                case 2 => c -> (fnt(0), fnt(1), "string")
-                case 3 => c -> (fnt(0), fnt(1), fnt(2))
-                case _ => throw ExceptionGenerator.newException("PropertyFormatError", s"Format of property hbase.column.$c is wrong, correct format is like cfn:cn:dt or cfn:cn")
             }
         }).toMap
         HBaseCatalog(namespace, table, rowKeyAlias, columnsDefinitions)
@@ -88,6 +66,28 @@ object HBaseCatalog {
             name
         val qualifiers = columns.map(c => c._1 -> Qualifier(c._2._1, c._2._2, c._2._3)) + (rk -> this.rowKey)
         HBaseCatalog(HBaseTable(namespace, fullName), this.doNotChangeMeColumn, qualifiers)
+    }
+
+    /**
+     * 由配置生成HBaseCatalog
+     *
+     * @param properties Properties
+     * @return
+     */
+    def apply(properties: Properties): HBaseCatalog = {
+        val namespace = properties.getProperty("hbase.namespace", "default")
+        val table = properties.getProperty("hbase.table")
+        assert(table.notNullAndEmpty, "parameter hbase.table is missing")
+        val rowKeyAlias = properties.getProperty("hbase.rowkey.alias", "rowkey")
+        val columnsDefinitions = properties.getProperty("hbase.columns").split(",").map(_.trim).filter(_.notNullAndEmpty).map(c => {
+            val fnt = properties.getProperty(s"hbase.column.$c", s"data:$c:string").split(":")
+            fnt.length match {
+                case 2 => c -> (fnt(0), fnt(1), "string")
+                case 3 => c -> (fnt(0), fnt(1), fnt(2))
+                case _ => throw ExceptionGenerator.newException("PropertyFormatError", s"Format of property hbase.column.$c is wrong, correct format is like cfn:cn:dt or cfn:cn")
+            }
+        }).toMap
+        HBaseCatalog(namespace, table, rowKeyAlias, columnsDefinitions)
     }
 
     /**

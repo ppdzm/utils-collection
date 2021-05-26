@@ -2,7 +2,6 @@ package io.github.ppdzm.utils.spark.streaming.structured.writer
 
 import io.github.ppdzm.utils.spark.streaming.structured.sink.{Sink, SinkOption}
 import org.apache.spark.sql.streaming.{DataStreamWriter, OutputMode, Trigger}
-import io.github.ppdzm.utils.spark.streaming.structured.sink.{Sink, SinkOption}
 
 import scala.reflect.ClassTag
 

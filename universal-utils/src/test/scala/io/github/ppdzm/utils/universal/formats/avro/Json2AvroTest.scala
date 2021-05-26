@@ -103,10 +103,6 @@ class Json2AvroTest extends FunSuite {
             }
     }
 
-    test("json 2 avro schema") {
-        println(AvroUtils.parseSchemaFromJson("""{"coordinate_info":{"page_X":290,"page_Y":51,"client_X":290,"client_Y":51}}""", "aaa", "bbb"))
-    }
-
     test("h5-in-ios") {
         val schema = AvroUtils.getSchemaFromFile("../data/avsc/schema-all.json")
         val content = FileUtils.readLines(new File("../data/json/ios/h5-in-ios.json"), StandardCharsets.UTF_8).mkString

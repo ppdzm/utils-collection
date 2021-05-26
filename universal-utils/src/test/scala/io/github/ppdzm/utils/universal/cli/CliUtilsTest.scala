@@ -1,6 +1,8 @@
 package io.github.ppdzm.utils.universal.cli
 
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import java.util.Properties
+
+import io.github.ppdzm.utils.universal.formats.json.ScalaJsonUtils
 import org.scalatest.FunSuite
 
 import scala.util.Try
@@ -11,17 +13,17 @@ import scala.util.Try
 class CliUtilsTest extends FunSuite {
 
     test("renders") {
-        println(JsonUtils.serialize4s(Renders.valueOf(0)))
-        println(JsonUtils.serialize4s(Renders.valueOf(32)))
-        val failure = Try(JsonUtils.serialize4s(Renders.valueOf(100)))
+        println(ScalaJsonUtils.serialize4s(Render.valueOf(0)))
+        println(ScalaJsonUtils.serialize4s(Render.valueOf(32)))
+        val failure = Try(ScalaJsonUtils.serialize4s(Render.valueOf(100)))
         assert(failure.isFailure)
         println(failure.failed.get.getMessage)
     }
 
     test("args parser test") {
-        CliUtils.parseArguments("--a=1 --b 2 --c --d e".split(" "))
-        CliUtils.parseArguments("--a 1 --b --c d e --f g".split(" "))
-        CliUtils.parseArguments("--a 1 --b --c ".split(" "))
+        CliUtils.parseArguments("--a=1 --b 2 --c --d e".split(" "), new Properties())
+        CliUtils.parseArguments("--a 1 --b --c d e --f g".split(" "), new Properties())
+        CliUtils.parseArguments("--a 1 --b --c ".split(" "), new Properties())
     }
 
 }

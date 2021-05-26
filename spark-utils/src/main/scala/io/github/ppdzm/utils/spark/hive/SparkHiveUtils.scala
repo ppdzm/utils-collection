@@ -3,13 +3,12 @@ package io.github.ppdzm.utils.spark.hive
 import java.sql.ResultSet
 
 import io.github.ppdzm.utils.database.handler.RDBHandler
-import io.github.ppdzm.utils.universal.base.Logging
-import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
-import org.apache.spark.sql.functions.lit
-import org.apache.spark.sql.types.StructType
 import io.github.ppdzm.utils.spark.sql.SparkSQL
 import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import org.apache.spark.sql.functions.lit
+import org.apache.spark.sql.types.StructType
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
@@ -184,28 +183,6 @@ object SparkHiveUtils extends RDBHandler with Logging {
     }
 
     /**
-     * 判断某个数据库是否存在
-     *
-     * @param database 数据库名称
-     * @return
-     */
-    def exists(database: String): Boolean = {
-        listDatabases().contains(database)
-    }
-
-    /**
-     * 列出所有数据库
-     *
-     * @return
-     */
-    def listDatabases(regexp: String = null): List[String] = {
-        if (regexp.notNullAndEmpty)
-            SparkSQL.sql("show databases").collect().map(_.getString(0)).filter(_.matches(regexp)).toList
-        else
-            SparkSQL.sql("show databases").collect().map(_.getString(0)).toList
-    }
-
-    /**
      * 判断某张表是否存在
      *
      * @param database 数据库名称
@@ -240,21 +217,34 @@ object SparkHiveUtils extends RDBHandler with Logging {
     }
 
     /**
-     * 执行sql语句
-     *
-     * @param statement sql语句
-     */
-    def execute(statement: String): Unit = {
-        SparkSQL.sql(statement)
-    }
-
-    /**
      * 创建表
      *
      * @param createSql 建表语句
      */
     def createTable(createSql: String): Unit = {
         exists(createSql)
+    }
+
+    /**
+     * 判断某个数据库是否存在
+     *
+     * @param database 数据库名称
+     * @return
+     */
+    def exists(database: String): Boolean = {
+        listDatabases().contains(database)
+    }
+
+    /**
+     * 列出所有数据库
+     *
+     * @return
+     */
+    def listDatabases(regexp: String = null): List[String] = {
+        if (regexp.notNullAndEmpty)
+            SparkSQL.sql("show databases").collect().map(_.getString(0)).filter(_.matches(regexp)).toList
+        else
+            SparkSQL.sql("show databases").collect().map(_.getString(0)).toList
     }
 
     /**
@@ -347,6 +337,15 @@ object SparkHiveUtils extends RDBHandler with Logging {
      */
     def truncate(database: String, table: String): Unit = {
         execute(s"truncate table $database.$table")
+    }
+
+    /**
+     * 执行sql语句
+     *
+     * @param statement sql语句
+     */
+    def execute(statement: String): Unit = {
+        SparkSQL.sql(statement)
     }
 
 }

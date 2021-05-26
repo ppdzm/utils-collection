@@ -5,8 +5,8 @@ import org.apache.commons.io._
 import org.scalatest._
 
 /**
-  * Created by Stuart Alex on 2021/4/8.
-  */
+ * Created by Stuart Alex on 2021/4/8.
+ */
 class CommonTest extends FunSuite with Logging {
     test("filename-utils") {
         println(FilenameUtils.removeExtension("a.txt"))

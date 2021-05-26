@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.implicits
 
-import org.apache.spark.rdd.RDD
 import io.github.ppdzm.utils.spark.SparkUtils
+import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 
