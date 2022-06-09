@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.charset.StandardCharsets._
 import java.util.concurrent.TimeoutException
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.apache.hadoop.fs.{FileSystem, LocatedFileStatus, Path}
 
@@ -14,7 +14,7 @@ import scala.collection.mutable
 /**
  * Created by Stuart Alex on 2017/1/11.
  */
-trait FileSystemHandler extends Logging {
+trait FileSystemHandler extends LoggingTrait {
     protected val fileSystem: FileSystem
 
     /**

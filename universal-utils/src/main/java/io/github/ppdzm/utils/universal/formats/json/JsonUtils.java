@@ -45,6 +45,7 @@ public class JsonUtils {
      * 将Java Class序列化为压缩格式JSON字符串
      *
      * @param object Object
+     * @param pretty 是否美化
      * @return String
      * @throws JsonProcessingException JsonProcessingException
      */
@@ -162,4 +163,5 @@ public class JsonUtils {
     public static <T> T parse(InputStream inputStream, Class<T> returnType) throws IOException {
         return OBJECT_MAPPER.readValue(inputStream, returnType);
     }
+
 }

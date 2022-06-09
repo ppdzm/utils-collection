@@ -3,7 +3,7 @@ package io.github.ppdzm.utils.hadoop.kafka.config
 import java.util
 import java.util.Properties
 
-import _root_.io.github.ppdzm.utils.universal.base.Logging
+import _root_.io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.kafka.common.config.AbstractConfig
 
@@ -14,7 +14,7 @@ import scala.reflect._
 /**
  * Created by Stuart Alex on 2021/1/28.
  */
-private[config] abstract class PropertiesBuilder[T <: AbstractConfig : ClassTag] extends Logging {
+private[config] abstract class PropertiesBuilder[T <: AbstractConfig : ClassTag] extends LoggingTrait {
     private lazy val instance = null.asInstanceOf[T]
     // AbstractConfig子类的所有已CONFIG结尾的静态字段
     private lazy val fields = classTag[T].runtimeClass.getFields.filter(_.getName.endsWith("CONFIG"))

@@ -24,7 +24,7 @@ public class AlertConfig {
     public ConfigItem ALERTER_WECHAT_WORK_WEB_HOOK_URL;
 
     public AlertConfig(Config config) {
-        this.ALERTER_TYPE = new ConfigItem(config, "alerter.type");
+        this.ALERTER_TYPE = new ConfigItem(config, "alerter.type", "none");
         this.ALERTER_DING_TALK_WEB_HOOK_URL = new ConfigItem(config, "alerter.ding-talk.web-hook.url");
         this.ALERTER_DING_TALK_RECEIVERS = new ConfigItem(config, "alerter.ding-talk.receivers");
         this.ALERTER_DING_TALK_RECEIVER_IS_AT_ALL = new ConfigItem(config, "alerter.ding-talk.receiver.is-at-all");

@@ -4,7 +4,7 @@ import java.sql.{ResultSet, ResultSetMetaData}
 import java.util
 
 import io.github.ppdzm.utils.database.connection.MySQLConnection
-import io.github.ppdzm.utils.universal.base.{Logging, StringUtils}
+import io.github.ppdzm.utils.universal.base.{LoggingTrait, StringUtils}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 /**
  * Created by Stuart Alex on 2018-04-18
  */
-case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) extends RDBHandler with Logging {
+case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) extends RDBHandler {
 
     /**
      * 查询binlog_format
@@ -37,7 +37,7 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     def checkPrimaryKeyType(primaryKeyName: String, primaryKeyValue: Any, primaryKeyType: String): Boolean = {
         val valid = checkColumnType(primaryKeyValue, primaryKeyType)
         if (!valid) {
-            logInfo(s"pk $primaryKeyName $primaryKeyValue not match $primaryKeyType")
+            println(s"pk $primaryKeyName $primaryKeyValue not match $primaryKeyType")
         }
         valid
     }

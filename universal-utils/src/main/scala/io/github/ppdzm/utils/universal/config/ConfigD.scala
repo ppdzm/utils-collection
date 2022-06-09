@@ -8,7 +8,7 @@ import io.github.ppdzm.utils.universal.cli.{CliUtils, ParameterOption, Render}
 import io.github.ppdzm.utils.universal.core.CoreConstants
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
-import org.apache.commons.cli.{CommandLine, DefaultParser, Options}
+import org.apache.commons.cli.{CommandLine, DefaultParser, Options, PosixParser}
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -158,9 +158,9 @@ private[config] trait ConfigD extends Logging {
      */
     def parseOptions(args: Array[String], options: Options = null): CommandLine = {
         val cli = if (options.isNull)
-            new DefaultParser().parse(new Options().addOption(ParameterOption.option), args)
+            new PosixParser().parse(new Options().addOption(ParameterOption.option), args)
         else
-            new DefaultParser().parse(options.addOption(ParameterOption.option), args)
+            new PosixParser().parse(options.addOption(ParameterOption.option), args)
         val properties = cli.getOptionProperties(ParameterOption.name)
         properties.filter(p => p._1 == CoreConstants.PROFILE_ACTIVE_KEY).foreach(p => System.setProperty(p._1, p._2))
         properties.foreach(p => addProperty(p._1, p._2))

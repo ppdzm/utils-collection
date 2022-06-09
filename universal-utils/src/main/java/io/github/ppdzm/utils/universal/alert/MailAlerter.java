@@ -1,6 +1,7 @@
 package io.github.ppdzm.utils.universal.alert;
 
 
+import io.github.ppdzm.utils.universal.base.ExceptionUtils;
 import io.github.ppdzm.utils.universal.mail.MailAgent;
 
 import javax.mail.MessagingException;
@@ -27,7 +28,11 @@ public class MailAlerter implements Alerter {
     }
 
     @Override
-    public void alert(String subject, String content) throws GeneralSecurityException, MessagingException {
-        mailAgent.send(subject, content, recipients, ccs, null);
+    public void alert(String subject, String content, Exception e) throws GeneralSecurityException, MessagingException {
+        if (e != null) {
+            mailAgent.send(subject, content + "\n\n" + ExceptionUtils.exceptionToString(e), recipients, ccs, null);
+        } else {
+            mailAgent.send(subject, content, recipients, ccs, null);
+        }
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>utils-collection</artifactId>
         <groupId>io.github.ppdzm</groupId>
-        <version>1.1</version>
+        <version>1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>database-utils</artifactId>
@@ -44,6 +44,7 @@
             <groupId>io.github.ppdzm</groupId>
             <artifactId>universal-utils</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>

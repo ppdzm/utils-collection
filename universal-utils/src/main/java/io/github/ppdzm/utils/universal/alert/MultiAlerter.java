@@ -9,12 +9,12 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class MultiAlerter implements Alerter {
-    private List<Alerter> alerterList;
+    private final List<Alerter> alerterList;
 
     @Override
-    public void alert(String subject, String content) throws Exception {
+    public void alert(String subject, String content, Exception e) throws Exception {
         for (Alerter alerter : alerterList) {
-            alerter.alert(subject, content);
+            alerter.alert(subject, content, e);
         }
     }
 }

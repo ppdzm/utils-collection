@@ -28,13 +28,15 @@ import java.util.Map;
  * @author Created by Stuart Alex on 2021/5/21.
  */
 public class AvroUtils {
-    private static Schema.Parser parser = new Schema.Parser();
+    private static final Schema.Parser parser = new Schema.Parser();
 
     /**
+     *
      * Avro字节数组转回Avro实体（类型未知，字节数组中含有Schema信息）
      *
      * @param bytes Avro格式字节数组
-     * @return List<Object>
+     * @return Object列表
+     * @throws IOException IOException
      */
     public static List<Object> bytes2Object(byte[] bytes) throws IOException {
         return bytes2Generic(bytes);
@@ -46,7 +48,7 @@ public class AvroUtils {
      *
      * @param bytes Avro格式字节数组
      * @param <T>   类型
-     * @return List<T>
+     * @return 泛型T列表
      * @throws IOException IOException
      */
     public static <T> List<T> bytes2Generic(byte[] bytes) throws IOException {
@@ -67,7 +69,8 @@ public class AvroUtils {
      *
      * @param bytes        Avro格式字节数组
      * @param schemaString Avro Schema字符串
-     * @return List<Object>
+     * @return Object列表
+     * @throws IOException IOException
      */
     public static List<Object> bytes2Object(byte[] bytes, String schemaString) throws IOException {
         return bytes2Generic(bytes, schemaString);
@@ -77,8 +80,9 @@ public class AvroUtils {
      * Avro字节数组转回Avro实体（GenericRecord/GenericData.Array，字节数组中不含Schema信息）
      *
      * @param bytes Avro格式字节数组
+     * @param schemaString Avro Schema字符串
      * @param <T>   类型
-     * @return List<T>
+     * @return 泛型T列表
      * @throws IOException IOException
      */
     public static <T> List<T> bytes2Generic(byte[] bytes, String schemaString) throws IOException {
@@ -90,7 +94,8 @@ public class AvroUtils {
      *
      * @param bytes  Avro格式字节数组
      * @param schema Avro Schema
-     * @return List<Object>
+     * @return Object列表
+     * @throws IOException IOException
      */
     public static List<Object> bytes2Object(byte[] bytes, Schema schema) throws IOException {
         return bytes2Generic(bytes, schema);
@@ -100,8 +105,10 @@ public class AvroUtils {
      * Avro字节数组转回Avro实体（GenericRecord/GenericData.Array，字节数组中不含Schema信息）
      *
      * @param bytes Avro格式字节数组
+     * @param schema Avro Schema
      * @param <T>   类型
-     * @return List<T>
+     * @return 泛型T列表
+     * @throws IOException IOException
      */
     public static <T> List<T> bytes2Generic(byte[] bytes, Schema schema) throws IOException {
         GenericDatumReader<T> reader = new GenericDatumReader<>(schema);
@@ -125,7 +132,7 @@ public class AvroUtils {
      * @param record      GenericRecord
      * @param independent 独立字段名称
      * @param sub         含有子级列表字段名称
-     * @return List<T>
+     * @return 泛型T列表
      */
     public static List<Map<String, Object>> flatRecordWithSubRecordList(GenericRecord record, String independent, String sub) {
         GenericRecord parentRecord = (GenericRecord) record.get(independent);
@@ -144,6 +151,7 @@ public class AvroUtils {
      *
      * @param schemaFileName Schema文件名
      * @return Schema
+     * @throws IOException IOException
      */
     public static Schema getSchemaFromFile(String schemaFileName) throws IOException {
         InputStream schemaInputStream = ResourceUtils.locateAsInputStream(schemaFileName);
@@ -166,6 +174,7 @@ public class AvroUtils {
      * @param jsonString   JsonString
      * @param schemaString Avro Schema String
      * @return byte[]
+     * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithSchema(String jsonString, String schemaString) throws IOException {
         return json2AvroBytesWithSchema(jsonString, parser.parse(schemaString));
@@ -177,6 +186,7 @@ public class AvroUtils {
      * @param jsonString JsonString
      * @param schema     Avro Schema
      * @return byte[]
+     * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithSchema(String jsonString, Schema schema) throws IOException {
         // 方法1
@@ -225,6 +235,7 @@ public class AvroUtils {
      * @param jsonString   JsonString
      * @param schemaString Avro Schema String
      * @return byte[]
+     * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithoutSchema(String jsonString, String schemaString) throws IOException {
         Schema schema = parser.parse(schemaString);
@@ -237,6 +248,7 @@ public class AvroUtils {
      * @param jsonString JsonString
      * @param schema     Avro Schema
      * @return byte[]
+     * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithoutSchema(String jsonString, Schema schema) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -250,6 +262,7 @@ public class AvroUtils {
      * @param schema       Avro Schema
      * @param outputStream ByteArrayOutputStream—
      * @return byte[]
+     * @throws IOException IOException
      */
     public static byte[] json2AvroBytes(String jsonString, Schema schema, ByteArrayOutputStream outputStream) throws IOException {
         List<Object> objects = json2AvroObject(jsonString, schema);
@@ -268,7 +281,8 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @return List<T>
+     * @return 泛型T列表
+     * @throws IOException IOException
      */
     public static List<Object> json2AvroObject(String jsonString, Schema schema) throws IOException {
         return json2Avro(jsonString, schema);
@@ -279,7 +293,9 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @return List<T>
+     * @param <T>   类型
+     * @return 泛型T列表
+     * @throws IOException IOException
      */
     public static <T> List<T> json2Avro(String jsonString, Schema schema) throws IOException {
         //        LoanPattern.using(new ByteArrayInputStream(jsonString.getBytes)) {
@@ -317,7 +333,8 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @return List<T>
+     * @return GenericRecord列表
+     * @throws IOException IOException
      */
     public static List<GenericRecord> json2AvroGenericRecord(String jsonString, Schema schema) throws IOException {
         return json2Avro(jsonString, schema);
@@ -328,7 +345,9 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @return List<T>
+     * @param <T>   类型
+     * @return 泛型T列表
+     * @throws IOException IOException
      */
     public static <T> List<GenericData.Array<T>> json2AvroGenericArray(String jsonString, Schema schema) throws IOException {
         return json2Avro(jsonString, schema);
@@ -339,7 +358,7 @@ public class AvroUtils {
      *
      * @param record            Avro Record
      * @param reserveParentName 是否保留父一级名称
-     * @return List<T>
+     * @return 泛型T列表
      */
     public static Map<String, Object> parseRecord2Map(GenericRecord record, boolean reserveParentName) {
         return parseRecord2Map(record, reserveParentName, null);

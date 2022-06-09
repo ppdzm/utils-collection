@@ -21,12 +21,16 @@ public class SystemProperties {
         return Boolean.parseBoolean(System.getProperty(CoreConstants.LOGGING_STDOUT_ENABLED_KEY, "false"));
     }
 
+    public static void setLogging2Stdout(boolean enabled) {
+        set(CoreConstants.LOGGING_STDOUT_ENABLED_KEY, String.valueOf(enabled));
+    }
+
     public static String configFilePrefix() {
         return System.getProperty(CoreConstants.PROFILE_PREFIX_KEY, System.getProperty(CoreConstants.PROFILE_PREFIX_KEY_ALIAS, CoreConstants.DEFAULT_PREFIX_VALUE));
     }
 
     public static String configFileActive() {
-        return System.getProperty(CoreConstants.PROFILE_ACTIVE_KEY, System.getProperty(CoreConstants.PROFILE_ACTIVE_KEY_ALIAS, ""));
+        return System.getProperty(CoreConstants.PROFILE_ACTIVE_KEY, System.getProperty(CoreConstants.PROFILE_ACTIVE_KEY_ALIAS));
     }
 
     public static String configFileExtension() {

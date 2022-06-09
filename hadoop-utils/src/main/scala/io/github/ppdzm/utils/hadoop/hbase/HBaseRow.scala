@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.hadoop.hbase
 
-import io.github.ppdzm.utils.universal.base.functions
+import io.github.ppdzm.utils.universal.base.{BytesUtils, functions}
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.CellUtil
@@ -30,13 +30,13 @@ object HBaseRow {
                     if (string.isUnderstandable)
                         string.trim
                     else
-                        functions.bytes2Long(valueBytes).toString
+                        BytesUtils.toLong(valueBytes).toString
                 } else {
                     Bytes.toString(valueBytes).trim
                 }
                 val timestamp = cell.getTimestamp
                 if (data.containsKey(family)) {
-                    if (data(family).get(qualifier).isEmpty)
+                    if (!data(family).contains(qualifier))
                         data(family) += qualifier -> (timestamp, value)
                 } else {
                     data += family -> Map(qualifier -> (timestamp, value))

@@ -50,7 +50,7 @@ object BasicConversions {
             }
         }
 
-        def prettyPrintln(render: String): Unit = any.toString.prettyPrintln(render)
+        def prettyPrintln(renders: Render*): Unit = any.toString.prettyPrintln(renders: _*)
 
     }
 
@@ -91,6 +91,13 @@ object BasicConversions {
         private lazy val specialSymbol = Array(lineSeparator, tab, backQuote, "\1")
 
         /**
+         * 在字符串两侧加上双引号
+         *
+         * @return
+         */
+        def quote = s""""$string""""
+
+        /**
          * 去除字符串两侧成对出现的的引号
          *
          * @param recursive 是否递归去除
@@ -106,20 +113,6 @@ object BasicConversions {
             }
             string
         }
-
-        /**
-         * 在字符串两侧加上双引号
-         *
-         * @return
-         */
-        def quote = s""""$string""""
-
-        /**
-         * 判断字符串是否非空
-         *
-         * @return
-         */
-        def notNullAndEmpty: Boolean = !isNullOrEmpty
 
         /**
          * Unicode转文本
@@ -178,23 +171,11 @@ object BasicConversions {
         }
 
         /**
-         * \x形式Unicode文本转字节
+         * 判断字符串是否非空
          *
          * @return
          */
-        def unicode82Bytes: Array[Byte] = {
-            val unicodeText = string
-            unicodeText
-                .split("""\\x""")
-                .flatMap {
-                    e =>
-                        if (e.length == 2)
-                            e.hexString2Bytes
-                        else {
-                            e.take(2).hexString2Bytes ++ e.drop(2).flatMap(_.toString.getBytes())
-                        }
-                }
-        }
+        def notNullAndEmpty: Boolean = !isNullOrEmpty
 
         /**
          * 去除注释
@@ -222,6 +203,25 @@ object BasicConversions {
         }
 
         /**
+         * \x形式Unicode文本转字节
+         *
+         * @return
+         */
+        def unicode82Bytes: Array[Byte] = {
+            val unicodeText = string
+            unicodeText
+                .split("""\\x""")
+                .flatMap {
+                    e =>
+                        if (e.length == 2)
+                            e.hexString2Bytes
+                        else {
+                            e.take(2).hexString2Bytes ++ e.drop(2).flatMap(_.toString.getBytes())
+                        }
+                }
+        }
+
+        /**
          * 是否为注释
          *
          * @return
@@ -234,6 +234,22 @@ object BasicConversions {
          * @return
          */
         def isUnderstandable: Boolean = !string.exists(c => !c.isCJK && !c.isDigit && !c.isLetter && !c.isSymbol)
+
+        /**
+         * 计算字符串在显示器上的宽度，CJK字符按长度2计算
+         *
+         * @return
+         */
+        def width: Int = {
+            string.map(char => {
+                if (char.toString == lineFeed)
+                    1
+                else if (char.isCJK)
+                    2
+                else
+                    1
+            }).sum
+        }
 
         /**
          * 按宽度切片
@@ -253,22 +269,6 @@ object BasicConversions {
             if (buffer != "")
                 slices += buffer
             slices.toArray
-        }
-
-        /**
-         * 计算字符串在显示器上的宽度，CJK字符按长度2计算
-         *
-         * @return
-         */
-        def width: Int = {
-            string.map(char => {
-                if (char.toString == lineFeed)
-                    1
-                else if (char.isCJK)
-                    2
-                else
-                    1
-            }).sum
         }
 
         /**
@@ -390,19 +390,62 @@ object BasicConversions {
             }
         }
 
-        def prettyPrint(render: String): Unit = print(string.rendering(render))
+        /**
+         * 对文本进行颜色渲染打印
+         *
+         * @param renders 渲染参数
+         * @return
+         */
+        def prettyPrint(renders: Render*): Unit = print(string.rendering(renders: _*))
+
+        /**
+         * 对文本进行颜色渲染打印
+         *
+         * @param renders 渲染参数
+         * @return
+         */
+        def prettyPrint(renders: String): Unit = print(string.rendering(renders))
+
+        /**
+         * 对文本进行颜色渲染打印后换行
+         *
+         * @param renders 渲染参数
+         * @return
+         */
+        def prettyPrintln(renders: Render*): Unit = println(string.rendering(renders: _*))
+
+        /**
+         * 对文本进行颜色渲染打印后换行
+         *
+         * @param renders 渲染参数
+         * @return
+         */
+        def prettyPrintln(renders: String): Unit = println(string.rendering(renders))
 
         /**
          * 对文本进行颜色渲染
          *
-         * @param render 渲染参数
+         * @param renders 渲染参数
          * @return
          */
-        def rendering(render: String): String = {
-            if (render.isNullOrEmpty)
+        def rendering(renders: Render*): String = {
+            if (renders == null || renders.isEmpty)
                 string
             else
-                CliUtils.rendering(string, render.split(";").map(_.toInt).map(Render.valueOf): _*)
+                CliUtils.rendering(string, renders: _*)
+        }
+
+        /**
+         * 对文本进行颜色渲染
+         *
+         * @param renders 渲染参数
+         * @return
+         */
+        def rendering(renders: String): String = {
+            if (renders == null || renders.isEmpty)
+                string
+            else
+                CliUtils.rendering(string, renders.split(";").map(_.toInt).map(Render.valueOf): _*)
         }
 
         /**
@@ -411,8 +454,6 @@ object BasicConversions {
          * @return
          */
         def isNullOrEmpty: Boolean = string.isNull || string == ""
-
-        def prettyPrintln(render: String): Unit = println(string.rendering(render))
 
         def splitDoubleQuotedString(splitter: String): Array[String] = StringUtils.split(string, splitter)
 

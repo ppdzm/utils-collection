@@ -2,6 +2,7 @@ package io.github.ppdzm.utils.universal.feature
 
 import java.util.Properties
 
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.encryption.PasswordBasedEncryptor
 import org.apache.commons.pool2.ObjectPool
 
@@ -25,7 +26,7 @@ object Pool {
     }
 }
 
-trait Pool[T] {
+trait Pool[T] extends LoggingTrait{
     protected val _pool: mutable.Map[String, ObjectPool[T]] = mutable.Map[String, ObjectPool[T]]()
     sys.addShutdownHook {
         this._pool.values.foreach(_.close())

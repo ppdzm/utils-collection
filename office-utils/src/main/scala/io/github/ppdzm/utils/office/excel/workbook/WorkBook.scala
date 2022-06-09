@@ -2,14 +2,14 @@ package io.github.ppdzm.utils.office.excel.workbook
 
 import java.io.{File, FileNotFoundException, FileOutputStream}
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.apache.poi.ss.usermodel.Workbook
 
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-trait WorkBook extends Logging {
+trait WorkBook extends LoggingTrait {
     protected lazy val backup: String = FilenameUtils.removeExtension(excelFileName) + "-backup." + FilenameUtils.getExtension(excelFileName)
     protected lazy val excelFile = new File(excelFileName)
     protected lazy val backupFile = new File(backup)

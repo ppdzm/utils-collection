@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.universal.implicits
 
 import io.github.ppdzm.utils.universal.base.Symbols._
-import io.github.ppdzm.utils.universal.cli.PrettyBricks
+import io.github.ppdzm.utils.universal.cli.{PrettyBricks, Render}
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 

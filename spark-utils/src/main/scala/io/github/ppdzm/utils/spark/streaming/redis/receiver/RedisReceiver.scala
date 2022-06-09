@@ -4,7 +4,7 @@ import java.util
 
 import io.github.ppdzm.utils.spark.streaming.redis.RedisConfigConstants
 import io.github.ppdzm.utils.spark.streaming.redis.wrapper.{JedisClusterWrapper, JedisSingletonWrapper, JedisWrapper}
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.receiver.Receiver
 import redis.clients.jedis.{HostAndPort, Jedis, JedisCluster}
@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 /**
  * Created by Stuart Alex on 2017/4/6.
  */
-abstract class RedisReceiver(keySet: Set[String], storageLevel: StorageLevel) extends Receiver[(String, String)](storageLevel) with RedisConfigConstants with Logging {
+abstract class RedisReceiver(keySet: Set[String], storageLevel: StorageLevel) extends Receiver[(String, String)](storageLevel) with RedisConfigConstants with LoggingTrait {
     private val host = REDIS_HOST.stringValue
     private val port = REDIS_PORT.intValue
     private val timeout = REDIS_TIMEOUT.intValue
@@ -56,7 +56,8 @@ abstract class RedisReceiver(keySet: Set[String], storageLevel: StorageLevel) ex
         }
         catch {
             case e: Throwable =>
-                logError("Got this exception: ", e)
+                logError("Got this exception: ")
+                e.printStackTrace()
                 restart("Trying to connect again")
         }
         finally {

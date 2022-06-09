@@ -4,7 +4,7 @@ import java.sql.ResultSet
 
 import io.github.ppdzm.utils.database.handler.RDBHandler
 import io.github.ppdzm.utils.spark.sql.SparkSQL
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.{Logging, LoggingTrait}
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.spark.sql.functions.lit
@@ -16,7 +16,7 @@ import scala.util.Try
 /**
  * Created by Stuart Alex on 2017/1/11.
  */
-object SparkHiveUtils extends RDBHandler with Logging {
+object SparkHiveUtils extends RDBHandler with LoggingTrait {
     override protected val url: String = "not supported"
 
     /**

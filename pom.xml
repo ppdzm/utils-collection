@@ -28,29 +28,32 @@
     <groupId>io.github.ppdzm</groupId>
     <artifactId>utils-collection</artifactId>
     <packaging>pom</packaging>
-    <version>1.1</version>
+    <version>1.2</version>
     <modules>
         <module>database-utils</module>
+        <module>examples</module>
         <module>flink-utils</module>
         <module>hadoop-utils</module>
         <module>office-utils</module>
         <module>spark-utils</module>
         <module>universal-utils</module>
-        <module>examples</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <avro.version>1.10.0</avro.version>
-        <cdh.version>cdh6.2.0</cdh.version>
+        <blink.version>1.13.6</blink.version>
+        <cdh.version>cdh6.0.1</cdh.version>
         <codehaus.jackson>1.9.13</codehaus.jackson>
         <druid.version>1.1.12</druid.version>
-        <flink.version>1.12.2</flink.version>
+        <flink.version>1.14.0</flink.version>
         <guava.version>16.0.1</guava.version>
-        <hadoop.version>2.7.5</hadoop.version>
+        <hadoop.version>3.0.0-cdh6.3.2</hadoop.version>
         <hbase.version>2.1.0</hbase.version>
+        <hbase-spark.version>2.0.0-cdh6.0.1</hbase-spark.version>
         <hikari.version>2.8.0</hikari.version>
+        <hutool.version>5.7.6</hutool.version>
         <io.version>2.5</io.version>
         <jline.version>2.12</jline.version>
         <kafka.version>2.4.1</kafka.version>
@@ -99,22 +102,23 @@
             <version>${scala-lang.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>net.alchim31.maven</groupId>-->
-            <!--                <artifactId>scala-maven-plugin</artifactId>-->
-            <!--                <version>3.3.2</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>attach-scaladocs</id>-->
-            <!--                        <phase>verify</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>doc-jar</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>net.alchim31.maven</groupId>-->
+            <!--                            <artifactId>scala-maven-plugin</artifactId>-->
+            <!--                            <version>3.3.2</version>-->
+            <!--                            <executions>-->
+            <!--                                <execution>-->
+            <!--                                    <id>attach-scaladocs</id>-->
+            <!--                                    <phase>verify</phase>-->
+            <!--                                    <goals>-->
+            <!--                                        <goal>doc-jar</goal>-->
+            <!--                                    </goals>-->
+            <!--                                </execution>-->
+            <!--                            </executions>-->
+            <!--                        </plugin>-->
             <!-- 用以使maven能够编译、测试、运行scala项目 -->
             <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -155,40 +159,40 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-            <!--                <version>2.9.1</version>-->
-            <!--                <configuration>-->
-            <!--                    <javadocExecutable>/usr/bin/javadoc</javadocExecutable>-->
-            <!--                    <includes>-->
-            <!--                        <include>*.java</include>-->
-            <!--                        <include>*.scala</include>-->
-            <!--                    </includes>-->
-            <!--                </configuration>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>attach-javadocs</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>jar</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-gpg-plugin</artifactId>-->
-            <!--                <version>1.5</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>sign-artifacts</id>-->
-            <!--                        <phase>verify</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>sign</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                            <artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--                            <version>2.9.1</version>-->
+            <!--                            <configuration>-->
+            <!--                                <javadocExecutable>/usr/bin/javadoc</javadocExecutable>-->
+            <!--                                <includes>-->
+            <!--                                    <include>*.java</include>-->
+            <!--                                    <include>*.scala</include>-->
+            <!--                                </includes>-->
+            <!--                            </configuration>-->
+            <!--                            <executions>-->
+            <!--                                <execution>-->
+            <!--                                    <id>attach-javadocs</id>-->
+            <!--                                    <goals>-->
+            <!--                                        <goal>jar</goal>-->
+            <!--                                    </goals>-->
+            <!--                                </execution>-->
+            <!--                            </executions>-->
+            <!--                        </plugin>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                            <artifactId>maven-gpg-plugin</artifactId>-->
+            <!--                            <version>1.5</version>-->
+            <!--                            <executions>-->
+            <!--                                <execution>-->
+            <!--                                    <id>sign-artifacts</id>-->
+            <!--                                    <phase>verify</phase>-->
+            <!--                                    <goals>-->
+            <!--                                        <goal>sign</goal>-->
+            <!--                                    </goals>-->
+            <!--                                </execution>-->
+            <!--                            </executions>-->
+            <!--                        </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -225,47 +229,51 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.sonatype.plugins</groupId>-->
-            <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-            <!--                <version>1.6.7</version>-->
-            <!--                <extensions>true</extensions>-->
-            <!--                <configuration>-->
-            <!--                    <serverId>oss</serverId>-->
-            <!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-            <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>org.sonatype.plugins</groupId>-->
+            <!--                            <artifactId>nexus-staging-maven-plugin</artifactId>-->
+            <!--                            <version>1.6.7</version>-->
+            <!--                            <extensions>true</extensions>-->
+            <!--                            <configuration>-->
+            <!--                                <serverId>oss</serverId>-->
+            <!--                                <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+            <!--                                <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+            <!--                            </configuration>-->
+            <!--                        </plugin>-->
         </plugins>
     </build>
     <profiles>
-        <!--        <profile>-->
-        <!--            <id>oss</id>-->
-        <!--            <properties>-->
-        <!--                <profiles.active>oss</profiles.active>-->
-        <!--                <gpg.executable>gpg2</gpg.executable>-->
-        <!--                <gpg.passphrase>C54419723407236694BE0D4DB983D31B5BDE996E</gpg.passphrase>-->
-        <!--            </properties>-->
-        <!--            <distributionManagement>-->
-        <!--                <snapshotRepository>-->
+        <!--                <profile>-->
         <!--                    <id>oss</id>-->
-        <!--                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
-        <!--                </snapshotRepository>-->
-        <!--                <repository>-->
-        <!--                    <id>oss</id>-->
-        <!--                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-        <!--                </repository>-->
-        <!--            </distributionManagement>-->
-        <!--        </profile>-->
+        <!--                    <properties>-->
+        <!--                        <profiles.active>oss</profiles.active>-->
+        <!--                        <gpg.executable>gpg2</gpg.executable>-->
+        <!--                        <gpg.passphrase>C54419723407236694BE0D4DB983D31B5BDE996E</gpg.passphrase>-->
+        <!--                    </properties>-->
+        <!--                    <distributionManagement>-->
+        <!--                        <snapshotRepository>-->
+        <!--                            <id>oss</id>-->
+        <!--                            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--                        </snapshotRepository>-->
+        <!--                        <repository>-->
+        <!--                            <id>oss</id>-->
+        <!--                            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+        <!--                        </repository>-->
+        <!--                    </distributionManagement>-->
+        <!--                </profile>-->
         <profile>
-            <id>chinapex</id>
+            <id>wwj</id>
             <distributionManagement>
                 <repository>
-                    <id>nexus-releases</id>
+                    <id>wwj-nexus</id>
                     <name>Local Nexus Repository</name>
-                    <url>http://mav.chinapex.com.cn/repository/maven-releases/</url>
+                    <url>http://nexus.weiwenjia.com/repository/maven-releases/</url>
                 </repository>
             </distributionManagement>
         </profile>
     </profiles>
+
+    <repositories>
+
+    </repositories>
 </project>

@@ -1,13 +1,12 @@
 package io.github.ppdzm.utils.universal.base
 
-import java.io.File
-import java.nio.charset.StandardCharsets
-import java.util.Properties
-
 import io.github.ppdzm.utils.universal.cli.CliUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.commons.io.FileUtils
 
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.util.Properties
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 import scala.util.matching.Regex
@@ -27,29 +26,29 @@ object SQLAnalyser extends Logging {
      * @param squeeze    是否压缩SQL
      * @return
      */
-    def analyse(sql: String, properties: Properties, squeeze: Boolean): String = {
-        val scripts = analyse(Array(sql), properties, squeeze)
+    def analyse(sql: String, properties: Properties, throwExceptionIfParameterNotProvided: Boolean, squeeze: Boolean): String = {
+        val scripts = analyse(Array(sql), properties, throwExceptionIfParameterNotProvided, squeeze)
         if (scripts.isEmpty)
             ""
         else
             scripts.head
     }
 
-    def analyse(file: File, properties: Properties, squeeze: Boolean): Array[String] = {
-        analyse(FileUtils.readLines(file, StandardCharsets.UTF_8).toList.toArray, properties, squeeze)
+    def analyse(file: File, properties: Properties, throwExceptionIfParameterNotProvided: Boolean, squeeze: Boolean): Array[String] = {
+        analyse(FileUtils.readLines(file, StandardCharsets.UTF_8).toList.toArray, properties, throwExceptionIfParameterNotProvided, squeeze)
     }
 
-    def analyse(originalScriptLines: Array[String], properties: Properties, squeeze: Boolean): Array[String] = {
-        analyse(originalScriptLines, properties.toMap, squeeze)
+    def analyse(originalScriptLines: Array[String], properties: Properties, throwExceptionIfParameterNotProvided: Boolean, squeeze: Boolean): Array[String] = {
+        analyse(originalScriptLines, properties.toMap, throwExceptionIfParameterNotProvided, squeeze)
     }
 
-    def analyse(originalScriptLines: Array[String], properties: Map[String, AnyRef], squeeze: Boolean): Array[String] = {
+    def analyse(originalScriptLines: Array[String], properties: Map[String, AnyRef], throwExceptionIfParameterNotProvided: Boolean, squeeze: Boolean): Array[String] = {
         originalScriptLines
             .map(line => line.trimComment) //去掉每行注释后清除首尾空白字符
             .filter(_.nonEmpty) //筛掉空行
             .mkString(if (squeeze) " " else "\n") //所有行用空格/换行符区分加在一起
             .split(";") //用分号做分隔符，截取成多个语句
-            .map(this.substitute(_, properties)) //替换变量
+            .map(this.substitute(_, properties, throwExceptionIfParameterNotProvided)) //替换变量
             .map(_.trim) //清除变量替换完成后每行的首尾空白字符
             .map(s => if (squeeze) this.squeeze(s) else s)
             .filter(_.nonEmpty) //筛掉空行
@@ -69,11 +68,11 @@ object SQLAnalyser extends Logging {
             .replace("\t", "")
             .replace("`", "")
             .trim
-            .replaceAllLiterally("  ", "")
-            .replace("( ", "(")
-            .replace(" )", ")")
-            .replace(", ", ",")
-            .replace(" ,", ",")
+            .recursiveReplace("  ", " ")
+            .recursiveReplace("( ", "(")
+            .recursiveReplace(" )", ")")
+            .recursiveReplace(", ", ",")
+            .recursiveReplace(" ,", ",")
     }
 
     /**
@@ -83,7 +82,7 @@ object SQLAnalyser extends Logging {
      * @param properties 参数配置
      * @return
      */
-    def substitute(sql: String, properties: Map[String, AnyRef]): String = {
+    def substitute(sql: String, properties: Map[String, AnyRef], throwExceptionIfParameterNotProvided: Boolean): String = {
         var temp = sql
         var canNotFindMore = false
         while (this.pattern.findFirstMatchIn(temp).isDefined && !canNotFindMore) {
@@ -93,12 +92,17 @@ object SQLAnalyser extends Logging {
                     val matcher = m.group(0)
                     val name = matcher.substring(2, matcher.length - 1).replace("hivevar:", "")
                     if (!properties.contains(name)) {
-                        throw new Exception(s"value of parameter $name isn't provided")
-                    }
-                    val value = properties(name).toString
-                    if (value != null) {
-                        temp = temp.replace(matcher, value)
-                        canNotFindMore = false
+                        if (throwExceptionIfParameterNotProvided) {
+                            throw new Exception(s"value of parameter $name isn't provided")
+                        } else {
+                            logWarning(s"value of parameter $name isn't provided")
+                        }
+                    } else {
+                        val value = properties(name).toString
+                        if (value != null) {
+                            temp = temp.replace(matcher, value)
+                            canNotFindMore = false
+                        }
                     }
             }
         }
@@ -111,7 +115,9 @@ object SQLAnalyser extends Logging {
      * @param scripts SQL脚本(s)
      * @return
      */
-    def squeeze(scripts: Array[String]): Array[String] = scripts.map(squeeze)
+    def squeeze(scripts: Array[String]): Array[String] = {
+        squeeze(scripts.map(squeeze).mkString(" ")).split(";")
+    }
 
     /**
      * 将参数替换为实际值
@@ -120,7 +126,7 @@ object SQLAnalyser extends Logging {
      * @param properties 参数配置
      * @return
      */
-    def substitute(sql: String, properties: Properties): String = substitute(sql, properties.toMap)
+    def substitute(sql: String, properties: Properties, throwExceptionIfParameterNotProvided: Boolean): String = substitute(sql, properties.toMap, throwExceptionIfParameterNotProvided)
 
     /**
      * 将参数替换为实际值

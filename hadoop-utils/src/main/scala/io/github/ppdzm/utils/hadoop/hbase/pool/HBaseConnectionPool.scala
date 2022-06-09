@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.hadoop.hbase.pool
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import org.apache.commons.pool2.ObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.hadoop.hbase.client.Connection
@@ -10,7 +10,7 @@ import scala.collection.mutable
 /**
  * Created by Stuart Alex on 2017/4/5.
  */
-object HBaseConnectionPool extends Logging {
+object HBaseConnectionPool extends LoggingTrait {
     private val _pool = mutable.Map[String, ObjectPool[Connection]]()
     sys.addShutdownHook {
         this._pool.values.foreach(_.close())

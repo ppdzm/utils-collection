@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.flink.source.kafka
 
-import io.github.ppdzm.utils.flink.scala.streaming.kafka.JavaAvroArrayRecordFlinkKafkaStreaming
+import io.github.ppdzm.utils.flink.scala.streaming.kafka.avro.JavaAvroArrayRecordFlinkKafkaStreaming
 import io.github.ppdzm.utils.universal.alert.{Alerter, LoggerAlerter}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import io.github.ppdzm.utils.universal.formats.avro.AvroUtils

@@ -4,6 +4,7 @@ import io.github.ppdzm.utils.universal.base.StringUtils;
 import lombok.Data;
 import lombok.SneakyThrows;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,8 @@ import java.util.Map;
  * @author Created by Stuart Alex on 2021/5/7.
  */
 @Data
-public class ConfigItem {
+public class ConfigItem implements Serializable {
+    private static final long serialVersionUID = 1014972612716007240L;
     private final Config config;
     private final String key;
     private Object defaultValue;
@@ -117,7 +119,7 @@ public class ConfigItem {
     @SneakyThrows
     @Override
     public String toString() {
-        return "ConfigItem(key=" + key + ", defaultValue=" + defaultValue + ", value=" + stringValue() + ")";
+        return "{\"key\": \"" + key + "\", \"defaultValue\": \"" + defaultValue + "\", \"value\": \"" + stringValue() + "\"}";
     }
 
 }

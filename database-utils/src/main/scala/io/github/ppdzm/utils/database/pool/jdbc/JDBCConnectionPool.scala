@@ -2,13 +2,13 @@ package io.github.ppdzm.utils.database.pool.jdbc
 
 import java.sql.Connection
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import scalikejdbc.ConnectionPool
 
 /**
  * Created by Stuart Alex on 2017/3/29.
  */
-abstract class JDBCConnectionPool extends Logging {
+abstract class JDBCConnectionPool extends LoggingTrait {
 
     /**
      * 通过name从连接池中获取一个ConnectionPool

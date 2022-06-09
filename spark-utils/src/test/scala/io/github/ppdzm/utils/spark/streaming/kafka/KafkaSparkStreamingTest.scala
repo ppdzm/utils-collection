@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.spark.streaming.kafka
 
 import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, ResultProcessor}
 import io.github.ppdzm.utils.universal.alert.{AlertConfig, Alerter, AlerterFactory}
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.rdd.RDD
@@ -71,7 +71,7 @@ object PP extends PartitionProcessor[String, Int] {
     }
 }
 
-object RP extends ResultProcessor[Int] with Logging {
+object RP extends ResultProcessor[Int] with LoggingTrait {
 
     /**
      * Partition处理逻辑

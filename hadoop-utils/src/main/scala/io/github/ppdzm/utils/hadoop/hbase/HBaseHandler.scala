@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.hadoop.hbase
 
 import java.util
 
-import io.github.ppdzm.utils.universal.base.{DateTimeUtils, Logging}
+import io.github.ppdzm.utils.universal.base.{DateTimeUtils, LoggingTrait}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.client._
@@ -19,7 +19,7 @@ import scala.util.Try
 /**
  * Created by Stuart Alex on 2017/1/11.
  */
-case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBaseEnvironment with Logging {
+case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBaseEnvironment with LoggingTrait {
 
     def bulkDelete(table: String, keyRegexp: String, batchSize: Int): Unit = {
         val filterList = new FilterList()

@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.universal.cli;
 
+import io.github.ppdzm.utils.universal.base.Logging;
 import io.github.ppdzm.utils.universal.base.Symbols;
-import io.github.ppdzm.utils.universal.log.Logging;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
@@ -15,46 +15,48 @@ public class CliUtils {
     /**
      * 转义符
      */
-    private static String ESCAPE = "\u001b[";
+    private static final String ESCAPE = "\u001b[";
     /**
      * 清除屏幕（光标位置不动）
      */
-    private static String CLEAR_SCREEN = "2J";
+    private static final String CLEAR_SCREEN = "2J";
     /**
      * 光标上移
      */
-    private static String UP = "A";
+    private static final String UP = "A";
     /**
      * 光标下移
      */
-    private static String DOWN = "B";
+    private static final String DOWN = "B";
     /**
      * 光标左移
      */
-    private static String LEFT = "C";
+    private static final String LEFT = "C";
     /**
      * 光标右移
      */
-    private static String RIGHT = "D";
+    private static final String RIGHT = "D";
     /**
      * 光标定点
      */
-    private static String POINTER = "H";
+    private static final String POINTER = "H";
     /**
      * 删除光标后所有文本
      */
-    private static String DELETE_ALL_AFTER_CURSOR = "K";
+    private static final String DELETE_ALL_AFTER_CURSOR = "K";
     /**
      * 保存当前光标位置
      */
-    private static String STORE = "s";
+    private static final String STORE = "s";
     /**
      * 恢复上次光标位置
      */
-    private static String RESTORE = "u";
+    private static final String RESTORE = "u";
 
     /**
      * 清除屏幕（光标位置不动）
+     *
+     * @return string
      */
     public static String clearScreen() {
         return ESCAPE + CLEAR_SCREEN;
@@ -62,6 +64,8 @@ public class CliUtils {
 
     /**
      * 清除屏幕（光标移至最左上角）
+     *
+     * @return string
      */
     public static String clearScreen2TopLeft() {
         return ESCAPE + CLEAR_SCREEN + ESCAPE + "0;0" + POINTER;
@@ -69,6 +73,8 @@ public class CliUtils {
 
     /**
      * 删除光标后所有文本
+     *
+     * @return string
      */
     public static String deleteAllAfterCursor() {
         return ESCAPE + DELETE_ALL_AFTER_CURSOR;
@@ -96,6 +102,7 @@ public class CliUtils {
      * 下移若干行
      *
      * @param n 行数
+     * @return string
      */
     public static String down(int n) {
         return ESCAPE + n + DOWN;
@@ -105,6 +112,7 @@ public class CliUtils {
      * 左移若干行
      *
      * @param n 行数
+     * @return string
      */
     public static String left(int n) {
         return ESCAPE + n + LEFT;
@@ -112,6 +120,8 @@ public class CliUtils {
 
     /**
      * 光标移至行首
+     *
+     * @return string
      */
     public static String move2Begin() {
         return Symbols.carriageReturn;
@@ -120,7 +130,9 @@ public class CliUtils {
     /**
      * 解析命令行参数
      *
-     * @param args 命令行参数
+     * @param args       命令行参数
+     * @param properties 解析后的配置存储在这里
+     * @return string list
      */
     public static List<String> parseArguments(String[] args, Properties properties) {
         // 解析完以后剩下的args
@@ -128,8 +140,9 @@ public class CliUtils {
         if (args == null || args.length == 0) {
             return restArgs;
         }
-        logging.logInfo("Receive args: " + String.join(",", args));
-        Map<String, Object> argumentsMapping = new HashMap<>();
+        //logging.logInfo(rendering("Receive args: ", Render.MAGENTA) + rendering(String.join(", ", args), Render.GREEN));
+        logging.logInfo("Receive args: " + rendering(String.join(", ", args), Render.GREEN));
+        Map<String, Object> argumentsMapping = new HashMap<>(4);
         int i = 0;
         while (i < args.length) {
             if (args[i].startsWith("--")) {
@@ -168,7 +181,12 @@ public class CliUtils {
         for (String key : argumentsMapping.keySet()) {
             Object value = argumentsMapping.get(key);
             properties.put(key, value.toString());
-            logging.logInfo("Parsed key " + key + ", value " + value + "");
+            logging.logInfo(
+                CliUtils.rendering("Parsed config ", Render.MAGENTA) +
+                    CliUtils.rendering(key, Render.GREEN) +
+                    CliUtils.rendering(" => ", Render.MAGENTA) +
+                    CliUtils.rendering(value.toString(), Render.GREEN)
+            );
         }
         return restArgs;
     }
@@ -178,6 +196,7 @@ public class CliUtils {
      *
      * @param x 行呀
      * @param y 列呀
+     * @return string
      */
     public static String point(int x, int y) {
         return ESCAPE + x + ";" + y + POINTER;
@@ -203,7 +222,7 @@ public class CliUtils {
      *
      * @param string  原始文本
      * @param renders 渲染器
-     * @return String
+     * @return string
      */
     public static String rendering(String string, Render... renders) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -218,7 +237,7 @@ public class CliUtils {
      *
      * @param messages       原始文本
      * @param messageRenders 原始文本与渲染器
-     * @return String
+     * @return string
      */
     public static String rendering(List<String> messages, Map<String, Render> messageRenders) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -231,6 +250,8 @@ public class CliUtils {
 
     /**
      * 重置所有设置
+     *
+     * @return string
      */
     public static String reset() {
         return ESCAPE + Render.RESET;
@@ -238,6 +259,8 @@ public class CliUtils {
 
     /**
      * 恢复上次保存的光标位置
+     *
+     * @return string
      */
     public static String restore() {
         return ESCAPE + RESTORE;
@@ -247,6 +270,7 @@ public class CliUtils {
      * 右移若干行
      *
      * @param n 行数
+     * @return string
      */
     public static String right(int n) {
         return ESCAPE + n + RIGHT;
@@ -254,6 +278,8 @@ public class CliUtils {
 
     /**
      * 保存光标当前所在位置
+     *
+     * @return string
      */
     public static String store() {
         return ESCAPE + STORE;
@@ -263,6 +289,7 @@ public class CliUtils {
      * 上移若干行
      *
      * @param n 行数
+     * @return string
      */
     public static String up(int n) {
         return ESCAPE + n + UP;

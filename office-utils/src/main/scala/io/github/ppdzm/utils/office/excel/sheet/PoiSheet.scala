@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.office.excel.sheet
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import org.apache.poi.hssf.usermodel.HSSFDataFormat
 import org.apache.poi.ss.usermodel._
 
@@ -9,7 +9,7 @@ import scala.util.Try
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-trait PoiSheet extends Logging {
+trait PoiSheet extends LoggingTrait {
     protected val workbook: Workbook
     protected val sheetName: String
     protected val overwrite: Boolean

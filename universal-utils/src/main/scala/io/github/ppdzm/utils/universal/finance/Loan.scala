@@ -7,7 +7,9 @@ import io.github.ppdzm.utils.universal.implicits.SeqConversions._
 /**
  * Created by Stuart Alex on 2017/9/22.
  */
-object Loan {
+object Loan extends App {
+    println(rate(72000, 6360, 12) * 12)
+//    println(rate(12000, 1090, 12) * 12)
 
     /**
      * 等额本金还款详情

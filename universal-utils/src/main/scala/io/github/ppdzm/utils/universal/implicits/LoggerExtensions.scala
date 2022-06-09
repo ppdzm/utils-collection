@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import io.github.ppdzm.utils.universal.cli.{CliUtils, Render, ScalaCliUtils}
+import io.github.ppdzm.utils.universal.cli.{CliUtils, Render, ExtendedCliUtils}
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
 object LoggerExtensions {
@@ -15,7 +15,7 @@ object LoggerExtensions {
         }
 
         def logInfo(messages: Array[(String, Render)]): Unit = {
-            logger.logInfo(ScalaCliUtils.rendering(messages))
+            logger.logInfo(ExtendedCliUtils.rendering(messages))
         }
 
         def logInfo(message: => String, renders: Render*): Unit = {
@@ -26,7 +26,7 @@ object LoggerExtensions {
         }
 
         def logWarning(messages: Array[(String, Render)]): Unit = {
-            logger.logWarning(ScalaCliUtils.rendering(messages))
+            logger.logWarning(ExtendedCliUtils.rendering(messages))
         }
 
         def logWarning(message: => String, renders: Render*): Unit = {
@@ -37,7 +37,7 @@ object LoggerExtensions {
         }
 
         def logError(messages: Array[(String, Render)]): Unit = {
-            logger.logError(ScalaCliUtils.rendering(messages))
+            logger.logError(ExtendedCliUtils.rendering(messages))
         }
 
         def logError(message: => String, renders: Render*): Unit = {
@@ -62,7 +62,7 @@ object LoggerExtensions {
         }
 
         def logInfo(messages: Array[(String, Render)]): Unit = {
-            logger.logInfo(ScalaCliUtils.rendering(messages))
+            logger.logInfo(ExtendedCliUtils.rendering(messages))
         }
 
         def logInfo(message: => String, renders: Render*): Unit = {
@@ -73,7 +73,7 @@ object LoggerExtensions {
         }
 
         def logWarning(messages: Array[(String, Render)]): Unit = {
-            logger.logWarning(ScalaCliUtils.rendering(messages))
+            logger.logWarning(ExtendedCliUtils.rendering(messages))
         }
 
         def logWarning(message: => String, renders: Render*): Unit = {
@@ -84,7 +84,7 @@ object LoggerExtensions {
         }
 
         def logError(messages: Array[(String, Render)]): Unit = {
-            logger.logError(ScalaCliUtils.rendering(messages))
+            logger.logError(ExtendedCliUtils.rendering(messages))
         }
 
         def logError(message: => String, renders: Render*): Unit = {

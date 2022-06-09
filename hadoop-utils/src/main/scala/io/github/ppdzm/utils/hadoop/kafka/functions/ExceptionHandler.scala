@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.hadoop.kafka.functions
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 
 /**
  * Created by Stuart Alex on 2021/1/29.
@@ -11,22 +11,22 @@ trait ExceptionHandler {
 
 }
 
-object PrintExceptionHandler extends ExceptionHandler with Logging {
+object PrintExceptionHandler extends ExceptionHandler with LoggingTrait {
     override def handle(e: Exception, data: Any): Unit = {
-        logError(data.toString, e)
+        logger.error(data.toString, e)
     }
 }
 
-object ExitExceptionHandler extends ExceptionHandler with Logging {
+object ExitExceptionHandler extends ExceptionHandler with LoggingTrait {
     override def handle(e: Exception, data: Any): Unit = {
-        logError(data.toString, e)
+        logger.error(data.toString, e)
         sys.exit(-1)
     }
 }
 
-object ThrowExceptionHandler extends ExceptionHandler with Logging {
+object ThrowExceptionHandler extends ExceptionHandler with LoggingTrait {
     override def handle(e: Exception, data: Any): Unit = {
-        logError(data.toString, e)
+        logger.error(data.toString, e)
         throw e
     }
 }

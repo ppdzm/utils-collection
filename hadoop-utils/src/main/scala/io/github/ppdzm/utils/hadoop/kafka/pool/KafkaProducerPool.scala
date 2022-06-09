@@ -4,7 +4,7 @@ import java.util.Properties
 
 import io.github.ppdzm.utils.hadoop.kafka.config.KafkaProducerProperties
 import io.github.ppdzm.utils.hadoop.kafka.factory.KafkaProducerFactory
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.feature.Pool
 import org.apache.commons.pool2.ObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPool
@@ -14,7 +14,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 /**
  * Created by Stuart Alex on 2017/3/29.
  */
-object KafkaProducerPool extends Pool[KafkaProducer[String, String]] with Logging {
+object KafkaProducerPool extends Pool[KafkaProducer[String, String]] with LoggingTrait {
 
     def apply(brokers: String): ObjectPool[KafkaProducer[String, String]] = {
         val properties = KafkaProducerProperties.builder()

@@ -73,7 +73,7 @@ abstract class KafkaStreaming[K, V, R1, R2] extends KafkaConfigConstants with Sp
                     }
                 } catch {
                     case e: Exception =>
-                        alerter.alert(s"spark streaming application $applicationName error", e.toString)
+                        alerter.alert("", s"spark streaming application $applicationName error", e)
                         throw e
                 }
                 stream.asInstanceOf[CanCommitOffsets].commitAsync(offsetRanges)

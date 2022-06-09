@@ -1,8 +1,11 @@
 package io.github.ppdzm.utils.universal.encryption
 
+import cn.hutool.core.util.StrUtil
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.scalatest.FunSuite
+
+import java.nio.charset.StandardCharsets
 
 /**
  * Created by Stuart Alex on 2021/4/9.
@@ -50,9 +53,19 @@ class RC4Test extends FunSuite {
         val unicodeEscapedMessageJson = JsonUtils.parse(unicodeEscapedMessage)
         val postParameters = unicodeEscapedMessageJson.get("postps").asText().unescapeUnicode8
         println(postParameters)
+        val dec = new cn.hutool.crypto.symmetric.RC4("R6qGg5^Pdv%4").crypt(postParameters.unicode82Bytes)
         val decryptedBytes = RC4.decrypt(postParameters.unicode82Bytes, "R6qGg5^Pdv%4")
         val decompressed = GZipUtils.decompress(decryptedBytes)
+        val decom = GZipUtils.decompress(dec)
         println(JsonUtils.pretty(decompressed))
+        println(decom)
+    }
+
+    test("aaa") {
+        val key = "jetaime"
+        val value = "gegkersg"
+        println(StrUtil.str(RC4.encrypt(value.getBytes, key), "utf8"))
+        println(StrUtil.str(new cn.hutool.crypto.symmetric.RC4(key).encrypt(value), "utf8"))
     }
 
 }

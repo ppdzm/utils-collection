@@ -1,13 +1,34 @@
 package io.github.ppdzm.utils.universal.base;
 
+import io.github.ppdzm.utils.universal.cli.CliUtils;
+import io.github.ppdzm.utils.universal.cli.Render;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author Created by Stuart Alex on 2021/5/7.
  */
 public class StringUtils {
+    public static void main(String[] args) {
+        System.out.println(randomString(8));
+        ;
+    }
+
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.isEmpty();
+    }
+
+    public static boolean isNotNullAndEmpty(String string) {
+        return string != null && !string.isEmpty();
+    }
+
+    public static String rendering(String string, Render... renders) {
+        if (renders == null || renders.length == 0) {
+            return string;
+        }
+        return CliUtils.rendering(string, renders);
+    }
 
     public static String randomString(int length) {
         char[] fromChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
@@ -16,9 +37,9 @@ public class StringUtils {
 
     public static String randomString(int length, char[] fromChars) {
         StringBuilder stringBuilder = new StringBuilder();
-        Random random = new Random();
+        int charNumber = fromChars.length;
         for (int i = 0; i < length; i++) {
-            stringBuilder.append(fromChars[random.nextInt(length)]);
+            stringBuilder.append(fromChars[Mathematics.randomInt(charNumber)]);
         }
         return stringBuilder.toString();
     }

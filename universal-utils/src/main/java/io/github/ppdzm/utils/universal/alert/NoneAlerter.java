@@ -5,7 +5,9 @@ package io.github.ppdzm.utils.universal.alert;
  */
 public class NoneAlerter implements Alerter {
     @Override
-    public void alert(String subject, String content) {
-        // do nothing
+    public void alert(String subject, String content, Exception e) throws Exception {
+        if (e != null) {
+            throw e;
+        }
     }
 }

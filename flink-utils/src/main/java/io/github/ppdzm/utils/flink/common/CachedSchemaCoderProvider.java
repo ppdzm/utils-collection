@@ -9,9 +9,9 @@ import org.apache.flink.formats.avro.registry.confluent.ConfluentSchemaRegistryC
  */
 public class CachedSchemaCoderProvider implements SchemaCoder.SchemaCoderProvider {
     private static final long serialVersionUID = 4396760227837662376L;
-    private String subject;
-    private String schemaRegistryUrl;
-    private int identityMapCapacity;
+    private final String subject;
+    private final String schemaRegistryUrl;
+    private final int identityMapCapacity;
 
     public CachedSchemaCoderProvider(String subject, String schemaRegistryUrl, int identityMapCapacity) {
         super();

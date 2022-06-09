@@ -27,7 +27,7 @@ import java.util.*;
 public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.ActionHandler {
     static final String CHARSET = "ISO-8859-1";
     private static final JsonElement NULL_JSON_ELEMENT = new JsonElement(null);
-    private static JsonFactory jsonFactory = new JsonFactory();
+    private static final JsonFactory jsonFactory = new JsonFactory();
     private final Schema schema;
     Stack<ReorderBuffer> reorderBuffers = new Stack<>();
     ReorderBuffer currentReorderBuffer;
@@ -54,7 +54,7 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
 
     private static List<JsonElement> getVaueAsTree(JsonParser in) throws IOException {
         int level = 0;
-        List<JsonElement> result = new ArrayList<JsonElement>();
+        List<JsonElement> result = new ArrayList<>();
         do {
             JsonToken t = in.getCurrentToken();
             switch (t) {

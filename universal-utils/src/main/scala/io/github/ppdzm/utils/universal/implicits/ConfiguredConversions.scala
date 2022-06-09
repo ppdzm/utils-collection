@@ -128,7 +128,9 @@ class ConfiguredConversions(implicit val config: Config) extends PrintConfig {
          * @param render 渲染参数
          * @return
          */
-        def rendering(render: String = render): String = CliUtils.rendering(string, render.split(";").map(_.toInt).map(Render.valueOf): _*)
+        def rendering(render: String = render): String = {
+            CliUtils.rendering(string, render.split(";").map(_.toInt).map(Render.valueOf): _*)
+        }
 
     }
 

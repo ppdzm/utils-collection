@@ -11,7 +11,7 @@ import org.scalatest.FunSuite
 /**
  * Created by Stuart Alex on 2021/1/29.
  */
-class KafkaRegistryAvroProducerTest extends FunSuite with ConfigTrait with Logging {
+class KafkaRegistryAvroProducerTest extends FunSuite with ConfigTrait {
     override protected val config: Config = new FileConfig()
     test("from-file-to-kafka") {
         val schemaRegistryUrl = config.newConfigItem("kafka.schemaRegistry.hosts").stringValue

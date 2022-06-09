@@ -1,13 +1,12 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.scalatest.FunSuite
 
 /**
  * @author StuartAlex on 2019-07-30 16:19
  */
-class BasicImplicitsTest extends FunSuite with Logging {
+class BasicImplicitsTest extends FunSuite {
 
     test("trim comment") {
         println("select * from table where some_column like '%--%';    -- this is a real comment".trimComment)

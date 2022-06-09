@@ -6,7 +6,7 @@ import java.text.MessageFormat
 import java.util.UUID
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.github.ppdzm.utils.universal.cli.MessageGenerator
+import io.github.ppdzm.utils.universal.cli.{MessageGenerator, Render}
 import io.github.ppdzm.utils.universal.feature.{ExceptionGenerator, LoanPattern}
 import io.github.ppdzm.utils.universal.formats.json.JsonUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
@@ -241,7 +241,7 @@ object YarnUtils {
         val html = this.executorsPageHtml(id, resourceManagerAddresses)
         val file = new File("/tmp/" + UUID.randomUUID().toString + ".html")
         FileUtils.write(file, html, StandardCharsets.UTF_8)
-        this.saveMsgFormatter(file.getAbsolutePath).prettyPrintln(null)
+        this.saveMsgFormatter(file.getAbsolutePath).prettyPrintln(Render.GREEN)
     }
 
     /**

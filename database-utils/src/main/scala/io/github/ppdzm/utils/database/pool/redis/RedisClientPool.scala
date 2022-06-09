@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.database.pool.redis
 
-import io.github.ppdzm.utils.universal.base.Logging
+import io.github.ppdzm.utils.universal.base.LoggingTrait
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import redis.clients.jedis.{Jedis, JedisPool, Pipeline}
 
@@ -9,7 +9,7 @@ import scala.collection.mutable
 /**
  * Created by Stuart Alex on 2017/4/5.
  */
-object RedisClientPool extends Logging {
+object RedisClientPool extends LoggingTrait {
     private val _pool = mutable.Map[(String, Int, String), JedisPool]()
     sys.addShutdownHook {
         this._pool.values.foreach { pool => pool.destroy() }

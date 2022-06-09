@@ -5,7 +5,7 @@
     <parent>
         <artifactId>utils-collection</artifactId>
         <groupId>io.github.ppdzm</groupId>
-        <version>1.1</version>
+        <version>1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hadoop-utils</artifactId>
@@ -15,10 +15,6 @@
             <artifactId>kafka-avro-serializer</artifactId>
             <version>5.5.2</version>
             <exclusions>
-                <exclusion>
-                    <artifactId>avro</artifactId>
-                    <groupId>org.apache.avro</groupId>
-                </exclusion>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
@@ -35,6 +31,7 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -50,6 +47,13 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
@@ -61,11 +65,18 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.github.ppdzm</groupId>
             <artifactId>universal-utils</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>3.1.2</version>
         </dependency>
     </dependencies>
 </project>

@@ -9,6 +9,8 @@ public interface Alerter {
      *
      * @param subject 主题
      * @param content 内容
+     * @param e       异常
+     * @throws Exception exception
      */
-    void alert(String subject, String content) throws Exception;
+    void alert(String subject, String content, Exception e) throws Exception;
 }
