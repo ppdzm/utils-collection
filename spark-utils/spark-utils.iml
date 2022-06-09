@@ -262,7 +262,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:kafka-clients:2.0.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-streaming-kafka-0-10_2.11:2.4.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.github.ppdzm:database-utils:1.2" level="project" />
+    <orderEntry type="module" module-name="database-utils" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.alibaba:druid:1.1.12" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: hikari-cp:hikari-cp:2.8.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.zaxxer:HikariCP:3.3.1" level="project" />
@@ -270,7 +270,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mybatis:mybatis:3.4.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: redis.clients:jedis:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.github.ppdzm:hadoop-utils:1.2" level="project" />
+    <orderEntry type="module" module-name="hadoop-utils" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.confluent:kafka-avro-serializer:5.5.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.confluent:kafka-schema-serializer:5.5.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.confluent:kafka-schema-registry-client:5.5.2" level="project" />
