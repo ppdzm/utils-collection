@@ -11,9 +11,9 @@ import java.security.GeneralSecurityException;
  * @author Created by Stuart Alex on 2021/5/8.
  */
 public class MailAlerter implements Alerter {
-    private String recipients;
-    private String ccs;
-    private MailAgent mailAgent;
+    private final String recipients;
+    private final String ccs;
+    private final MailAgent mailAgent;
 
     public MailAlerter(String host,
                        int port,

@@ -1,5 +1,6 @@
 package io.github.ppdzm.utils.universal.core;
 
+
 /**
  * @author Created by Stuart Alex on 2021/5/18.
  */

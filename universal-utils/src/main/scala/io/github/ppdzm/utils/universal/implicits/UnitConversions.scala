@@ -260,7 +260,7 @@ object UnitConversions {
     }
 
     implicit class SecondsImplicits(long: Long) {
-        private val units = Map("en" -> Array(" days", " hours", " minutes", " seconds"), "zh" -> Array("天", "小时", "分钟", "秒"))
+        private val units = Map("en" -> Array(" days ", " hours ", " minutes ", " seconds"), "zh" -> Array("天", "小时", "分钟", "秒"))
 
         def longTimeFormat(lang: String): String = {
             val language = lang match {

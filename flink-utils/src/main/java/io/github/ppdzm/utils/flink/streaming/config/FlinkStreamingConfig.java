@@ -57,22 +57,22 @@ public class FlinkStreamingConfig {
     }
 
     public CheckpointConfiguration getCheckpointConfiguration() throws Exception {
-        if (FLINK_CHECKPOINT_ENABLED.booleanValue()) {
+        if (FLINK_CHECKPOINT_ENABLED != null && FLINK_CHECKPOINT_ENABLED.booleanValue()) {
             String checkpointDir = FLINK_CHECKPOINT_DIR.stringValue();
             StateBackend stateBackend = new EmbeddedRocksDBStateBackend(true);
             return CheckpointConfiguration
-                .builder()
-                .checkpointDir(checkpointDir)
-                .checkpointIntervalInMilliseconds(FLINK_CHECKPOINT_INTERVAL.longValue())
-                .checkpointMode(CheckpointingMode.valueOf(FLINK_CHECKPOINT_MODE.stringValue().toUpperCase()))
-                .checkpointTimeoutInMilliseconds(FLINK_CHECKPOINT_TIMEOUT.longValue())
-                .cleanupMode(org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup.valueOf(FLINK_CHECKPOINT_CLEANUP_MODE.stringValue().toUpperCase()))
-                .maxConcurrentCheckpoints(FLINK_CHECKPOINT_MAX_CONCURRENT.intValue())
-                .minPauseBetweenCheckpoints(FLINK_CHECKPOINT_MIN_PAUSE.intValue())
-                .stateBackend(stateBackend)
-                .tolerableCheckpointFailureNumber(FLINK_CHECKPOINT_TOLERABLE_FAILURE.intValue())
-                .checkpointEnabled(true)
-                .build();
+                    .builder()
+                    .checkpointDir(checkpointDir)
+                    .checkpointIntervalInMilliseconds(FLINK_CHECKPOINT_INTERVAL.longValue())
+                    .checkpointMode(CheckpointingMode.valueOf(FLINK_CHECKPOINT_MODE.stringValue().toUpperCase()))
+                    .checkpointTimeoutInMilliseconds(FLINK_CHECKPOINT_TIMEOUT.longValue())
+                    .cleanupMode(org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup.valueOf(FLINK_CHECKPOINT_CLEANUP_MODE.stringValue().toUpperCase()))
+                    .maxConcurrentCheckpoints(FLINK_CHECKPOINT_MAX_CONCURRENT.intValue())
+                    .minPauseBetweenCheckpoints(FLINK_CHECKPOINT_MIN_PAUSE.intValue())
+                    .stateBackend(stateBackend)
+                    .tolerableCheckpointFailureNumber(FLINK_CHECKPOINT_TOLERABLE_FAILURE.intValue())
+                    .checkpointEnabled(true)
+                    .build();
         } else {
             return null;
         }

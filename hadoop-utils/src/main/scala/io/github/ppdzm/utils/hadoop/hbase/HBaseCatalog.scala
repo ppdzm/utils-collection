@@ -1,11 +1,11 @@
 package io.github.ppdzm.utils.hadoop.hbase
 
-import java.util.Properties
-
 import io.github.ppdzm.utils.universal.config.{Config, ConfigItem}
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.formats.json.Json4sUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+
+import java.util.Properties
 
 /**
  * Created by Stuart Alex on 2016/12/14.
@@ -96,7 +96,7 @@ object HBaseCatalog {
      * @param json JSON表示的HBase Catalog
      * @return
      */
-    def apply(json: String): HBaseCatalog = JsonUtils.deserialize[HBaseCatalog](json, classOf[HBaseCatalog])
+    def apply(json: String): HBaseCatalog = Json4sUtils.deserialize4s[HBaseCatalog](json)
 
 }
 
@@ -117,7 +117,7 @@ case class HBaseCatalog(table: HBaseTable, rowkey: String, columns: Map[String, 
         this.toString.prettyPrintln(render)
     }
 
-    override def toString: String = JsonUtils.serialize(this)
+    override def toString: String = Json4sUtils.serialize4s(this)
 
 }
 

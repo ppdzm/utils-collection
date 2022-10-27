@@ -55,7 +55,7 @@ trait LineChart extends Chart {
      * @return
      */
     override def plot(): this.type = {
-        logInfo(s"start plot ${if (labeled) "labeled" else ""} ${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
+        this.logging.logInfo(s"start plot ${if (labeled) "labeled" else ""} ${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
         this.setTitle(ctChart)
         this.setLegend(ctChart)
         this.setCategoryAxis(ctChart)

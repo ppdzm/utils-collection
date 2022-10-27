@@ -1,22 +1,20 @@
 package io.github.ppdzm.utils.spark.hive
 
-import java.sql.ResultSet
-
 import io.github.ppdzm.utils.database.handler.RDBHandler
 import io.github.ppdzm.utils.spark.sql.SparkSQL
-import io.github.ppdzm.utils.universal.base.{Logging, LoggingTrait}
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.spark.sql.functions.lit
 import org.apache.spark.sql.types.StructType
 
+import java.sql.ResultSet
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 /**
  * Created by Stuart Alex on 2017/1/11.
  */
-object SparkHiveUtils extends RDBHandler with LoggingTrait {
+object SparkHiveUtils extends RDBHandler {
     override protected val url: String = "not supported"
 
     /**
@@ -36,11 +34,11 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
         if (SparkSQL.sql(s"desc $database.$table").select("col_name").collect().map(_.getString(0)).contains(columnName))
             throw ExceptionGenerator.newException("ColumnAlreadyExist", s"Column $columnName already exists in $database.$table")
         val statement = this.showCreateTable(database, table)
-            .replace("CREATE EXTERNAL TABLE", "CREATE EXTERNAL TABLE if not exists")
-            .replace(" COMMENT 'from deserializer'", "")
-            .replaceSpecialSymbol
-            .replaceFirst("""\)ROW""", s",$columnName $columnType) ROW")
-            .replace("','serialization", s",$columnFamily:$hColumnName','serialization")
+          .replace("CREATE EXTERNAL TABLE", "CREATE EXTERNAL TABLE if not exists")
+          .replace(" COMMENT 'from deserializer'", "")
+          .replaceSpecialSymbol
+          .replaceFirst("""\)ROW""", s",$columnName $columnType) ROW")
+          .replace("','serialization", s",$columnFamily:$hColumnName','serialization")
         this.execute(s"drop table if exists $database.$table")
         this.execute(statement)
     }
@@ -62,6 +60,17 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
     }
 
     /**
+     * 查询hive外部表创建语句
+     *
+     * @param database 数据库名称
+     * @param table    表名称
+     * @return
+     */
+    def showCreateTable(database: String, table: String): String = {
+        SparkSQL.sql(s"show create table $database.$table").collect().map(_.getString(0).trim).mkString
+    }
+
+    /**
      * 比较MySQL源数据表与Hive数据表的schema差异
      *
      * @param url            MySQL连接url
@@ -73,27 +82,27 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
     def compare(url: String, tableRegex: String, hiveDatabase: String, table: String, ignoredMapping: Map[String, String]): List[(String, String, String, String, String, String, String)] = {
         val database = url.substring(url.lastIndexOf('/') + 1, url.indexOf('?')).toLowerCase
         val mts = SparkSQL.mysql.df(url.replace(database, "information_schema"), "columns")
-            .filter(s"TABLE_SCHEMA='$database'")
-            .select("column_name", "data_type", "table_name")
-            .withColumnRenamed("column_name", "mysql_column_name")
-            .withColumnRenamed("data_type", "mysql_data_type")
+          .filter(s"TABLE_SCHEMA='$database'")
+          .select("column_name", "data_type", "table_name")
+          .withColumnRenamed("column_name", "mysql_column_name")
+          .withColumnRenamed("data_type", "mysql_data_type")
         val hts = SparkSQL.sql(s"desc $hiveDatabase.$table").select("col_name", "data_type")
-            .withColumnRenamed("col_name", "hive_column_name")
-            .withColumnRenamed("data_type", "hive_data_type")
+          .withColumnRenamed("col_name", "hive_column_name")
+          .withColumnRenamed("data_type", "hive_data_type")
         val joined = mts.join(hts, mts("mysql_column_name") === hts("hive_column_name"), "left").withColumn("hive_table_name", lit(s"$hiveDatabase.$table")).collect()
-            .filter(row => row.getAs[String]("table_name").matches(tableRegex))
-            .filter(row => {
-                val mct = row.getAs[String]("mysql_data_type")
-                val hct = row.getAs[String]("hive_data_type")
-                if (mct == hct)
-                    false
-                else if (ignoredMapping.isNull)
-                    true
-                else if (ignoredMapping.contains(mct))
-                    ignoredMapping(mct) != hct
-                else
-                    true
-            })
+          .filter(row => row.getAs[String]("table_name").matches(tableRegex))
+          .filter(row => {
+              val mct = row.getAs[String]("mysql_data_type")
+              val hct = row.getAs[String]("hive_data_type")
+              if (mct == hct)
+                  false
+              else if (ignoredMapping.isNull)
+                  true
+              else if (ignoredMapping.contains(mct))
+                  ignoredMapping(mct) != hct
+              else
+                  true
+          })
         val differences = ListBuffer[(String, String, String, String, String, String, String)]()
         joined.foreach(row => {
             val mtn = row.getAs[String]("table_name")
@@ -126,7 +135,7 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
         if (!exists(destinationDatabase))
             createDatabase(destinationDatabase)
         if (exists(sourceDatabase, sourceTable) && !exists(destinationDatabase, destinationTable)) {
-            this.logInfo(s"Create HiveOverHBaseTable $destinationDatabase.$destinationTable from schema of $sourceDatabase.$sourceTable")
+            this.logging.logInfo(s"Create HiveOverHBaseTable $destinationDatabase.$destinationTable from schema of $sourceDatabase.$sourceTable")
             var statement = this.showCreateTable(sourceDatabase, sourceTable).replace(" COMMENT 'from deserializer'", "")
             statement = "(?<=CREATE EXTERNAL TABLE) `.*?(?=`)".r.replaceFirstIn(statement, s" if not exists `$destinationDatabase.${destinationTable.replace("-", "_")}")
             statement = "(?<=hbase.table.name'=').*?(?=')".r.replaceFirstIn(statement, hBaseTable)
@@ -139,20 +148,9 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
             val result = Try(this.execute(statement))
             if (result.isFailure)
                 result.failed.get match {
-                    case _: Exception => this.logError(s"Error occurred while create external Hive over HBase table from table schema was ignored and statement is\n$statement")
+                    case e: Exception => this.logging.logError(s"Error occurred while create external Hive over HBase table from table schema was ignored and statement is\n$statement", e)
                 }
         }
-    }
-
-    /**
-     * 查询hive外部表创建语句
-     *
-     * @param database 数据库名称
-     * @param table    表名称
-     * @return
-     */
-    def showCreateTable(database: String, table: String): String = {
-        SparkSQL.sql(s"show create table $database.$table").collect().map(_.getString(0).trim).mkString
     }
 
     /**
@@ -171,13 +169,13 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
         if (!exists(database, table)) {
             val types = schema.filter(_.name != rowKey).map(sf => s"${sf.name.toLowerCase} ${sf.dataType.typeName.toHiveDataType}")
             val statement = s"create external table if not exists $database.$table ($rowKey string," + types.mkString(",") +
-                """) stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' with serdeproperties ("hbase.columns.mapping"=":key,""" +
-                schema.map("data:" + _.name.toLowerCase).mkString(",") +
-                s"""") tblproperties ("hbase.table.name" = "$namespace:$hBaseTable")"""
+              """) stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' with serdeproperties ("hbase.columns.mapping"=":key,""" +
+              schema.map("data:" + _.name.toLowerCase).mkString(",") +
+              s"""") tblproperties ("hbase.table.name" = "$namespace:$hBaseTable")"""
             val result = Try(this.execute(statement))
             if (result.isFailure)
                 result.failed.get match {
-                    case _: Exception => this.logError(s"Error occurred while create external Hive over HBase table was ignored and statement is\n$statement")
+                    case e: Exception => this.logging.logError(s"Error occurred while create external Hive over HBase table was ignored and statement is\n$statement", e)
                 }
         }
     }
@@ -212,17 +210,8 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
      * @param database 数据库名称
      */
     def createDatabase(database: String): Unit = {
-        this.logInfo(s"Create hive database $database")
+        this.logging.logInfo(s"Create hive database $database")
         this.execute(s"create database if not exists $database")
-    }
-
-    /**
-     * 创建表
-     *
-     * @param createSql 建表语句
-     */
-    def createTable(createSql: String): Unit = {
-        exists(createSql)
     }
 
     /**
@@ -245,6 +234,15 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
             SparkSQL.sql("show databases").collect().map(_.getString(0)).filter(_.matches(regexp)).toList
         else
             SparkSQL.sql("show databases").collect().map(_.getString(0)).toList
+    }
+
+    /**
+     * 创建表
+     *
+     * @param createSql 建表语句
+     */
+    def createTable(createSql: String): Unit = {
+        exists(createSql)
     }
 
     /**
@@ -279,11 +277,11 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
         if (!SparkSQL.sql(s"desc $database.$table").select("col_name").collect().map(_.getString(0)).contains(columnName))
             throw ExceptionGenerator.newException("ColumnNotExist", s"Column $columnName does not exists in $database.$table")
         val statement = this.showCreateTable(database, table)
-            .replace("CREATE EXTERNAL TABLE", "CREATE EXTERNAL TABLE if not exists")
-            .replace(" COMMENT 'from deserializer'", "")
-            .replaceSpecialSymbol
-            .replace(s",$columnName $columnType", "")
-            .replace(s",$columnFamily:$hColumnName", "")
+          .replace("CREATE EXTERNAL TABLE", "CREATE EXTERNAL TABLE if not exists")
+          .replace(" COMMENT 'from deserializer'", "")
+          .replaceSpecialSymbol
+          .replace(s",$columnName $columnType", "")
+          .replace(s",$columnFamily:$hColumnName", "")
         this.execute(s"drop table if exists $database.$table")
         this.execute(statement)
     }
@@ -309,12 +307,21 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
     }
 
     /**
+     * 执行sql语句
+     *
+     * @param statement sql语句
+     */
+    def execute(statement: String): Unit = {
+        SparkSQL.sql(statement)
+    }
+
+    /**
      * 查询
      *
      * @param statement sql语句
      * @return
      */
-    def query(statement: String): ResultSet = {
+    def query[T](statement: String, f: ResultSet => T): T = {
         throw new UnsupportedOperationException("not supported")
     }
 
@@ -325,7 +332,7 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
      * @param parameters sql语句参数
      * @return
      */
-    def query(statement: String, parameters: Array[Any]): ResultSet = {
+    def query[T](statement: String, parameters: Array[Any], f: ResultSet => T): T = {
         throw new UnsupportedOperationException("not supported")
     }
 
@@ -337,15 +344,6 @@ object SparkHiveUtils extends RDBHandler with LoggingTrait {
      */
     def truncate(database: String, table: String): Unit = {
         execute(s"truncate table $database.$table")
-    }
-
-    /**
-     * 执行sql语句
-     *
-     * @param statement sql语句
-     */
-    def execute(statement: String): Unit = {
-        SparkSQL.sql(statement)
     }
 
 }

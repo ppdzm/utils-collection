@@ -7,14 +7,16 @@ import java.util.Properties
  */
 object DatabaseConstants {
     lazy val mySQLDefaultProperties: Properties = new Properties {
-        put("driver", Drivers.MySQL.toString)
-        put("useunicode", "true")
-        put("characterEncoding", "utf8")
         put("autoReconnect", "true")
+        put("characterEncoding", "utf8")
+        put("driver", Drivers.MySQL.toString)
         put("failOverReadOnly", "false")
-        put("zeroDateTimeBehavior", "convertToNull")
-        put("transformedBitIsBoolean", "true")
+        put("rewriteBatchedStatements", "true")
         put("tinyInt1isBit", "false")
+        put("transformedBitIsBoolean", "true")
         put("useSSL", "false")
+        put("useunicode", "true")
+        put("yearIsDateType", "false")
+        put("zeroDateTimeBehavior", "convertToNull")
     }
 }

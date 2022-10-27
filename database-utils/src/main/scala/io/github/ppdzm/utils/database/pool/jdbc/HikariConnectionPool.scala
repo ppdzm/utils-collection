@@ -24,7 +24,7 @@ object HikariConnectionPool extends JDBCConnectionPool {
               username: String = null, password: String = null, properties: Map[String, AnyRef] = Map()): ConnectionPool = {
         val name = if (identity != null) Symbol(identity) else Symbol(jdbcUrl)
         if (!ConnectionPool.isInitialized(name)) {
-            this.logInfo(s"ConnectionPool named ${name} does not exists, create it with url $jdbcUrl and add it into HikariConnectionPool")
+            this.logging.logInfo(s"ConnectionPool named ${name} does not exists, create it with url $jdbcUrl and add it into HikariConnectionPool")
             val hikariConfig = new HikariConfig()
             hikariConfig.setDriverClassName(driver.toString)
             hikariConfig.setJdbcUrl(jdbcUrl)
@@ -36,10 +36,11 @@ object HikariConnectionPool extends JDBCConnectionPool {
             hikariConfig.setConnectionTimeout(60000)
             hikariConfig.setValidationTimeout(3000)
             hikariConfig.setMaxLifetime(60000)
-            hikariConfig.setMaximumPoolSize(10)
+            hikariConfig.setMaximumPoolSize(60)
             properties.foreach(property => hikariConfig.addDataSourceProperty(property._1, property._2))
             val hikariDataSource = new HikariDataSource(hikariConfig)
             hikariDataSource.setLoginTimeout(5)
+            //hikariDataSource.setConnectionTestQuery("SELECT 1")
             ConnectionPool.add(name, new DataSourceConnectionPool(hikariDataSource))
         }
         get(name)

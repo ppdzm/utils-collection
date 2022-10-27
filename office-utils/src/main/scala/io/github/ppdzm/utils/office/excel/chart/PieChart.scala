@@ -37,9 +37,9 @@ object PieChart {
 }
 
 trait PieChart extends Chart {
-    val chartTypeName = s"Pie${if (is3D) "3D" else ""}Chart"
     protected val is3D: Boolean
     protected val labeled: Boolean
+    val chartTypeName = s"Pie${if (is3D) "3D" else ""}Chart"
 
     /**
      * 绘图
@@ -47,7 +47,7 @@ trait PieChart extends Chart {
      * @return
      */
     override def plot(): PieChart.this.type = {
-        logInfo(s"start plot ${if (labeled) "labeled " else ""}${if (is3D) "3D " else ""}${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
+        this.logging.logInfo(s"start plot ${if (labeled) "labeled " else ""}${if (is3D) "3D " else ""}${this.getClass.getSimpleName} ${this.chartTitle} in sheet ${this.sheet.getSheetName}")
         this.setTitle(ctChart)
         this.setLegend(ctChart)
         if (is3D) {

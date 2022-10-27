@@ -41,31 +41,35 @@ public class FileConfig extends Config {
             active = properties.getProperty(CoreConstants.PROFILE_ACTIVE_KEY, "");
         }
         if (active.isEmpty()) {
-            logInfo("Profile " + CliUtils.rendering("default", Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
+            logging.logInfo("Profile " + CliUtils.rendering("default", Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
         } else {
-            logInfo("Profile " + CliUtils.rendering(active, Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
+            logging.logInfo("Profile " + CliUtils.rendering(active, Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
         }
+        String[] splits = active.split("/");
+        active = splits[splits.length - 1];
+        splits[splits.length - 1] = "";
+        String directory = String.join("/", splits);
         String profileName = "";
         if (name.isEmpty()) {
-            profileName = active + fixedExtension;
+            profileName = directory + active + fixedExtension;
         } else if (active.isEmpty()) {
-            profileName = name + fixedExtension;
+            profileName = directory + name + fixedExtension;
         } else {
-            profileName = name + "-" + active + fixedExtension;
+            profileName = directory + name + "-" + active + fixedExtension;
         }
-        logInfo("Load config from file " + CliUtils.rendering(profileName, Render.GREEN));
+        logging.logInfo("Load config from file " + CliUtils.rendering(profileName, Render.GREEN));
         Properties properties = new Properties();
         URL url = ResourceUtils.locateResourceAsURL(profileName);
         if (url != null) {
             String path = url.getPath();
-            logInfo("Config file located at " + CliUtils.rendering(path, Render.GREEN));
+            logging.logInfo("Config file located at " + CliUtils.rendering(path, Render.GREEN));
             InputStream inputStream = url.openStream();
             properties.load(inputStream);
             properties.setProperty(CoreConstants.PROFILE_PATH_KEY, path.substring(0, path.lastIndexOf("/")));
         } else {
-            logWarning(CliUtils.rendering("Config file ", Render.YELLOW) +
-                CliUtils.rendering(profileName, Render.GREEN) +
-                CliUtils.rendering(" not found, using only default configurations defined in code", Render.YELLOW));
+            logging.logWarning(CliUtils.rendering("Config file ", Render.YELLOW) +
+                    CliUtils.rendering(profileName, Render.GREEN) +
+                    CliUtils.rendering(" not found, using only default configurations defined in code", Render.YELLOW));
         }
         return properties;
     }

@@ -18,7 +18,11 @@ import java.util.Map;
 public class Logging implements Serializable {
     private static final long serialVersionUID = 1102659729708837677L;
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public Logger logger = LoggerFactory.getLogger(getClass());
+    public Logger logger;
+
+    public Logging(Class<?> clazz) {
+        this.logger = LoggerFactory.getLogger(clazz);
+    }
 
     public static void setLogging2Stdout(boolean enabled) {
         SystemProperties.setLogging2Stdout(enabled);
@@ -32,7 +36,7 @@ public class Logging implements Serializable {
         }
     }
 
-    protected void logDebug(String message, Render... renders) {
+    public void logDebug(String message, Render... renders) {
         String renderedMessage = rendering(message, renders);
         if (SystemProperties.getLogging2Stdout()) {
             System.out.println(CliUtils.rendering(sdf.format(new Date()), Render.CYAN) + " " + renderedMessage);
@@ -41,11 +45,11 @@ public class Logging implements Serializable {
         }
     }
 
-    public void logDebug(Object object, Render... renders) {
+    protected void logDebug(Object object, Render... renders) {
         logDebug(object.toString(), renders);
     }
 
-    protected void logInfo(String message, Render... renders) {
+    public void logInfo(String message, Render... renders) {
         String renderedMessage = rendering(message, renders);
         if (SystemProperties.getLogging2Stdout()) {
             System.out.println(CliUtils.rendering(sdf.format(new Date()), Render.CYAN) + " " + renderedMessage);
@@ -67,7 +71,7 @@ public class Logging implements Serializable {
         }
     }
 
-    public void logWarning(String message, Render... renders) {
+    void logWarning(String message, Render... renders) {
         String renderedMessage = rendering(message, renders);
         if (SystemProperties.getLogging2Stdout()) {
             System.out.println(CliUtils.rendering(sdf.format(new Date()), Render.CYAN) + " " + renderedMessage);
@@ -89,7 +93,7 @@ public class Logging implements Serializable {
         }
     }
 
-    protected void logError(String message, Exception e, Render... renders) {
+    public void logError(String message, Exception e, Render... renders) {
         String renderedMessage = rendering(message, renders);
         if (SystemProperties.getLogging2Stdout()) {
             System.out.println(CliUtils.rendering(sdf.format(new Date()), Render.CYAN) + " " + renderedMessage);

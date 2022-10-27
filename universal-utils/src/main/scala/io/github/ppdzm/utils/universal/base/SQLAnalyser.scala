@@ -14,8 +14,9 @@ import scala.util.matching.Regex
 /**
  * @author Created by Stuart Alex on 2021/4/19.
  */
-object SQLAnalyser extends Logging {
+object SQLAnalyser {
     type Readable = {def readLine(hint: String): String}
+    private lazy val logging = new Logging(getClass)
     private lazy val pattern: Regex = """[#$]\{[^#\}$]+\}""".r
 
     /**
@@ -44,35 +45,14 @@ object SQLAnalyser extends Logging {
 
     def analyse(originalScriptLines: Array[String], properties: Map[String, AnyRef], throwExceptionIfParameterNotProvided: Boolean, squeeze: Boolean): Array[String] = {
         originalScriptLines
-            .map(line => line.trimComment) //去掉每行注释后清除首尾空白字符
-            .filter(_.nonEmpty) //筛掉空行
-            .mkString(if (squeeze) " " else "\n") //所有行用空格/换行符区分加在一起
-            .split(";") //用分号做分隔符，截取成多个语句
-            .map(this.substitute(_, properties, throwExceptionIfParameterNotProvided)) //替换变量
-            .map(_.trim) //清除变量替换完成后每行的首尾空白字符
-            .map(s => if (squeeze) this.squeeze(s) else s)
-            .filter(_.nonEmpty) //筛掉空行
-    }
-
-    /**
-     * 压缩SQL脚本
-     *
-     * @param script SQL脚本
-     * @return
-     */
-    def squeeze(script: String): String = {
-        script
-            .replace("\b", "")
-            .replace("\n", "")
-            .replace("\r", "")
-            .replace("\t", "")
-            .replace("`", "")
-            .trim
-            .recursiveReplace("  ", " ")
-            .recursiveReplace("( ", "(")
-            .recursiveReplace(" )", ")")
-            .recursiveReplace(", ", ",")
-            .recursiveReplace(" ,", ",")
+          .map(line => line.trimComment) //去掉每行注释后清除首尾空白字符
+          .filter(_.nonEmpty) //筛掉空行
+          .mkString(if (squeeze) " " else "\n") //所有行用空格/换行符区分加在一起
+          .split(";") //用分号做分隔符，截取成多个语句
+          .map(this.substitute(_, properties, throwExceptionIfParameterNotProvided)) //替换变量
+          .map(_.trim) //清除变量替换完成后每行的首尾空白字符
+          .map(s => if (squeeze) this.squeeze(s) else s)
+          .filter(_.nonEmpty) //筛掉空行
     }
 
     /**
@@ -95,7 +75,7 @@ object SQLAnalyser extends Logging {
                         if (throwExceptionIfParameterNotProvided) {
                             throw new Exception(s"value of parameter $name isn't provided")
                         } else {
-                            logWarning(s"value of parameter $name isn't provided")
+                            this.logging.logWarning(s"value of parameter $name isn't provided")
                         }
                     } else {
                         val value = properties(name).toString
@@ -117,6 +97,27 @@ object SQLAnalyser extends Logging {
      */
     def squeeze(scripts: Array[String]): Array[String] = {
         squeeze(scripts.map(squeeze).mkString(" ")).split(";")
+    }
+
+    /**
+     * 压缩SQL脚本
+     *
+     * @param script SQL脚本
+     * @return
+     */
+    def squeeze(script: String): String = {
+        script
+          .replace("\b", "")
+          .replace("\n", "")
+          .replace("\r", "")
+          .replace("\t", "")
+          .replace("`", "")
+          .trim
+          .recursiveReplace("  ", " ")
+          .recursiveReplace("( ", "(")
+          .recursiveReplace(" )", ")")
+          .recursiveReplace(", ", ",")
+          .recursiveReplace(" ,", ",")
     }
 
     /**

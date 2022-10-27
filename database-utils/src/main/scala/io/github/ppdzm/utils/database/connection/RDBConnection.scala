@@ -9,9 +9,5 @@ trait RDBConnection {
 
     def getConnection(url: String, properties: Map[String, AnyRef]): Connection
 
-    def getStatement(url: String, properties: Map[String, AnyRef]): Statement
-
-    def getPreparedStatement(url: String, properties: Map[String, AnyRef], sql: String): PreparedStatement
-
     def close(): Unit
 }

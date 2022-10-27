@@ -8,8 +8,8 @@ import io.github.ppdzm.utils.universal.implicits.SeqConversions._
  * Created by Stuart Alex on 2017/9/22.
  */
 object Loan extends App {
-    println(rate(72000, 6360, 12) * 12)
-//    println(rate(12000, 1090, 12) * 12)
+    println(rate(48000, 4115.2, 12) * 12)
+    //    println(rate(12000, 1090, 12) * 12)
 
     /**
      * 等额本金还款详情
@@ -125,8 +125,8 @@ object Loan extends App {
             s"总还款额${paybackDetails.totalPayback}元，总利息${paybackDetails.totalInterest}元".prettyPrintln(render)
             "还款详情如下：".prettyPrintln(render)
             paybackDetails.monthPaybackDetails
-                .map { e => List(e.period.toString, e.payback.toString, e.principle.toString, e.interest.toString) }
-                .prettyShow(render, -1, explode = false, 0, 0, flank = true, null2Empty = true, transverse = true, truncate = false, 0, vertical = true, columns = List("Period", "Month Payback", "Principle", "Interest"))
+              .map { e => List(e.period.toString, e.payback.toString, e.principle.toString, e.interest.toString) }
+              .prettyShow(render, -1, explode = false, 0, 0, flank = true, null2Empty = true, transverse = true, truncate = false, 0, vertical = true, columns = List("Period", "Month Payback", "Principle", "Interest"))
         }
 
     }

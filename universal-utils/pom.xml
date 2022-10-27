@@ -147,12 +147,12 @@
         </dependency>
         <dependency>
             <groupId>org.scalaj</groupId>
-            <artifactId>scalaj-http_${scala.version}</artifactId>
+            <artifactId>scalaj-http_${scala.lang.version}</artifactId>
             <version>${scalaj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scalikejdbc</groupId>
-            <artifactId>scalikejdbc-core_${scala.version}</artifactId>
+            <artifactId>scalikejdbc-core_${scala.lang.version}</artifactId>
             <version>${scalikejdbc.version}</version>
             <exclusions>
                 <exclusion>

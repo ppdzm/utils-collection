@@ -71,12 +71,12 @@ object BasicConversions {
         def isCJK: Boolean = {
             val ub = Character.UnicodeBlock.of(char)
             ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
-                ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
-                ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
-                ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
-                ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
-                ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS ||
-                ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+              ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
+              ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+              ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
+              ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
+              ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS ||
+              ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
         }
 
     }
@@ -121,23 +121,23 @@ object BasicConversions {
          */
         def deUnicode: String = {
             string
-                .split("""\\u""")
-                .filter(_.nonEmpty)
-                .map {
-                    e =>
-                        if (e.length < 4)
-                            e
-                        else {
-                            val left = e.substring(0, 4)
-                            val right = e.substring(4)
-                            val r = Try(Integer.parseInt(left, 16).toChar)
-                            if (r.isSuccess)
-                                r.get + right
-                            else
-                                e
-                        }
-                }
-                .mkString
+              .split("""\\u""")
+              .filter(_.nonEmpty)
+              .map {
+                  e =>
+                      if (e.length < 4)
+                          e
+                      else {
+                          val left = e.substring(0, 4)
+                          val right = e.substring(4)
+                          val r = Try(Integer.parseInt(left, 16).toChar)
+                          if (r.isSuccess)
+                              r.get + right
+                          else
+                              e
+                      }
+              }
+              .mkString
         }
 
         /**
@@ -149,14 +149,14 @@ object BasicConversions {
             val unicodeString = string
             val stringBuilder = new StringBuilder()
             unicodeString
-                .indices
-                .foreach {
-                    i =>
-                        if (unicodeString(i) == '\\' && i < unicodeString.length && unicodeString(i + 1) == 'x')
-                            stringBuilder.append("""\\""")
-                        else
-                            stringBuilder.append(unicodeString(i))
-                }
+              .indices
+              .foreach {
+                  i =>
+                      if (unicodeString(i) == '\\' && i < unicodeString.length && unicodeString(i + 1) == 'x')
+                          stringBuilder.append("""\\""")
+                      else
+                          stringBuilder.append(unicodeString(i))
+              }
             stringBuilder.mkString
         }
 
@@ -210,15 +210,15 @@ object BasicConversions {
         def unicode82Bytes: Array[Byte] = {
             val unicodeText = string
             unicodeText
-                .split("""\\x""")
-                .flatMap {
-                    e =>
-                        if (e.length == 2)
-                            e.hexString2Bytes
-                        else {
-                            e.take(2).hexString2Bytes ++ e.drop(2).flatMap(_.toString.getBytes())
-                        }
-                }
+              .split("""\\x""")
+              .flatMap {
+                  e =>
+                      if (e.length == 2)
+                          e.hexString2Bytes
+                      else {
+                          e.take(2).hexString2Bytes ++ e.drop(2).flatMap(_.toString.getBytes())
+                      }
+              }
         }
 
         /**
@@ -369,6 +369,8 @@ object BasicConversions {
 
         def green: String = CliUtils.rendering(string, Render.RESET, Render.GREEN)
 
+        def magenta: String = CliUtils.rendering(string, Render.RESET, Render.MAGENTA)
+
         def red: String = CliUtils.rendering(string, Render.RESET, Render.RED)
 
         def yellow: String = CliUtils.rendering(string, Render.RESET, Render.YELLOW)
@@ -459,9 +461,9 @@ object BasicConversions {
 
         def ipV4Address2Int: Int = {
             string.split("\\.")
-                .zipWithIndex
-                .map { case (value, index) => value.toInt << ((3 - index) * 8) }
-                .sum
+              .zipWithIndex
+              .map { case (value, index) => value.toInt << ((3 - index) * 8) }
+              .sum
         }
 
         def toCamel: String = {

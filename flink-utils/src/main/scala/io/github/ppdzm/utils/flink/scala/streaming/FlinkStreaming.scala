@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.flink.scala.streaming
 
 import io.github.ppdzm.utils.flink.scala.common.CheckpointConfiguration
 import io.github.ppdzm.utils.universal.alert.Alerter
-import io.github.ppdzm.utils.universal.base.{Logging, LoggingTrait}
+import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.flink.api.common.restartstrategy.RestartStrategies.RestartStrategyConfiguration
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 
@@ -10,11 +10,8 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction
 /**
  * Created by Stuart Alex on 2021/4/13.
  */
-trait FlinkStreaming[T] extends LoggingTrait {
-    /**
-     * 命令行参数
-     */
-    private var _args: Array[String] = _
+trait FlinkStreaming[T] {
+    protected lazy val logging = new Logging(getClass)
     /**
      * Checkpoint配置
      */
@@ -39,20 +36,24 @@ trait FlinkStreaming[T] extends LoggingTrait {
      * 数据源方法
      */
     protected val dataSource: SourceFunction[T]
-
-    protected def args: Array[String] = _args
+    /**
+     * 命令行参数
+     */
+    private var _args: Array[String] = _
 
     def main(args: Array[String]): Unit = {
         try {
             _args = args
             Logging.setLogging2Stdout(true)
             start()
-            logInfo(s"start execute application $applicationName")
+            this.logging.logInfo(s"start execute application $applicationName")
         } catch {
             case e: Exception =>
                 alerter.alert("", applicationName, e);
         }
     }
+
+    protected def args: Array[String] = _args
 
     protected def start()
 }

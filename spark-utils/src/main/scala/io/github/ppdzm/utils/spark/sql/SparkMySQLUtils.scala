@@ -11,7 +11,8 @@ import io.github.ppdzm.utils.universal.implicits.UnitConversions._
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 
-object SparkMySQLUtils extends Logging {
+object SparkMySQLUtils {
+    protected lazy val logging = new Logging(getClass)
     private lazy val defaultProperties: Properties = DatabaseConstants.mySQLDefaultProperties
 
     /**
@@ -24,7 +25,7 @@ object SparkMySQLUtils extends Logging {
      * @return Boolean（是否成功）
      */
     def insert(url: String, table: String, dataFrame: DataFrame, mode: String): Unit = {
-        logInfo(s"Start write data from a DataFrame to table $table with mode $mode and url $url")
+        this.logging.logInfo(s"Start write data from a DataFrame to table $table with mode $mode and url $url")
         dataFrame.write.mode(mode).jdbc(url, table, defaultProperties)
     }
 
@@ -73,7 +74,7 @@ object SparkMySQLUtils extends Logging {
                 .collect()
             if (tableInfo.length == 1) {
                 val size = tableInfo.head.get(3)
-                logInfo(s"Size of table $table is about ${
+                this.logging.logInfo(s"Size of table $table is about ${
                     size.toString.toLong.toBytesLength
                 }")
             }
@@ -125,7 +126,7 @@ object SparkMySQLUtils extends Logging {
         if (schema.length != 0)
             (table, true, schema.ascending)
         else {
-            logWarning(s"Can not find primary key of table $table")
+            this.logging.logWarning(s"Can not find primary key of table $table")
             (table, false, Array[String]())
         }
     }

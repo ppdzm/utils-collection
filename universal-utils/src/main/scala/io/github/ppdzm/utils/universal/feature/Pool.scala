@@ -1,11 +1,10 @@
 package io.github.ppdzm.utils.universal.feature
 
-import java.util.Properties
-
-import io.github.ppdzm.utils.universal.base.LoggingTrait
+import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.encryption.PasswordBasedEncryptor
 import org.apache.commons.pool2.ObjectPool
 
+import java.util.Properties
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
@@ -26,7 +25,8 @@ object Pool {
     }
 }
 
-trait Pool[T] extends LoggingTrait{
+trait Pool[T] {
+    protected val logging = new Logging(getClass)
     protected val _pool: mutable.Map[String, ObjectPool[T]] = mutable.Map[String, ObjectPool[T]]()
     sys.addShutdownHook {
         this._pool.values.foreach(_.close())
@@ -35,12 +35,12 @@ trait Pool[T] extends LoggingTrait{
     def getKey(properties: Properties): String = {
         PasswordBasedEncryptor.md5Digest {
             properties
-                .keys()
-                .map(key => (key.toString, properties.get(key).toString))
-                .toList
-                .sortBy(_._1)
-                .map(e => e._1 + ":" + e._2)
-                .mkString(",")
+              .keys()
+              .map(key => (key.toString, properties.get(key).toString))
+              .toList
+              .sortBy(_._1)
+              .map(e => e._1 + ":" + e._2)
+              .mkString(",")
 
         }
     }

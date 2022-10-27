@@ -10,11 +10,15 @@ import org.apache.commons.pool2.impl.GenericObjectPool
  */
 object MySQLHandlerPool extends Pool[MySQLHandler] {
 
-    def apply(url: String, properties: Map[String, AnyRef]): ObjectPool[MySQLHandler] = {
+    def apply(url: String, properties: Map[String, AnyRef] = Map()): ObjectPool[MySQLHandler] = {
         this._pool.getOrElse(url, {
-            this.logInfo(s"MySQLHandler with url $url does not exists, create it and add it into MySQLHandler Pool")
+            this.logging.logInfo(s"MySQLHandler with url $url does not exists, create it and add it into MySQLHandler Pool")
             synchronized[ObjectPool[MySQLHandler]] {
-                val pool = new GenericObjectPool[MySQLHandler](new MySQLHandlerFactory(url, properties))
+                val pool =
+                    if (properties == null)
+                        new GenericObjectPool[MySQLHandler](new MySQLHandlerFactory(url, Map()))
+                    else
+                        new GenericObjectPool[MySQLHandler](new MySQLHandlerFactory(url, properties))
                 pool.addObject()
                 this._pool.put(url, pool)
                 pool

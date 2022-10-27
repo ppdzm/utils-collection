@@ -1,16 +1,20 @@
 package io.github.ppdzm.utils.hadoop.hbase
 
-import java.util
-
-import io.github.ppdzm.utils.universal.base.{DateTimeUtils, LoggingTrait}
+import io.github.ppdzm.utils.hadoop.security.KerberosConfig
+import io.github.ppdzm.utils.universal.base.{DateTimeUtils, Logging}
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.client._
 import org.apache.hadoop.hbase.filter._
+import org.apache.hadoop.hbase.io.compress.Compression.Algorithm
+import org.apache.hadoop.hbase.io.encoding.DataBlockEncoding
+import org.apache.hadoop.hbase.regionserver.BloomType
 import org.apache.hadoop.hbase.snapshot.{SnapshotCreationException, SnapshotExistsException}
 import org.apache.hadoop.hbase.util.Bytes
-import org.apache.hadoop.hbase.{CompareOperator, HColumnDescriptor, HTableDescriptor, NamespaceDescriptor, NamespaceExistException, NamespaceNotFoundException, TableExistsException, TableName}
+import org.apache.hadoop.hbase.{CompareOperator, NamespaceDescriptor, NamespaceExistException, NamespaceNotFoundException, TableExistsException, TableName}
 
+import java.nio.charset.StandardCharsets
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
@@ -19,20 +23,27 @@ import scala.util.Try
 /**
  * Created by Stuart Alex on 2017/1/11.
  */
-case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBaseEnvironment with LoggingTrait {
+case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int, kerberosEnabled: Boolean = false, kerberosConfig: KerberosConfig = null) extends HBaseEnvironment {
+    private val logging = new Logging(getClass)
 
     def bulkDelete(table: String, keyRegexp: String, batchSize: Int): Unit = {
         val filterList = new FilterList()
         filterList.addFilter(new RowFilter(CompareOperator.EQUAL, new RegexStringComparator(keyRegexp)))
         filterList.addFilter(new KeyOnlyFilter())
         val iterator = scan(table, filterList)
-        LoanPattern.using(connection.getTable(TableName.valueOf(table))) {
-            t =>
-                iterator.map(_.getRow).grouped(batchSize)
-                    .map(_.map(new Delete(_)))
-                    .foreach {
-                        deletes => t.delete(deletes.asJava)
+        LoanPattern.using(connection.getBufferedMutator(TableName.valueOf(table))) {
+            bufferedMutator =>
+                var count = 0
+                while (iterator.hasNext) {
+                    val delete = new Delete(iterator.next().getRow)
+                    bufferedMutator.mutate(delete)
+                    count += 1
+                    if (count == batchSize) {
+                        bufferedMutator.flush()
+                        count = 0
                     }
+                }
+                bufferedMutator.flush()
         }
     }
 
@@ -48,9 +59,9 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
         LoanPattern.using(connection.getTable(TableName.valueOf(table))) {
             t =>
                 puts.grouped(batchSize)
-                    .foreach {
-                        ps => t.put(ps.asJava)
-                    }
+                  .foreach {
+                      ps => t.put(ps.asJava)
+                  }
         }
     }
 
@@ -72,15 +83,15 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
         val result = Try {
             LoanPattern.using(connection.getAdmin)(admin => {
                 if (!admin.listNamespaceDescriptors().map(_.getName).contains(namespace)) {
-                    this.logInfo(s"Start create namespace $namespace")
+                    this.logging.logInfo(s"Start create namespace $namespace")
                     admin.createNamespace(NamespaceDescriptor.create(namespace).build)
-                    this.logInfo(s"Namespace $namespace was successfully created")
+                    this.logging.logInfo(s"Namespace $namespace was successfully created")
                 }
             })
         }
         if (result.isFailure)
             result.failed.get match {
-                case _: NamespaceExistException => this.logError("Try to create an existed namespace, exception was avoided by program")
+                case e: NamespaceExistException => this.logging.logError("Try to create an existed namespace, exception was avoided by program", e)
                 case _ => throw result.failed.get
             }
     }
@@ -94,7 +105,9 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
      * @param endKey         RowKey终止
      * @param regionNumber   Region数目
      */
-    def createTable(table: String, columnFamilies: Array[String], startKey: String = null, endKey: String = null, regionNumber: Int = 0): Unit = this.createTable(table, columnFamilies.map(_ -> 1).toMap, startKey, endKey, regionNumber)
+    def createTable(table: String, columnFamilies: Array[String], compression: Algorithm = Algorithm.SNAPPY, startKey: String = null, endKey: String = null, regionNumber: Int = 0): Unit = {
+        this.createTable(table, columnFamilies.map(_ -> 1).toMap, compression, startKey, endKey, regionNumber)
+    }
 
     /**
      * 创建表
@@ -105,38 +118,51 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
      * @param endKey               RowKey终止
      * @param regionNumber         Region数目
      */
-    def createTable(table: String, columnFamiliesSchema: Map[String, Int], startKey: String, endKey: String, regionNumber: Int): Unit = {
-        val result = Try {
+    def createTable(table: String, columnFamiliesSchema: Map[String, Int], compression: Algorithm, startKey: String, endKey: String, regionNumber: Int): Unit = {
+        try {
             LoanPattern.using(connection.getAdmin)(admin => {
                 val tableName = TableName.valueOf(table)
                 if (!admin.tableExists(tableName)) {
-                    val descriptor = new HTableDescriptor(tableName)
-                    TableDescriptorBuilder.newBuilder(tableName).build()
+                    val descriptorBuilder = TableDescriptorBuilder.newBuilder(tableName)
                     columnFamiliesSchema.foreach(cfs => {
-                        val columnFamily = new HColumnDescriptor(cfs._1)
-                        columnFamily.setMaxVersions(cfs._2)
-                        descriptor.addFamily(columnFamily)
+                        val columnFamilyBuilder =
+                            ColumnFamilyDescriptorBuilder
+                              .newBuilder(cfs._1.getBytes(StandardCharsets.UTF_8))
+                              .setBloomFilterType(BloomType.ROW)
+                              .setCompressionType(compression)
+                              .setDataBlockEncoding(DataBlockEncoding.FAST_DIFF)
+                              .setMaxVersions(cfs._2)
+                        descriptorBuilder.setColumnFamily(columnFamilyBuilder.build())
                     })
-                    if (startKey.isNull || endKey.isNull || regionNumber <= 0)
+                    val descriptor = descriptorBuilder.build()
+                    if (startKey.isNull || endKey.isNull)
                         admin.createTable(descriptor)
-                    else
+                    else if (Try(startKey.toInt).isSuccess && Try(endKey.toInt).isSuccess) {
+                        val sKey = startKey.toInt
+                        val eKey = endKey.toInt
+                        val splitKeyLength = endKey.length
+                        val splitKeys = new Array[Array[Byte]](eKey - sKey + 1)
+                        for (key <- sKey to eKey) {
+                            splitKeys(key) = Bytes.toBytes(String.valueOf(key).pad(splitKeyLength, '0', 1))
+                        }
+                        admin.createTable(descriptor, splitKeys)
+                    } else {
                         admin.createTable(descriptor, startKey.getBytes, endKey.getBytes, regionNumber)
-                    this.logInfo(s"HBase table $table was successfully created")
+                    }
+                    this.logging.logInfo(s"HBase table $table was successfully created")
                 }
             })
+        } catch {
+            case _: TableExistsException =>
+            case t: Throwable => throw t
         }
-        if (result.isFailure)
-            result.failed.get match {
-                case _: TableExistsException =>
-                case t: Throwable => throw t
-            }
     }
 
     /**
      * HBase删除单行单列
      *
      * @param table     HBase表名
-     * @param key       rowkey
+     * @param key       row key
      * @param family    列族
      * @param qualifier 列名
      */
@@ -175,7 +201,7 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
         }
         if (result.isFailure)
             result.failed.get match {
-                case _: NamespaceNotFoundException => this.logError("Try to drop an unexisted namespace, exception was avoided by program")
+                case e: NamespaceNotFoundException => this.logging.logError("Try to drop an unexisted namespace, exception was avoided by program", e)
                 case t: Throwable => throw t
             }
     }
@@ -202,10 +228,13 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
      *
      * @param table 表名称
      */
-    def dropTable(table: String): Unit = {
+    def dropTable(table: String, force: Boolean = false): Unit = {
         LoanPattern.using(connection.getAdmin)(admin => {
             val tableName = TableName.valueOf(table)
             if (admin.tableExists(tableName)) {
+                if (admin.isTableEnabled(tableName) && force) {
+                    admin.disableTable(tableName)
+                }
                 admin.deleteTable(tableName)
             }
         })
@@ -338,7 +367,7 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
                 if (admin.tableExists(tableName))
                     if (!admin.listSnapshots().map(_.getName).contains(snapshot)) {
                         admin.snapshot(snapshot, tableName)
-                        this.logInfo(s"Snapshot “$snapshot” of “$tableName” was successfully created")
+                        this.logging.logInfo(s"Snapshot “$snapshot” of “$tableName” was successfully created")
                     }
             })
         }
@@ -346,8 +375,8 @@ case class HBaseHandler(zookeeperQuorum: String, zookeeperPort: Int) extends HBa
             result.failed.get match {
                 case _: SnapshotExistsException =>
                 case _: SnapshotCreationException =>
-                case e: Throwable =>
-                    this.logError(s"Exception occurred but avoided by program, detail information is bellow")
+                case e: Exception =>
+                    this.logging.logError(s"Exception occurred but avoided by program, detail information is bellow", e)
                     e.printStackTrace()
             }
     }

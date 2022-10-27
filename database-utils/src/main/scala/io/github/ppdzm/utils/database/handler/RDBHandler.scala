@@ -1,11 +1,14 @@
 package io.github.ppdzm.utils.database.handler
 
+import io.github.ppdzm.utils.universal.base.Logging
+
 import java.sql.{PreparedStatement, ResultSet}
 
 /**
  * Created by Stuart Alex on 2021/4/6.
  */
 trait RDBHandler {
+    protected lazy val logging = new Logging(getClass)
     protected val url: String
 
     /**
@@ -89,19 +92,19 @@ trait RDBHandler {
     /**
      * 查询
      *
-     * @param statement sql语句
+     * @param sql sql语句
      * @return
      */
-    def query(statement: String): ResultSet
+    def query[T](sql: String, f: ResultSet => T): T
 
     /**
      * 查询
      *
-     * @param statement  sql语句
+     * @param sql        sql语句
      * @param parameters sql语句参数
      * @return
      */
-    def query(statement: String, parameters: Array[Any]): ResultSet
+    def query[T](sql: String, parameters: Array[Any], f: ResultSet => T): T
 
     /**
      * 查询hive外部表创建语句
@@ -137,10 +140,10 @@ trait RDBHandler {
             if (parameters == null)
                 return ps
             parameters
-                .zipWithIndex
-                .foreach {
-                    case (v, i) => ps.setParameter(i, v)
-                }
+              .zipWithIndex
+              .foreach {
+                  case (v, i) => ps.setParameter(i, v)
+              }
             ps
         }
 
@@ -153,6 +156,29 @@ trait RDBHandler {
          */
         def setParameter(parameterIndex: Int, value: Any): PreparedStatement = {
             ps.setParameter(parameterIndex, value, value.getClass.getSimpleName.toLowerCase)
+        }
+
+        /**
+         * 设置PreparedStatement的参数
+         *
+         * @param columnNameValuePair 参数，也即字段名称——字段值对
+         * @param columnNameTypePair  字段名称——类型对
+         * @param startIndex          起始索引
+         * @return
+         */
+        def setParameters(columnNameValuePair: Map[String, Any], columnNameTypePair: Map[String, String], startIndex: Int): PreparedStatement = {
+            if (columnNameValuePair == null)
+                return ps
+            columnNameValuePair
+              .toList
+              .sortBy(_._1)
+              .zipWithIndex
+              .foreach {
+                  case ((k, v), i) =>
+                      val columnType = columnNameTypePair(k)
+                      ps.setParameter(startIndex + i, v, columnType)
+              }
+            ps
         }
 
         /**
@@ -180,29 +206,6 @@ trait RDBHandler {
                 case "double" => ps.setDouble(parameterIndex, value.asInstanceOf[Double])
                 case _ => ps.setObject(parameterIndex, value)
             }
-            ps
-        }
-
-        /**
-         * 设置PreparedStatement的参数
-         *
-         * @param columnNameValuePair 参数，也即字段名称——字段值对
-         * @param columnNameTypePair  字段名称——类型对
-         * @param startIndex          起始索引
-         * @return
-         */
-        def setParameters(columnNameValuePair: Map[String, Any], columnNameTypePair: Map[String, String], startIndex: Int): PreparedStatement = {
-            if (columnNameValuePair == null)
-                return ps
-            columnNameValuePair
-                .toList
-                .sortBy(_._1)
-                .zipWithIndex
-                .foreach {
-                    case ((k, v), i) =>
-                        val columnType = columnNameTypePair(k)
-                        ps.setParameter(startIndex + i, v, columnType)
-                }
             ps
         }
 

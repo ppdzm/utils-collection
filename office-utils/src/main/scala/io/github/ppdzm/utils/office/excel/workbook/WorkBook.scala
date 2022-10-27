@@ -1,15 +1,16 @@
 package io.github.ppdzm.utils.office.excel.workbook
 
-import java.io.{File, FileNotFoundException, FileOutputStream}
-
-import io.github.ppdzm.utils.universal.base.LoggingTrait
+import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.apache.poi.ss.usermodel.Workbook
+
+import java.io.{File, FileNotFoundException, FileOutputStream}
 
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-trait WorkBook extends LoggingTrait {
+trait WorkBook {
+    protected lazy val logging = new Logging(getClass)
     protected lazy val backup: String = FilenameUtils.removeExtension(excelFileName) + "-backup." + FilenameUtils.getExtension(excelFileName)
     protected lazy val excelFile = new File(excelFileName)
     protected lazy val backupFile = new File(backup)
@@ -26,7 +27,7 @@ trait WorkBook extends LoggingTrait {
         val backupFile = new File(backup)
         if (excelFile.exists()) {
             // 创建备份文件
-            logInfo(s"create backup file $backupFile")
+            this.logging.logInfo(s"create backup file $backupFile")
             FileUtils.copyFile(excelFile, backupFile)
         } else if (!create) {
             throw new FileNotFoundException(s"file $excelFileName not exist")
@@ -71,17 +72,17 @@ trait WorkBook extends LoggingTrait {
     def cleanBackup(success: Boolean): Unit = {
         if (!success && excelFile.exists()) {
             // 删除出错的文件
-            logInfo(s"delete wrong file ${excelFile.getName}")
+            this.logging.logInfo(s"delete wrong file ${excelFile.getName}")
             excelFile.delete()
             if (backupFile.exists()) {
                 // 恢复原文件
-                logInfo(s"recover backup ${backupFile.getName} to ${excelFile.getName}")
+                this.logging.logInfo(s"recover backup ${backupFile.getName} to ${excelFile.getName}")
                 FileUtils.copyFile(backupFile, excelFile)
             }
         }
         if (backupFile.exists()) {
             // 删除备份文件
-            logInfo(s"delete backup file $backupFile")
+            this.logging.logInfo(s"delete backup file $backupFile")
             backupFile.delete()
         }
     }

@@ -3,6 +3,7 @@ package io.github.ppdzm.utils.spark.hbase
 import io.github.ppdzm.utils.hadoop.constants.ZookeeperConfigConstants
 import io.github.ppdzm.utils.hadoop.hbase.implicts.HBaseImplicits._
 import io.github.ppdzm.utils.hadoop.hbase.{HBaseCatalog, HBaseEnvironment}
+import io.github.ppdzm.utils.hadoop.security.KerberosConfig
 import io.github.ppdzm.utils.spark.SparkUtils
 import io.github.ppdzm.utils.spark.sql.SparkSQL
 import io.github.ppdzm.utils.universal.cli.PrintConfig
@@ -14,10 +15,12 @@ import org.apache.spark.sql.datasources.hbase.HBaseTableCatalog
 import org.scalatest.FunSuite
 
 class SparkHBaseTest extends FunSuite with HBaseEnvironment with PrintConfig with ZookeeperConfigConstants {
-    private lazy val handler = SparkHBaseHandler(zookeeperQuorum, zookeeperPort)
+    private lazy val handler = SparkHBaseHandler(SparkUtils.getSparkSession(), zookeeperQuorum, zookeeperPort)
     override protected val config: Config = new FileConfig()
-    override protected val zookeeperQuorum: String = ZOOKEEPER_QUORUM.stringValue
-    override protected val zookeeperPort: Int = ZOOKEEPER_PORT.intValue
+    override val kerberosEnabled: Boolean = false
+    override val kerberosConfig: KerberosConfig = null
+    override val zookeeperQuorum: String = ZOOKEEPER_QUORUM.stringValue
+    override val zookeeperPort: Int = ZOOKEEPER_PORT.intValue
 
 
     test("HBase RDD to DataFrame") {
@@ -74,7 +77,7 @@ class SparkHBaseTest extends FunSuite with HBaseEnvironment with PrintConfig wit
         val conf = this.configuration
         conf.set(TableInputFormat.INPUT_TABLE, "User")
         SparkUtils.getSparkSession().sparkContext
-            .newAPIHadoopRDD(this.configuration, classOf[TableInputFormat], classOf[ImmutableBytesWritable], classOf[Result])
-            .foreachPartition(_.foreach(_._2.prettyShow(render, alignment, linefeed)))
+          .newAPIHadoopRDD(this.configuration, classOf[TableInputFormat], classOf[ImmutableBytesWritable], classOf[Result])
+          .foreachPartition(_.foreach(_._2.prettyShow(render, alignment, linefeed)))
     }
 }

@@ -2,8 +2,14 @@ package io.github.ppdzm.utils.universal.config;
 
 import io.github.ppdzm.utils.universal.base.Logging;
 import io.github.ppdzm.utils.universal.cli.CliUtils;
+import io.github.ppdzm.utils.universal.cli.ParameterOption;
 import io.github.ppdzm.utils.universal.cli.Render;
+import io.github.ppdzm.utils.universal.core.CoreConstants;
 import lombok.Getter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,8 +18,9 @@ import java.util.regex.Pattern;
 /**
  * @author Created by Stuart Alex on 2021/5/7.
  */
-public abstract class Config extends Logging {
+public abstract class Config {
     private static final long serialVersionUID = -5864298598020240463L;
+    protected Logging logging = new Logging(getClass());
     protected Pattern replaceRegex = Pattern.compile("\\$\\{[^#}$]+\\}");
     protected Map<String, String> configKeyValues = new HashMap<>();
     @Getter
@@ -101,11 +108,11 @@ public abstract class Config extends Logging {
                 refs = findReferences(plainValue, missingRefs);
             }
             for (String missingRef : missingRefs) {
-                logWarning(CliUtils.rendering("Value of reference ", Render.YELLOW) + missingRef + " in configuration " + property + CliUtils.rendering(" is not found, please confirm", Render.YELLOW));
+                logging.logWarning(CliUtils.rendering("Value of reference ", Render.YELLOW) + missingRef + " in configuration " + property + CliUtils.rendering(" is not found, please confirm", Render.YELLOW));
             }
         }
         if (plainValue.isEmpty()) {
-            logWarning(CliUtils.rendering("Value of configuration ", Render.YELLOW) + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" is empty, please confirm", Render.YELLOW));
+            logging.logWarning(CliUtils.rendering("Value of configuration ", Render.YELLOW) + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" is empty, please confirm", Render.YELLOW));
         } else {
             printConfig(property, plainValue);
         }
@@ -164,51 +171,49 @@ public abstract class Config extends Logging {
         }
     }
 
-//    /**
-//     * 解析程序参数
-//     *
-//     * @param args 程序参数
-//     * @return CommandLine
-//     */
-//    public CommandLine parseOptions(String[] args) throws ParseException {
-//        return parseOptions(args, null);
-//    }
-//
-//    /**
-//     * 解析程序参数
-//     *
-//     * @param args    程序参数
-//     * @param options 程序选项列表
-//     * @return CommandLine
-//     */
-//    public CommandLine parseOptions(String[] args, Options options) throws ParseException {
-//        CommandLine cli;
-//        if (options == null) {
-//            cli = new PosixParser().parse(new Options().addOption(ParameterOption.option()), args);
-//        } else {
-//            cli = new PosixParser().parse(options.addOption(ParameterOption.option()), args);
-//        }
-//        Properties properties = cli.getOptionProperties(ParameterOption.name());
-//        for (Object o : properties.keySet()) {
-//            String key = o.toString();
-//            String value = properties.getProperty(key);
-//            if (key.equals(CoreConstants.PROFILE_ACTIVE_KEY)) {
-//                System.setProperty(key, value);
-//            }
-//            addProperty(o, properties.get(o));
-//        }
-//        return cli;
-//    }
+    /**
+     * 解析程序参数
+     *
+     * @param args 程序参数
+     * @return CommandLine
+     */
+    public CommandLine parseOptions(String[] args) throws ParseException {
+        return parseOptions(args, null);
+    }
+
+    /**
+     * 解析程序参数
+     *
+     * @param args    程序参数
+     * @param options 程序选项列表
+     * @return CommandLine
+     */
+    public CommandLine parseOptions(String[] args, Options options) throws ParseException {
+        CommandLine cli;
+        if (options == null) {
+            cli = new PosixParser().parse(new Options().addOption(ParameterOption.option()), args);
+        } else {
+            cli = new PosixParser().parse(options.addOption(ParameterOption.option()), args);
+        }
+        Properties properties = cli.getOptionProperties(ParameterOption.name());
+        for (Object o : properties.keySet()) {
+            String key = o.toString();
+            String value = properties.getProperty(key);
+            if (key.equals(CoreConstants.PROFILE_ACTIVE_KEY)) {
+                System.setProperty(key, value);
+            }
+            addProperty(o, properties.get(o));
+        }
+        return cli;
+    }
 
     private void printConfig(String property, Object plainValue) {
         if (!configKeyValues.containsKey(property)) {
             configKeyValues.put(property, plainValue.toString());
-            logInfo("Value of configuration " + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" => ", Render.MAGENTA) + CliUtils.rendering(plainValue.toString(), Render.GREEN));
+            logging.logInfo("Value of configuration " + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" => ", Render.MAGENTA) + CliUtils.rendering(plainValue.toString(), Render.GREEN));
         } else if (!configKeyValues.get(property).equals(plainValue)) {
             configKeyValues.put(property, plainValue.toString());
-            logInfo("Value of configuration " + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" changed to => ", Render.MAGENTA) + CliUtils.rendering(plainValue.toString(), Render.RED));
-        } else {
-            return;
+            logging.logInfo("Value of configuration " + CliUtils.rendering(property, Render.GREEN) + CliUtils.rendering(" changed to => ", Render.MAGENTA) + CliUtils.rendering(plainValue.toString(), Render.RED));
         }
     }
 

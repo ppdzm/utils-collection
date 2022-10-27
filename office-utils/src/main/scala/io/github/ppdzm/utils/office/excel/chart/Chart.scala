@@ -1,17 +1,18 @@
 package io.github.ppdzm.utils.office.excel.chart
 
-import java.lang
-
 import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.Direction
 import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
-import io.github.ppdzm.utils.universal.base.LoggingTrait
+import io.github.ppdzm.utils.universal.base.Logging
 import org.apache.poi.xssf.usermodel.{XSSFChart, XSSFClientAnchor, XSSFDrawing, XSSFSheet}
 import org.openxmlformats.schemas.drawingml.x2006.chart._
+
+import java.lang
 
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-trait Chart extends LoggingTrait {
+trait Chart {
+    protected lazy val logging = new Logging(getClass)
     /**
      * 图表
      */

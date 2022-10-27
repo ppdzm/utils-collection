@@ -11,7 +11,7 @@ import java.util.*;
  * @author Created by Stuart Alex on 2021/5/7.
  */
 public class CliUtils {
-    protected static Logging logging = new Logging();
+    protected static Logging logging = new Logging(CliUtils.class);
     /**
      * 转义符
      */
@@ -182,10 +182,10 @@ public class CliUtils {
             Object value = argumentsMapping.get(key);
             properties.put(key, value.toString());
             logging.logInfo(
-                CliUtils.rendering("Parsed config ", Render.MAGENTA) +
-                    CliUtils.rendering(key, Render.GREEN) +
-                    CliUtils.rendering(" => ", Render.MAGENTA) +
-                    CliUtils.rendering(value.toString(), Render.GREEN)
+                    CliUtils.rendering("Parsed config ", Render.MAGENTA) +
+                            CliUtils.rendering(key, Render.GREEN) +
+                            CliUtils.rendering(" => ", Render.MAGENTA) +
+                            CliUtils.rendering(value.toString(), Render.GREEN)
             );
         }
         return restArgs;

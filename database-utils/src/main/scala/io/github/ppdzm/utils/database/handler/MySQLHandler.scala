@@ -1,14 +1,13 @@
 package io.github.ppdzm.utils.database.handler
 
-import java.sql.{ResultSet, ResultSetMetaData}
-import java.util
-
 import io.github.ppdzm.utils.database.connection.MySQLConnection
-import io.github.ppdzm.utils.universal.base.{LoggingTrait, StringUtils}
+import io.github.ppdzm.utils.universal.base.StringUtils
 import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
 
+import java.sql.{ResultSet, ResultSetMetaData}
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
@@ -23,7 +22,35 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return
      */
     def binlogFormat(): String = {
-        query("show variables like 'binlog_format'").scalar(0, 1)
+        query("show variables like 'binlog_format'", _.scalar(0, 1))
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql sql语句
+     * @return
+     */
+    def query[T](sql: String, f: ResultSet => T): T = {
+        query[T](sql, null, f)
+    }
+
+    /**
+     * 查询
+     *
+     * @param sql        sql语句
+     * @param parameters sql语句参数
+     * @return
+     */
+    def query[T](sql: String, parameters: Array[Any], f: ResultSet => T): T = {
+        LoanPattern.using(MySQLConnection.getConnection(url, properties = extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
+                LoanPattern.using(preparedStatement.setParameters(parameters).executeQuery()) {
+                    f(_)
+                }
+        }
     }
 
     /**
@@ -81,6 +108,19 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
     }
 
     /**
+     * 执行sql语句
+     *
+     * @param sql sql语句
+     */
+    def execute(sql: String): Unit = {
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val statement = connection.createStatement
+                statement.execute(sql)
+        }
+    }
+
+    /**
      * 创建表
      *
      * @param database         数据库名称
@@ -100,11 +140,13 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def delete(table: String, primaryKeyName: String, primaryKeyValue: Any): Unit = {
         val sql = s"delete from $table where $primaryKeyName=?"
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-            ps =>
-                ps
-                    .setParameter(1, primaryKeyValue)
-                    .executeUpdate()
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
+                preparedStatement
+                  .setParameter(1, primaryKeyValue)
+                  .executeUpdate()
         }
     }
 
@@ -118,11 +160,13 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def delete(table: String, primaryKeyName: String, primaryKeyValue: Any, primaryKeyType: String): Unit = {
         val sql = s"delete from $table where $primaryKeyName=?"
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-            ps =>
-                ps
-                    .setParameter(1, primaryKeyValue, primaryKeyType)
-                    .executeUpdate()
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
+                preparedStatement
+                  .setParameter(1, primaryKeyValue, primaryKeyType)
+                  .executeUpdate()
         }
     }
 
@@ -154,13 +198,15 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return Boolean（是否成功）
      */
     def execute(statement: String, parameters: Array[String]): Boolean = {
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = statement)) {
-            ps =>
+        LoanPattern.using(MySQLConnection.getConnection(url, properties = extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(statement, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
                 parameters
-                    .zipWithIndex
-                    .filter { case (v, _) => v != null }
-                    .foreach { case (v, i) => ps.setObject(i + 1, v) }
-                ps.execute()
+                  .zipWithIndex
+                  .filter { case (v, _) => v != null }
+                  .foreach { case (v, i) => preparedStatement.setObject(i + 1, v) }
+                preparedStatement.execute()
         }
     }
 
@@ -181,9 +227,9 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def listDatabases(regexp: String = null): List[String] = {
         if (regexp.notNullAndEmpty)
-            query("show databases").singleColumnList(0).filter(_.matches(regexp))
+            query("show databases", _.singleColumnList(0).filter(_.matches(regexp)))
         else
-            query("show databases").singleColumnList(0)
+            query("show databases", _.singleColumnList(0))
     }
 
     /**
@@ -204,12 +250,11 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return
      */
     def listTables(database: String, regexp: String = null): List[String] = {
-        val database = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"))
         val sql = s"select table_name from information_schema.tables where table_schema='$database'"
         if (regexp.notNullAndEmpty)
-            query(sql).singleColumnList(0).filter(_.matches(regexp))
+            query(sql, _.singleColumnList(0).filter(_.matches(regexp)))
         else
-            query(sql).singleColumnList(0)
+            query(sql, _.singleColumnList(0))
     }
 
     /**
@@ -230,26 +275,12 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def getColumnsType(tableName: String): Map[String, String] = {
         val sql = s"select * from $tableName where 1<0"
-        val conn = MySQLConnection.getConnection(url, extraProperties)
-        val stmt = conn.createStatement()
-        val res = stmt.executeQuery(sql)
-        getColumnsType(res.getMetaData)
-    }
-
-    /**
-     * 获取字段类型
-     *
-     * @param resultSetMetaData ResultSetMetaData
-     * @return
-     */
-    def getColumnsType(resultSetMetaData: ResultSetMetaData): Map[String, String] = {
-        val columnCount = resultSetMetaData.getColumnCount
-        (1 to columnCount).map {
-            columnIndex =>
-                val columnName = resultSetMetaData.getColumnName(columnIndex)
-                val columnType = resultSetMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
-                (columnName, columnType)
-        }.toMap
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val stmt = connection.createStatement()
+                val res = stmt.executeQuery(sql)
+                getColumnsType(res.getMetaData)
+        }
     }
 
     /**
@@ -258,33 +289,7 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return
      */
     def globalBinlogFormat(): String = {
-        query("show global variables like 'binlog_format'").scalar(0, 1)
-    }
-
-    /**
-     * 查询
-     *
-     * @param sql sql语句
-     * @return
-     */
-    def query(sql: String): ResultSet = {
-        query(sql, null)
-    }
-
-    /**
-     * 查询
-     *
-     * @param sql        sql语句
-     * @param parameters sql语句参数
-     * @return
-     */
-    def query(sql: String, parameters: Array[Any]): ResultSet = {
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, properties = extraProperties, sql = sql)) {
-            ps =>
-                ps
-                    .setParameters(parameters)
-                    .executeQuery()
-        }
+        query("show global variables like 'binlog_format'", _.scalar(0, 1))
     }
 
     /**
@@ -322,12 +327,14 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
         }
         val columnsCount = validColumnNameValuePair.keys.size
         val sql = generateInsertOrUpdateString(table, validColumnNameValuePair)
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-            ps =>
-                ps
-                    .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
-                    .setParameters(validColumnNameValuePair, columnNameTypePair, columnsCount + 1)
-                    .executeUpdate()
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
+                preparedStatement
+                  .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
+                  .setParameters(validColumnNameValuePair, columnNameTypePair, columnsCount + 1)
+                  .executeUpdate()
         }
     }
 
@@ -362,16 +369,18 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
         val columnNameValueMap = columnNameValuePairList.head
         val columnsCount = columnNameValueMap.keys.size
         val sql = generateInsertOrUpdateString(table, columnNameValueMap)
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-            ps =>
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
                 columnNameValuePairList.foreach {
                     columnNameValuePair =>
-                        ps
-                            .setParameters(columnNameValuePair, columnNameTypePair, 1)
-                            .setParameters(columnNameValuePair, columnNameTypePair, columnsCount + 1)
-                            .addBatch()
+                        preparedStatement
+                          .setParameters(columnNameValuePair, columnNameTypePair, 1)
+                          .setParameters(columnNameValuePair, columnNameTypePair, columnsCount + 1)
+                          .addBatch()
                 }
-                ps.executeBatch().toList
+                preparedStatement.executeBatch().toList
         }
     }
 
@@ -384,8 +393,8 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def query(sql: String, columns: util.Collection[String]): util.Iterator[util.Map[String, Any]] = {
         query(sql, columns.toList)
-            .map { e => e.asJava }
-            .asJava
+          .map { e => e.asJava }
+          .asJava
     }
 
     /**
@@ -396,7 +405,7 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return
      */
     def query(sql: String, columns: Iterable[String]): Iterator[Map[String, Any]] = {
-        LoanPattern.using(query(sql)) {
+        query(sql, {
             resultSet =>
                 val columnNameTypePair = getColumnsType(resultSet.getMetaData)
 
@@ -423,7 +432,23 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
                         }.toMap
                     }
                 }
-        }
+        })
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param resultSetMetaData ResultSetMetaData
+     * @return
+     */
+    def getColumnsType(resultSetMetaData: ResultSetMetaData): Map[String, String] = {
+        val columnCount = resultSetMetaData.getColumnCount
+        (1 to columnCount).map {
+            columnIndex =>
+                val columnName = resultSetMetaData.getColumnName(columnIndex)
+                val columnType = resultSetMetaData.getColumnTypeName(columnIndex).split(" ").head.toLowerCase
+                (columnName, columnType)
+        }.toMap
     }
 
     /**
@@ -440,8 +465,8 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
             val ps = connection.prepareStatement(statement)
             (1 to count).foreach(_ => {
                 ps
-                    .setParameters(Array.fill(columns.length)(StringUtils.randomString(20)))
-                    .addBatch()
+                  .setParameters(Array.fill(columns.length)(StringUtils.randomString(20)))
+                  .addBatch()
             })
             ps.executeBatch()
             connection.commit()
@@ -456,7 +481,7 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      * @return
      */
     def showCreateTable(database: String, table: String): String = {
-        query(s"show create table $database.$table").singleColumnList(0).mkString(" ")
+        query(s"show create table $database.$table", _.singleColumnList(0).mkString(" "))
     }
 
     /**
@@ -467,17 +492,6 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
      */
     def truncate(database: String, table: String): Unit = {
         execute(s"truncate table $database.$table")
-    }
-
-    /**
-     * 执行sql语句
-     *
-     * @param statement sql语句
-     */
-    def execute(statement: String): Unit = {
-        LoanPattern.using(MySQLConnection.getStatement(url, extraProperties))(ps => {
-            ps.execute(statement)
-        })
     }
 
     /**
@@ -516,15 +530,16 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
         val updateString = fieldsMapToUpdateString(validColumnNameValuePair.keys.toList.sorted)
         val sql = s"update $table set $updateString where $singlePrimaryKey=?"
         val columnsCount = validColumnNameValuePair.keys.size
-        LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-            ps =>
+        LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+            connection =>
+                val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                preparedStatement.executeQuery("SET NAMES utf8mb4")
                 val primaryKeyValue = validColumnNameValuePair(singlePrimaryKey)
                 val primaryKeyType = columnNameTypePair(singlePrimaryKey)
-                ps
-                    .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
-                    .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
-                    .executeUpdate
-
+                preparedStatement
+                  .setParameters(validColumnNameValuePair, columnNameTypePair, 1)
+                  .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
+                  .executeUpdate
         }
     }
 
@@ -545,35 +560,37 @@ case class MySQLHandler(url: String, extraProperties: Map[String, AnyRef]) exten
                       columnNameValuePairList: List[Map[String, Any]],
                       columnNameTypePair: Map[String, String]): Unit = {
         columnNameValuePairList
-            .map {
-                columnNameValuePair =>
-                    val validColumnNameValuePair = columnNameValuePair.filter(_._2 != null)
-                    val updateString = fieldsMapToUpdateString(validColumnNameValuePair.keys.toList.sorted)
-                    (updateString, validColumnNameValuePair)
-            }
-            .groupBy(_._1)
-            .mapValues(_.map(_._2))
-            .foreach {
-                case (updateString, columnNameValuePair) =>
-                    val sql = s"update $table set $updateString where $singlePrimaryKey=?"
-                    LoanPattern.using(MySQLConnection.getPreparedStatement(url, extraProperties, sql)) {
-                        ps =>
-                            columnNameValuePair
-                                .filter { columnNameValuePair => columnNameValuePair.contains(singlePrimaryKey) }
-                                .foreach {
-                                    columnNameValuePair =>
-                                        val columnsCount = columnNameValuePair.keys.toList.length
-                                        val primaryKeyValue = columnNameValuePair(singlePrimaryKey)
-                                        val primaryKeyType = columnNameTypePair(singlePrimaryKey)
-                                        ps
-                                            .setParameters(columnNameValuePair, columnNameTypePair, 1)
-                                            .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
-                                            .addBatch()
-                                }
-                            ps.executeBatch()
-                            ps.clearBatch()
-                    }
-            }
+          .map {
+              columnNameValuePair =>
+                  val validColumnNameValuePair = columnNameValuePair.filter(_._2 != null)
+                  val updateString = fieldsMapToUpdateString(validColumnNameValuePair.keys.toList.sorted)
+                  (updateString, validColumnNameValuePair)
+          }
+          .groupBy(_._1)
+          .mapValues(_.map(_._2))
+          .foreach {
+              case (updateString, columnNameValuePair) =>
+                  val sql = s"update $table set $updateString where $singlePrimaryKey=?"
+                  LoanPattern.using(MySQLConnection.getConnection(url, extraProperties)) {
+                      connection =>
+                          val preparedStatement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY, ResultSet.HOLD_CURSORS_OVER_COMMIT)
+                          preparedStatement.executeQuery("SET NAMES utf8mb4")
+                          columnNameValuePair
+                            .filter { columnNameValuePair => columnNameValuePair.contains(singlePrimaryKey) }
+                            .foreach {
+                                columnNameValuePair =>
+                                    val columnsCount = columnNameValuePair.keys.toList.length
+                                    val primaryKeyValue = columnNameValuePair(singlePrimaryKey)
+                                    val primaryKeyType = columnNameTypePair(singlePrimaryKey)
+                                    preparedStatement
+                                      .setParameters(columnNameValuePair, columnNameTypePair, 1)
+                                      .setParameter(columnsCount + 1, primaryKeyValue, primaryKeyType)
+                                      .addBatch()
+                            }
+                          preparedStatement.executeBatch()
+                          preparedStatement.clearBatch()
+                  }
+          }
     }
 
 }

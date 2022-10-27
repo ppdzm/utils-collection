@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.office.excel.sheet
 
-import io.github.ppdzm.utils.universal.base.LoggingTrait
 import org.apache.poi.hssf.usermodel.HSSFDataFormat
 import org.apache.poi.ss.usermodel._
 
@@ -9,7 +8,7 @@ import scala.util.Try
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-trait PoiSheet extends LoggingTrait {
+trait PoiSheet {
     protected val workbook: Workbook
     protected val sheetName: String
     protected val overwrite: Boolean
@@ -73,9 +72,9 @@ trait PoiSheet extends LoggingTrait {
      */
     def headerChanged(headers: List[String]): Boolean = {
         sheet.getRow(0).getLastCellNum < headers.length ||
-            headers.indices.exists {
-                i => sheet.getRow(0).getCell(i).getStringCellValue != headers(i)
-            }
+          headers.indices.exists {
+              i => sheet.getRow(0).getCell(i).getStringCellValue != headers(i)
+          }
     }
 
     /**

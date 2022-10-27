@@ -8,23 +8,23 @@ import org.apache.spark.{SparkConf, SparkContext}
 /**
  * Created by Stuart Alex on 2016/5/26.
  */
-object SparkUtils extends Logging {
-
+object SparkUtils {
+    import com.ctc.wstx.io.InputBootstrapper
+    private lazy val logging = new Logging(getClass)
     def getSparkContext(conf: Map[String, String] = Map[String, String]()): SparkContext = {
         val sparkSession = this.getSparkSession(conf)
-        this.logInfo("Get SparkContext ...")
+        this.logging.logInfo("Get SparkContext ...")
         sparkSession.sparkContext
     }
 
     def getSparkSession(conf: Map[String, String] = Map[String, String]()): SparkSession = {
-        this.logInfo("Get SparkSession ...")
+        this.logging.logInfo("Get SparkSession ...")
         val builder = SparkSession.builder()
-        builder.master("local[*]")
-            .appName("unnamed")
-            .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-            .config("spark.kryo.registrationRequired", "false")
-            .config("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict")
-            .config("spark.blacklist.enabled", "false")
+        builder
+          .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+          .config("spark.kryo.registrationRequired", "false")
+          .config("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict")
+          .config("spark.blacklist.enabled", "false")
         sys.props.get("os.name").getOrElse("") match {
             case "Linux" => builder.enableHiveSupport()
             case "Ubuntu" => builder.enableHiveSupport()

@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.spark.streaming.kafka
 
 import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, ResultProcessor}
 import io.github.ppdzm.utils.universal.alert.{AlertConfig, Alerter, AlerterFactory}
-import io.github.ppdzm.utils.universal.base.LoggingTrait
+import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.rdd.RDD
@@ -71,7 +71,8 @@ object PP extends PartitionProcessor[String, Int] {
     }
 }
 
-object RP extends ResultProcessor[Int] with LoggingTrait {
+object RP extends ResultProcessor[Int] {
+    private val logging = new Logging(getClass)
 
     /**
      * Partition处理逻辑
@@ -79,6 +80,6 @@ object RP extends ResultProcessor[Int] with LoggingTrait {
      * @param result Iterator[T]
      */
     override def processResult(result: Int): Unit = {
-        logInfo(s"read $result records in this partition")
+        this.logging.logInfo(s"read $result records in this partition")
     }
 }

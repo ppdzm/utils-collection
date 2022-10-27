@@ -4,7 +4,6 @@ import io.github.ppdzm.utils.flink.common.CheckpointConfiguration;
 import io.github.ppdzm.utils.flink.streaming.config.FlinkStreamingConfig;
 import io.github.ppdzm.utils.universal.alert.Alerter;
 import io.github.ppdzm.utils.universal.base.Logging;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,11 +16,11 @@ import java.io.Serializable;
 /**
  * @author Created by Stuart Alex on 2021/5/8.
  */
-@AllArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode()
 @NoArgsConstructor
-public abstract class FlinkStreaming<T> extends Logging implements Serializable {
+public abstract class FlinkStreaming<T> implements Serializable {
+    private transient Logging logging = new Logging(getClass());
     /**
      * 应用名称
      */
@@ -44,13 +43,21 @@ public abstract class FlinkStreaming<T> extends Logging implements Serializable 
         this.flinkStreamingConfig = flinkStreamingConfig;
     }
 
+    public FlinkStreaming(String applicationName, Alerter alerter, CheckpointConfiguration checkpointConfiguration, FlinkStreamingConfig flinkStreamingConfig) {
+        this();
+        this.applicationName = applicationName;
+        this.alerter = alerter;
+        this.checkpointConfiguration = checkpointConfiguration;
+        this.flinkStreamingConfig = flinkStreamingConfig;
+    }
+
     public void start(SourceFunction<T> sourceFunction) throws Exception {
         try {
             StreamExecutionEnvironment streamExecutionEnvironment = flinkStreamingConfig.getStreamExecutionEnvironment();
             DataStreamSource<T> dataStreamSource = streamExecutionEnvironment.addSource(sourceFunction);
             execute(dataStreamSource);
             streamExecutionEnvironment.execute(applicationName);
-            logInfo("start execute application " + applicationName);
+            this.logging.logInfo("start execute application " + applicationName);
         } catch (Exception e) {
             alerter.alert("", applicationName, e);
             throw e;

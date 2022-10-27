@@ -30,7 +30,7 @@ class CliUtilsTest extends FunSuite {
 
     test("render") {
         System.setProperty(CoreConstants.LOGGING_STDOUT_ENABLED_KEY, "true")
-        val logging = new Logging;
+        val logging = new Logging(getClass);
         logging.logInfo("Receive args: " + CliUtils.rendering(String.join(", ", util.Arrays.asList("a", "b")), Render.GREEN))
     }
 

@@ -45,7 +45,8 @@ object Compiler extends Compiler(None) {
 
 }
 
-case class Compiler(targetDirectory: Option[String]) extends Logging {
+case class Compiler(targetDirectory: Option[String]) {
+    private val logging = new Logging(getClass)
     private val classCache = mutable.Map[String, Class[_]]()
     private val target = targetDirectory match {
         case Some(directory) => AbstractFile.getDirectory(directory)
@@ -84,7 +85,7 @@ case class Compiler(targetDirectory: Option[String]) extends Logging {
             givenClassName
         val clazzOption = this.findClass(className)
         if (clazzOption.isDefined) {
-            logInfo(s"Class $className found")
+            logging.logInfo(s"Class $className found")
             clazzOption.get
         } else {
             compile(classDefinition)
@@ -99,7 +100,7 @@ case class Compiler(targetDirectory: Option[String]) extends Logging {
      */
     private def compile(code: String): Unit = {
         val sourceFiles = List(new BatchSourceFile("(inline)", code))
-        this.logInfo(s"Compile code: \n" + sourceFiles.head.content.mkString)
+        logging.logInfo(s"Compile code: \n" + sourceFiles.head.content.mkString)
         new this.global.Run().compileSources(sourceFiles)
     }
 

@@ -1,14 +1,15 @@
 package io.github.ppdzm.utils.database.pool.jdbc
 
-import java.sql.Connection
-
-import io.github.ppdzm.utils.universal.base.LoggingTrait
+import io.github.ppdzm.utils.universal.base.Logging
 import scalikejdbc.ConnectionPool
+
+import java.sql.Connection
 
 /**
  * Created by Stuart Alex on 2017/3/29.
  */
-abstract class JDBCConnectionPool extends LoggingTrait {
+abstract class JDBCConnectionPool {
+    protected lazy val logging = new Logging(getClass)
 
     /**
      * 通过name从连接池中获取一个ConnectionPool

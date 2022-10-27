@@ -1,6 +1,7 @@
 package io.github.ppdzm.utils.universal.feature
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.reflectiveCalls
 import scala.util.control.Exception._
 
 /**
