@@ -8,10 +8,11 @@ import org.apache.poi.ss.usermodel
  * @author Created by Stuart Alex on 2019/3/29
  */
 case class JxlWorkBook(excelFileName: String,
+                       needBackUp: Boolean = false,
                        private val createWhenNotExist: Boolean = true) extends WorkBook {
     override val workbook: usermodel.Workbook = null
     this.checkExtension("xls")
-    this.backup(createWhenNotExist)
+    this.backup(needBackUp, createWhenNotExist)
     private val jxlWorkbook = {
         val workbookSettings = new WorkbookSettings()
         workbookSettings.setEncoding("ISO-8859-1")
@@ -35,8 +36,8 @@ case class JxlWorkBook(excelFileName: String,
     def writeSheet(sheetName: String, overwrite: Boolean, columns: List[String] = List[String](), rows: List[List[Any]]): this.type = {
         try {
             JxlSheet(this.jxlWorkbook, sheetName, overwrite)
-                .writeColumnHeader(columns)
-                .writeData(rows)
+              .writeColumnHeader(columns)
+              .writeData(rows)
         } catch {
             case e: Exception =>
                 this.success = false

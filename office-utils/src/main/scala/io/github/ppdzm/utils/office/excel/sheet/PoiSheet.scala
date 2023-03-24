@@ -1,8 +1,10 @@
 package io.github.ppdzm.utils.office.excel.sheet
 
 import org.apache.poi.hssf.usermodel.HSSFDataFormat
+import org.apache.poi.ss.usermodel.CellType._
 import org.apache.poi.ss.usermodel._
 
+import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 /**
@@ -125,6 +127,55 @@ trait PoiSheet {
                 //cell.setCellStyle(textCellStyle)
             }
         }
+    }
+
+    def getRowValues(rowIndex: Int): List[String] = {
+        val row = sheet.getRow(rowIndex)
+        getRowValues(row)
+    }
+
+    def getRowValues(row: Row): List[String] = {
+        if (row == null) {
+            return null
+        }
+        (0 until row.getLastCellNum)
+          .map {
+              columnIndex =>
+                  val cell = row.getCell(columnIndex)
+                  getCellValue(cell)
+          }
+          .toList
+    }
+
+    def getCellValue(cell: Cell): String = {
+        if (cell == null) {
+            return null
+        }
+        if (cell.getCellTypeEnum == null) {
+            return null
+        }
+        val cellValue = cell.getCellTypeEnum match {
+            case NUMERIC | FORMULA => new java.math.BigDecimal(cell.getNumericCellValue).toPlainString
+            case _ => cell.getStringCellValue
+        }
+        if (cellValue == null)
+            return null
+        cellValue.toString.trim
+    }
+
+    def read(header: Boolean, headerIndex: Int): (List[String], List[List[String]]) = {
+        val headers = if (header) {
+            getRowValues(headerIndex)
+        } else {
+            null
+        }
+        val sheetData = ListBuffer[List[String]]()
+        for (rowIndex <- headerIndex + 1 until sheet.getLastRowNum) {
+            val row = sheet.getRow(rowIndex)
+            val rowData = getRowValues(row)
+            sheetData += rowData
+        }
+        (headers, sheetData.toList)
     }
 
 }

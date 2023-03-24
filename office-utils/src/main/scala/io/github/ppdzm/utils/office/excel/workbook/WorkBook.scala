@@ -23,7 +23,10 @@ trait WorkBook {
      *
      * @param create 没有时是否新建
      */
-    def backup(create: Boolean): Unit = {
+    def backup(needBackup: Boolean, create: Boolean): Unit = {
+        if (!needBackup) {
+            return
+        }
         val backupFile = new File(backup)
         if (excelFile.exists()) {
             // 创建备份文件
@@ -48,7 +51,7 @@ trait WorkBook {
     /**
      * call this function by LoanPattern.using
      */
-    protected def close(): Unit = {
+    def close(): Unit = {
         try {
             val fileOutputStream = new FileOutputStream(excelFileName)
             fileOutputStream.flush()

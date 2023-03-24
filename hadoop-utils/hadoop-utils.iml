@@ -173,6 +173,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.hbase:hbase-hadoop2-compat:tests:2.1.0-cdh6.3.2" level="project" />
     <orderEntry type="module" module-name="universal-utils" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ch.ethz.ganymed:ganymed-ssh2:262" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.alibaba:fastjson:1.2.47" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: cn.hutool:hutool-all:5.7.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.aliyun:aliyun-java-sdk-core:3.3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.aliyun:aliyun-java-sdk-dyvmsapi:1.0.0" level="project" />

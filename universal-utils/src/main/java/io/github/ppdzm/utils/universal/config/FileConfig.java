@@ -5,9 +5,11 @@ import io.github.ppdzm.utils.universal.cli.CliUtils;
 import io.github.ppdzm.utils.universal.cli.Render;
 import io.github.ppdzm.utils.universal.core.CoreConstants;
 import io.github.ppdzm.utils.universal.core.SystemProperties;
+import io.github.ppdzm.utils.universal.formats.json.JsonUtils;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -64,7 +66,12 @@ public class FileConfig extends Config {
             String path = url.getPath();
             logging.logInfo("Config file located at " + CliUtils.rendering(path, Render.GREEN));
             InputStream inputStream = url.openStream();
-            properties.load(inputStream);
+            if (fixedExtension.equals(".json")) {
+                Map<String, Object> configMap = JsonUtils.parse(url.openStream(), Map.class);
+                properties.put(CoreConstants.PROFILE_ROOT, configMap);
+            } else {
+                properties.load(inputStream);
+            }
             properties.setProperty(CoreConstants.PROFILE_PATH_KEY, path.substring(0, path.lastIndexOf("/")));
         } else {
             logging.logWarning(CliUtils.rendering("Config file ", Render.YELLOW) +

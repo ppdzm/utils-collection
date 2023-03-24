@@ -50,7 +50,7 @@ public class StringUtils {
         StringBuilder buffer = new StringBuilder();
         for (String split : splits) {
             if (split.startsWith("\"") && split.endsWith("\"")) {
-                expectedSplits.add(split);
+                expectedSplits.add(split.substring(1, split.length() - 1));
             } else if (split.startsWith("\"")) {
                 if (!buffer.toString().isEmpty()) {
                     buffer.append(separator).append(split);
@@ -59,7 +59,9 @@ public class StringUtils {
                 }
             } else if (split.endsWith("\"")) {
                 if (!buffer.toString().isEmpty()) {
-                    expectedSplits.add(buffer + separator + split);
+                    buffer.append(separator).append(split);
+                    String temp = buffer.toString();
+                    expectedSplits.add(temp.substring(1, temp.length() - 1));
                     buffer = new StringBuilder();
                 } else {
                     expectedSplits.add(split);
@@ -72,8 +74,12 @@ public class StringUtils {
                 }
             }
         }
-        if (!buffer.toString().isEmpty()) {
-            expectedSplits.add(buffer.toString());
+        String temp = buffer.toString();
+        if (temp.startsWith("\"")) {
+            temp = temp.substring(1);
+        }
+        if (!temp.isEmpty()) {
+            expectedSplits.add(temp);
         }
         String[] finalSplits = new String[expectedSplits.size()];
         for (int i = 0; i < expectedSplits.size(); i++) {

@@ -15,4 +15,5 @@ public class CoreConstants {
     public final static String DEFAULT_PREFIX_VALUE = "application";
     public final static String DEFAULT_EXTENSION_VALUE = ".properties";
     public final static String LOGGING_STDOUT_ENABLED_KEY = "logging.stdout.enabled";
+    public final static String PROFILE_ROOT = "profile.root";
 }

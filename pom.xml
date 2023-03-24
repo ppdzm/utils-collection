@@ -68,7 +68,7 @@
         <scalaj.version>2.4.2</scalaj.version>
         <scalikejdbc.version>3.3.5</scalikejdbc.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <spark.version>2.4.0-cdh6.3.2</spark.version>
+        <spark.version>2.4.0</spark.version>
         <zstd.version>1.4.3-1</zstd.version>
     </properties>
     <dependencies>

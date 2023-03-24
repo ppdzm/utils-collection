@@ -1,17 +1,17 @@
 package io.github.ppdzm.utils.office.excel.workbook
 
-import java.io.FileInputStream
-
 import io.github.ppdzm.utils.office.excel.sheet.OOXMLSheet
 import org.apache.poi.openxml4j.util.ZipSecureFile
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
+import java.io.FileInputStream
+
 /**
  * @author Created by Stuart Alex on 2019/3/29
  */
-case class OOXMLWorkBook(excelFileName: String, private val createWhenNotExist: Boolean = true) extends WorkBook {
+case class OOXMLWorkBook(excelFileName: String, needBackup: Boolean = true, private val createWhenNotExist: Boolean = true) extends WorkBook {
     this.checkExtension("xlsx")
-    this.backup(createWhenNotExist)
+    this.backup(needBackup, createWhenNotExist)
     ZipSecureFile.setMinInflateRatio(-1.0d)
     override val workbook: XSSFWorkbook = {
         if (excelFile.exists()) {
@@ -44,8 +44,8 @@ case class OOXMLWorkBook(excelFileName: String, private val createWhenNotExist: 
     def writeSheet(sheetName: String, overwrite: Boolean, columns: List[String] = List[String](), rows: List[List[Any]]): this.type = {
         try {
             OOXMLSheet(this.workbook, sheetName, overwrite)
-                .writeColumnHeader(columns)
-                .writeData(rows)
+              .writeColumnHeader(columns)
+              .writeData(rows)
         } catch {
             case e: Exception =>
                 this.success = false

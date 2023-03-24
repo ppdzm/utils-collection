@@ -6,10 +6,7 @@ import io.github.ppdzm.utils.universal.cli.ParameterOption;
 import io.github.ppdzm.utils.universal.cli.Render;
 import io.github.ppdzm.utils.universal.core.CoreConstants;
 import lombok.Getter;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,7 +18,7 @@ import java.util.regex.Pattern;
 public abstract class Config {
     private static final long serialVersionUID = -5864298598020240463L;
     protected Logging logging = new Logging(getClass());
-    protected Pattern replaceRegex = Pattern.compile("\\$\\{[^#}$]+\\}");
+    protected Pattern replaceRegex = Pattern.compile("\\$\\{[^#}$]+}");
     protected Map<String, String> configKeyValues = new HashMap<>();
     @Getter
     protected Properties properties = new Properties();
@@ -84,7 +81,7 @@ public abstract class Config {
         // String plainValue = properties.getProperty(property, System.getProperty(property, defaultValue));
         String plainValue = properties.getProperty(property, defaultValue);
         if (plainValue == null) {
-            throw new Exception("Configuration " + property + " is missing");
+            throw new MissingArgumentException("Configuration " + property + " is missing");
         }
         if (recursive) {
             List<String> missingRefs = new ArrayList<>();
@@ -117,6 +114,36 @@ public abstract class Config {
             printConfig(property, plainValue);
         }
         return plainValue;
+    }
+
+    public Object getRawProperty(String property) throws Exception {
+        if (properties.containsKey(property)) {
+            return properties.get(property);
+        }
+        if (properties.containsKey(CoreConstants.PROFILE_ROOT)) {
+            Map<String, Object> root = (Map<String, Object>) properties.get(CoreConstants.PROFILE_ROOT);
+            if (root.containsKey(property)) {
+                return root.get(property);
+            } else {
+                String[] slices = property.split("\\.");
+                Object temp = root;
+                for (String slice : slices) {
+                    if (temp instanceof Map) {
+                        Map<String, Object> tempMap = (Map<String, Object>) temp;
+                        if (tempMap.containsKey(slice)) {
+                            temp = tempMap.get(slice);
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
+                }
+                return temp;
+            }
+        } else {
+            return getProperty(property);
+        }
     }
 
     /**
@@ -191,9 +218,9 @@ public abstract class Config {
     public CommandLine parseOptions(String[] args, Options options) throws ParseException {
         CommandLine cli;
         if (options == null) {
-            cli = new PosixParser().parse(new Options().addOption(ParameterOption.option()), args);
+            cli = new DefaultParser().parse(new Options().addOption(ParameterOption.option()), args);
         } else {
-            cli = new PosixParser().parse(options.addOption(ParameterOption.option()), args);
+            cli = new DefaultParser().parse(options.addOption(ParameterOption.option()), args);
         }
         Properties properties = cli.getOptionProperties(ParameterOption.name());
         for (Object o : properties.keySet()) {

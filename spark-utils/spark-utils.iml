@@ -133,23 +133,24 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.yetus:audience-annotations:0.5.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-hive_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-core_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-hive_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:parquet-hadoop-bundle:1.6.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-core_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:chill_2.11:0.9.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.esotericsoftware:kryo-shaded:4.0.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.esotericsoftware:minlog:1.3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:chill-java:0.9.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.xbean:xbean-asm7-shaded:4.12" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-launcher_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-kvstore_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-network-common_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-network-shuffle_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-unsafe_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.xbean:xbean-asm6-shaded:4.8" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-launcher_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-kvstore_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-network-common_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-network-shuffle_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-unsafe_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.activation:activation:1.1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:jul-to-slf4j:1.7.25" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:jul-to-slf4j:1.7.16" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:jcl-over-slf4j:1.7.16" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.ning:compress-lzf:1.0.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.xerial.snappy:snappy-java:1.1.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.xerial.snappy:snappy-java:1.1.7.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.lz4:lz4-java:1.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.roaringbitmap:RoaringBitmap:0.5.11" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.json4s:json4s-jackson_2.11:3.5.3" level="project" />
@@ -173,7 +174,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.glassfish.jersey.containers:jersey-container-servlet:2.22.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.glassfish.jersey.containers:jersey-container-servlet-core:2.22.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-all:4.1.17.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty:3.10.6.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty:3.9.9.Final" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.clearspring.analytics:stream:2.7.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.dropwizard.metrics:metrics-jvm:3.1.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.dropwizard.metrics:metrics-json:3.1.5" level="project" />
@@ -182,86 +183,76 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: oro:oro:2.0.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.razorvine:pyrolite:4.13" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.py4j:py4j:0.10.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sql_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sql_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.univocity:univocity-parsers:2.7.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sketch_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-catalyst_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sketch_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-catalyst_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.janino:janino:3.0.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.janino:commons-compiler:3.0.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr4-runtime:4.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-column:1.9.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-common:1.9.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-encoding:1.9.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-hadoop:1.9.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-format:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-jackson:1.9.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.orc:orc-core:nohive:1.5.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.orc:orc-shims:1.5.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: io.airlift:aircompressor:0.10" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.orc:orc-mapreduce:nohive:1.5.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-column:1.10.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-common:1.10.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-encoding:1.10.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-hadoop:1.10.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-format:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.parquet:parquet-jackson:1.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.arrow:arrow-vector:0.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.arrow:arrow-format:0.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.arrow:arrow-memory:0.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.carrotsearch:hppc:0.7.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.vlkan:flatbuffers:1.2.0-3f79e055" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.hive:hive-exec:2.1.1-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.cloudera.logredactor:logredactor:2.0.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-api:2.8.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.logging.log4j:log4j-core:2.8.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr-runtime:3.5.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:ST4:4.0.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-core:1.12.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-linq4j:1.12.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.hydromatic:aggdesigner-algorithm:6.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-druid:1.12.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite.avatica:avatica:1.12.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: stax:stax-api:1.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.hive:hive-metastore:2.1.1-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spark-project.hive:hive-exec:1.2.1.spark2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javolution:javolution:5.5.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:apache-log4j-extras:1.2.17" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr-runtime:3.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:stringtemplate:3.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: antlr:antlr:2.7.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:ST4:4.0.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.googlecode.javaewah:JavaEWAH:0.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.iq80.snappy:snappy:0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: stax:stax-api:1.0.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spark-project.hive:hive-metastore:1.2.1.spark2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.jolbox:bonecp:0.8.0.RELEASE" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-api-jdo:4.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-rdbms:4.1.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-api-jdo:3.2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-rdbms:3.2.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jdo:jdo-api:3.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.transaction:jta:1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:javax.jdo:3.2.0-m3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.transaction:transaction-api:1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: co.cask.tephra:tephra-api:0.6.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: co.cask.tephra:tephra-core:0.6.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.inject:guice:3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.inject:javax.inject:1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.inject.extensions:guice-assistedinject:3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: it.unimi.dsi:fastutil:6.5.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-common:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-core:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-api:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-discovery-api:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-discovery-core:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.twill:twill-zookeeper:0.6.0-incubating" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: co.cask.tephra:tephra-hbase-compat-1.0:0.6.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.avro:avro-mapred:hadoop2:1.8.2-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.avro:avro-ipc:1.8.2-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.httpcomponents:httpclient:4.5.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.httpcomponents:httpcore:4.4.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13-cloudera.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.avro:avro-mapred:hadoop2:1.8.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.avro:avro-ipc:1.8.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-avatica:1.2.0-incubating" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-core:1.2.0-incubating" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.calcite:calcite-linq4j:1.2.0-incubating" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.hydromatic:eigenbase-properties:1.1.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.httpcomponents:httpclient:4.5.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.httpcomponents:httpcore:4.4.10" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-codec:commons-codec:1.10" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: joda-time:joda-time:2.9.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jodd:jodd-core:3.5.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-core:4.1.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.thrift:libthrift:0.9.3-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.datanucleus:datanucleus-core:3.2.10" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.thrift:libthrift:0.9.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.thrift:libfb303:0.9.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.derby:derby:10.14.1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.derby:derby:10.12.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spark-project.spark:unused:1.0.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-mllib_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-mllib_2.11:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-parser-combinators_2.11:1.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-streaming_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-graphx_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-streaming_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-graphx_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.fommil.netlib:core:1.1.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sourceforge.f2j:arpack_combined_all:0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-mllib-local_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-mllib-local_2.11:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.scalanlp:breeze_2.11:0.13.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.scalanlp:breeze-macros_2.11:0.13.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.rwl:jtransforms:2.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spire-math:spire_2.11:0.13.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spire-math:spire-macros_2.11:0.13.0" level="project" />
@@ -269,14 +260,10 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.chuusai:shapeless_2.11:2.3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.typelevel:macro-compat_2.11:1.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-math3:3.4.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.glassfish.jaxb:jaxb-runtime:2.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sun.istack:istack-commons-runtime:3.0.8" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-tags_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.0-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:kafka-clients:2.2.1-cdh6.3.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-streaming-kafka-0-10_2.11:2.4.0-cdh6.3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-tags_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-sql-kafka-0-10_2.11:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:kafka-clients:2.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.spark:spark-streaming-kafka-0-10_2.11:2.4.0" level="project" />
     <orderEntry type="module" module-name="database-utils" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.alibaba:druid:1.1.12" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: hikari-cp:hikari-cp:2.8.0" level="project" />
@@ -296,6 +283,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.confluent:common-utils:5.5.2" level="project" />
     <orderEntry type="module" module-name="universal-utils" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ch.ethz.ganymed:ganymed-ssh2:262" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.alibaba:fastjson:1.2.47" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: cn.hutool:hutool-all:5.7.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.aliyun:aliyun-java-sdk-core:3.3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.aliyun:aliyun-java-sdk-dyvmsapi:1.0.0" level="project" />
