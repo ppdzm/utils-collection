@@ -1,11 +1,11 @@
 package io.github.ppdzm.utils.spark.hbase
 
-import io.github.ppdzm.utils.hadoop.hbase.implicts.HBaseImplicits._
-import io.github.ppdzm.utils.hadoop.hbase.{HBaseCatalog, HBaseEnvironment}
-import io.github.ppdzm.utils.hadoop.security.KerberosConfig
+import io.github.ppdzm.utils.hadoop.scala.hbase.implicts.HBaseImplicits._
+import io.github.ppdzm.utils.hadoop.scala.hbase.{HBaseCatalog, HBaseEnvironment}
+import io.github.ppdzm.utils.hadoop.scala.security.KerberosConfig
 import io.github.ppdzm.utils.spark.implicits.DataFrameConversions._
 import io.github.ppdzm.utils.universal.feature.ExceptionGenerator
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions.StringImplicits
 import org.apache.hadoop.hbase.TableName
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.spark.HBaseContext

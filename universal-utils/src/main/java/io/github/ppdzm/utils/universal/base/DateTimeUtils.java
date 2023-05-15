@@ -13,11 +13,11 @@ import java.util.*;
  * @author Created by Stuart Alex on 2021/5/19.
  */
 public class DateTimeUtils {
-    private static Map<String, SimpleDateFormat> dataFormats = new HashMap<>();
-    private static List<String> zoneIds = Arrays.asList(
-        "GMT", "GMT+01:00", "GMT+02:00", "GMT+03:00", "GMT+03:30", "GMT+04:00", "GMT+05:00", "GMT+05:30", "GMT+06:00",
-        "GMT+07:00", "GMT+08:00", "GMT+09:00", "GMT+09:30", "GMT+10:00", "GMT+11:00", "GMT+12:00",
-        "GMT-11:00", "GMT-10:00", "GMT-09:00", "GMT-08:00", "GMT-07:00", "GMT-06:00", "GMT-05:00", "GMT-04:00", "GMT-03:30", "GMT-03:00", "GMT-01:00"
+    private static final Map<String, SimpleDateFormat> dataFormats = new HashMap<>();
+    private static final List<String> zoneIds = Arrays.asList(
+            "GMT", "GMT+01:00", "GMT+02:00", "GMT+03:00", "GMT+03:30", "GMT+04:00", "GMT+05:00", "GMT+05:30", "GMT+06:00",
+            "GMT+07:00", "GMT+08:00", "GMT+09:00", "GMT+09:30", "GMT+10:00", "GMT+11:00", "GMT+12:00",
+            "GMT-11:00", "GMT-10:00", "GMT-09:00", "GMT-08:00", "GMT-07:00", "GMT-06:00", "GMT-05:00", "GMT-04:00", "GMT-03:30", "GMT-03:00", "GMT-01:00"
     );
 
     /**
@@ -28,8 +28,7 @@ public class DateTimeUtils {
      * @return 比较结果
      */
     public static boolean compareTimezone(String timezone1, String timezone2) {
-        return timezone1 != null && timezone2 != null && timezone1.startsWith("GMT") && timezone2.startsWith("GMT") &&
-            timezone2.startsWith("GMT") && TimeZone.getTimeZone(timezone1).getID().equals(TimeZone.getTimeZone(timezone2).getID());
+        return timezone1 != null && timezone2 != null && timezone1.startsWith("GMT") && timezone2.startsWith("GMT") && TimeZone.getTimeZone(timezone1).getID().equals(TimeZone.getTimeZone(timezone2).getID());
     }
 
     public static List<String> dateRange(String dt, String format) throws ParseException {

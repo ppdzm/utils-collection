@@ -26,6 +26,17 @@ public class FlinkStreamingConfig {
     public ConfigItem FLINK_CHECKPOINT_MAX_CONCURRENT;
     public ConfigItem FLINK_CHECKPOINT_MIN_PAUSE;
     public ConfigItem FLINK_CHECKPOINT_TOLERABLE_FAILURE;
+    public ConfigItem FLINK_RESTART_STRATEGY;
+    public ConfigItem FLINK_RESTART_STRATEGY_FIXED_DELAY_ATTEMPTS;
+    public ConfigItem FLINK_RESTART_STRATEGY_FIXED_DELAY_DELAY_INTERVAL_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_FAILURE_RATE;
+    public ConfigItem FLINK_RESTART_STRATEGY_FAILURE_RATE_INTERVAL_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_FAILURE_RATE_DELAY_INTERVAL_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_INITIAL_BACKOFF_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_MAX_BACKOFF_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_BACKOFF_MULTIPLIER;
+    public ConfigItem FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_RESET_BACKOFF_THRESHOLD_SECONDS;
+    public ConfigItem FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_JITTER_FACTOR;
 
     public FlinkStreamingConfig(String applicationName, Config config) {
         this.applicationName = applicationName;
@@ -38,11 +49,53 @@ public class FlinkStreamingConfig {
         this.FLINK_CHECKPOINT_MAX_CONCURRENT = new ConfigItem(config, "flink.checkpoint.max-concurrent", 1);
         this.FLINK_CHECKPOINT_MIN_PAUSE = new ConfigItem(config, "flink.checkpoint.min-pause", 500);
         this.FLINK_CHECKPOINT_TOLERABLE_FAILURE = new ConfigItem(config, "flink.checkpoint.tolerable-failure", 10);
+        this.FLINK_RESTART_STRATEGY = new ConfigItem(config, "flink.restart.strategy", "no");
+        this.FLINK_RESTART_STRATEGY_FIXED_DELAY_ATTEMPTS = new ConfigItem(config, "flink.restart.strategy.fixed-delay.attempts", 2);
+        this.FLINK_RESTART_STRATEGY_FIXED_DELAY_DELAY_INTERVAL_SECONDS = new ConfigItem(config, "flink.restart.strategy.fixed-delay.delay-interval.seconds", 5);
+        this.FLINK_RESTART_STRATEGY_FAILURE_RATE = new ConfigItem(config, "flink.restart.strategy.failure-rate");
+        this.FLINK_RESTART_STRATEGY_FAILURE_RATE_INTERVAL_SECONDS = new ConfigItem(config, "flink.restart.strategy.failure-rate.interval.seconds");
+        this.FLINK_RESTART_STRATEGY_FAILURE_RATE_DELAY_INTERVAL_SECONDS = new ConfigItem(config, "flink.restart.strategy.failure-rate.delay-interval.seconds");
+        this.FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_INITIAL_BACKOFF_SECONDS = new ConfigItem(config, "flink.restart.strategy.exponential-delay.initial-backoff.seconds");
+        this.FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_MAX_BACKOFF_SECONDS = new ConfigItem(config, "flink.restart.strategy.exponential-delay.max-backoff.seconds");
+        this.FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_BACKOFF_MULTIPLIER = new ConfigItem(config, "flink.restart.strategy.exponential-delay.backoff-multiplier");
+        this.FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_RESET_BACKOFF_THRESHOLD_SECONDS = new ConfigItem(config, "flink.restart.strategy.exponential-delay.reset-backoff.threshold.seconds");
+        this.FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_JITTER_FACTOR = new ConfigItem(config, "flink.restart.strategy.exponential-delay.jitter.factor");
     }
 
     public StreamExecutionEnvironment getStreamExecutionEnvironment() throws Exception {
         StreamExecutionEnvironment streamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment();
-        streamExecutionEnvironment.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(2, Time.seconds(2)));
+        String restartStrategy = FLINK_RESTART_STRATEGY.stringValue();
+        RestartStrategies.RestartStrategyConfiguration restartStrategyConfiguration;
+        switch (restartStrategy) {
+            case "no":
+                restartStrategyConfiguration = RestartStrategies.noRestart();
+                break;
+            case "fixed-delay":
+                int attempts = FLINK_RESTART_STRATEGY_FIXED_DELAY_ATTEMPTS.intValue();
+                int fixedDelayInterval = FLINK_RESTART_STRATEGY_FIXED_DELAY_DELAY_INTERVAL_SECONDS.intValue();
+                restartStrategyConfiguration = (RestartStrategies.fixedDelayRestart(attempts, Time.seconds(fixedDelayInterval)));
+                break;
+            case "fallback":
+                restartStrategyConfiguration = (RestartStrategies.fallBackRestart());
+                break;
+            case "failure-rate":
+                int failureRate = FLINK_RESTART_STRATEGY_FAILURE_RATE.intValue();
+                int failureRateInterval = FLINK_RESTART_STRATEGY_FAILURE_RATE_INTERVAL_SECONDS.intValue();
+                int failureRateDelayInterval = FLINK_RESTART_STRATEGY_FAILURE_RATE_DELAY_INTERVAL_SECONDS.intValue();
+                restartStrategyConfiguration = (RestartStrategies.failureRateRestart(failureRate, Time.seconds(failureRateInterval), Time.seconds(failureRateDelayInterval)));
+                break;
+            case "exponential-delay":
+                int initialBackoff = FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_INITIAL_BACKOFF_SECONDS.intValue();
+                int maxBackoff = FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_MAX_BACKOFF_SECONDS.intValue();
+                double backoffMultiplier = Double.parseDouble(FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_BACKOFF_MULTIPLIER.stringValue());
+                int resetBackoffThreshold = FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_RESET_BACKOFF_THRESHOLD_SECONDS.intValue();
+                double jitterFactor = Double.parseDouble(FLINK_RESTART_STRATEGY_EXPONENTIAL_DELAY_JITTER_FACTOR.stringValue());
+                restartStrategyConfiguration = (RestartStrategies.exponentialDelayRestart(Time.seconds(initialBackoff), Time.seconds(maxBackoff), backoffMultiplier, Time.seconds(resetBackoffThreshold), jitterFactor));
+                break;
+            default:
+                throw new UnsupportedOperationException("restart strategy " + restartStrategy + " is unsupported. no, fixed-delay, fallback, failure-rate, exponential-delay are supported");
+        }
+        streamExecutionEnvironment.getConfig().setRestartStrategy(restartStrategyConfiguration);
         CheckpointConfiguration checkpointConfiguration = getCheckpointConfiguration();
         if (checkpointConfiguration != null && checkpointConfiguration.isCheckpointEnabled()) {
             streamExecutionEnvironment.enableCheckpointing(checkpointConfiguration.getCheckpointIntervalInMilliseconds(), checkpointConfiguration.getCheckpointMode());

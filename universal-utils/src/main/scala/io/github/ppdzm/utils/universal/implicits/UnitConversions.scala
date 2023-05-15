@@ -1,10 +1,9 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import java.nio.charset.StandardCharsets
-
 import io.github.ppdzm.utils.universal.base.{BytesUtils, Mathematics}
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 
+import java.nio.charset.StandardCharsets
 import scala.collection.mutable
 
 /**

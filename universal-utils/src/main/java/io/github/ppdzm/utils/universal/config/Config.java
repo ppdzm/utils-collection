@@ -2,20 +2,23 @@ package io.github.ppdzm.utils.universal.config;
 
 import io.github.ppdzm.utils.universal.base.Logging;
 import io.github.ppdzm.utils.universal.cli.CliUtils;
-import io.github.ppdzm.utils.universal.cli.ParameterOption;
 import io.github.ppdzm.utils.universal.cli.Render;
+import io.github.ppdzm.utils.universal.cli.option.ParameterOption;
 import io.github.ppdzm.utils.universal.core.CoreConstants;
 import lombok.Getter;
 import org.apache.commons.cli.*;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Created by Stuart Alex on 2021/5/7.
+ * 读取resources下的配置文件，只读取被激活（active）的配置
+ *
+ * @author Created by Stuart Alex on 2016/4/7.
  */
-public abstract class Config {
+public abstract class Config implements Serializable {
     private static final long serialVersionUID = -5864298598020240463L;
     protected Logging logging = new Logging(getClass());
     protected Pattern replaceRegex = Pattern.compile("\\$\\{[^#}$]+}");
@@ -217,12 +220,13 @@ public abstract class Config {
      */
     public CommandLine parseOptions(String[] args, Options options) throws ParseException {
         CommandLine cli;
+        ParameterOption parameterOption = new ParameterOption();
         if (options == null) {
-            cli = new DefaultParser().parse(new Options().addOption(ParameterOption.option()), args);
+            cli = new DefaultParser().parse(new Options().addOption(parameterOption.option()), args);
         } else {
-            cli = new DefaultParser().parse(options.addOption(ParameterOption.option()), args);
+            cli = new DefaultParser().parse(options.addOption(parameterOption.option()), args);
         }
-        Properties properties = cli.getOptionProperties(ParameterOption.name());
+        Properties properties = cli.getOptionProperties(parameterOption.getName());
         for (Object o : properties.keySet()) {
             String key = o.toString();
             String value = properties.getProperty(key);

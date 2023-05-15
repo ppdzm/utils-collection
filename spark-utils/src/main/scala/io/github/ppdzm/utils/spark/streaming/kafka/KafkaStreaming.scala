@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.spark.streaming.kafka
 
-import io.github.ppdzm.utils.hadoop.constants.KafkaConfigConstants
+import io.github.ppdzm.utils.hadoop.scala.constants.KafkaConfigConstants
 import io.github.ppdzm.utils.spark.common.SparkStreamingEnvironment
 import io.github.ppdzm.utils.spark.streaming.{PartitionProcessor, RDDProcessor, ResultProcessor}
 import io.github.ppdzm.utils.universal.alert.Alerter

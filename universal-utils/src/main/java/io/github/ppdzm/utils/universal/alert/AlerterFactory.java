@@ -22,21 +22,21 @@ public class AlerterFactory {
         switch (alerterType.toLowerCase()) {
             case "ding-talk":
                 return new DingTalkAlerter(
-                    alertConfig.ALERTER_DING_TALK_WEB_HOOK_URL.stringValue(),
-                    alertConfig.ALERTER_DING_TALK_RECEIVERS.arrayValue(),
-                    alertConfig.ALERTER_DING_TALK_RECEIVER_IS_AT_ALL.booleanValue()
+                        alertConfig.ALERTER_DING_TALK_WEB_HOOK_URL.stringValue(),
+                        alertConfig.ALERTER_DING_TALK_RECEIVERS.arrayValue(),
+                        alertConfig.ALERTER_DING_TALK_RECEIVER_IS_AT_ALL.booleanValue()
                 );
             case "logger":
                 return new LoggerAlerter();
             case "mail":
                 return new MailAlerter(
-                    alertConfig.ALERTER_MAIL_SMTP_HOST.stringValue(),
-                    alertConfig.ALERTER_MAIL_SMTP_PORT.intValue(),
-                    alertConfig.ALERTER_MAIL_SENDER_USERNAME.stringValue(),
-                    alertConfig.ALERTER_MAIL_SENDER_PASSWORD.stringValue(),
-                    alertConfig.ALERTER_MAIL_SENDER_NAME.stringValue(),
-                    alertConfig.ALERTER_MAIL_RECIPIENTS.stringValue(),
-                    alertConfig.ALERTER_MAIL_CCS.stringValue()
+                        alertConfig.ALERTER_MAIL_SMTP_HOST.stringValue(),
+                        alertConfig.ALERTER_MAIL_SMTP_PORT.intValue(),
+                        alertConfig.ALERTER_MAIL_SENDER_USERNAME.stringValue(),
+                        alertConfig.ALERTER_MAIL_SENDER_PASSWORD.stringValue(),
+                        alertConfig.ALERTER_MAIL_SENDER_NAME.stringValue(),
+                        alertConfig.ALERTER_MAIL_RECIPIENTS.stringValue(),
+                        alertConfig.ALERTER_MAIL_CCS.stringValue()
                 );
             case "multi":
                 String[] alerterTypes = alertConfig.ALERTER_MULTI_TYPES.arrayValue();

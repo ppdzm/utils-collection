@@ -1,11 +1,11 @@
 package io.github.ppdzm.utils.universal.formats.avro
 
-import java.io.File
 
-import io.github.ppdzm.utils.universal.feature.LoanPattern
+import java.io.File
 import org.apache.avro.Schema
 import org.apache.avro.generic.{GenericData, GenericRecord}
 import org.scalatest.FunSuite
+import scalikejdbc.LoanPattern
 
 import scala.collection.JavaConversions._
 import scala.io.Source

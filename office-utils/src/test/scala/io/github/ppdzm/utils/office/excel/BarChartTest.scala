@@ -3,8 +3,8 @@ package io.github.ppdzm.utils.office.excel
 import io.github.ppdzm.utils.office.excel.chart.{ColumnSeriesBarChart, ValueSeriesBarChart}
 import io.github.ppdzm.utils.office.excel.enumeration.ExcelEnumerations.{BarChartGrouping, Direction, Order}
 import io.github.ppdzm.utils.office.excel.workbook.OOXMLWorkBook
-import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.scalatest.FunSuite
+import scalikejdbc.LoanPattern
 
 class BarChartTest extends FunSuite {
 

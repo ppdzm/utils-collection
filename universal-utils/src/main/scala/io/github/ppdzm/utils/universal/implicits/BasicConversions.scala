@@ -290,9 +290,9 @@ object BasicConversions {
             val paddingNumber = length - string.length
             if (paddingNumber >= 0) {
                 Alignment.construct(alignment) match {
-                    case Alignment.left => string + List.fill(paddingNumber)(char).mkString
-                    case Alignment.center => List.fill(paddingNumber / 2)(char).mkString + string + List.fill(paddingNumber / 2 + paddingNumber % 2)(char).mkString
-                    case Alignment.right => List.fill(paddingNumber)(char).mkString + string
+                    case Alignment.LEFT => string + List.fill(paddingNumber)(char).mkString
+                    case Alignment.CENTER => List.fill(paddingNumber / 2)(char).mkString + string + List.fill(paddingNumber / 2 + paddingNumber % 2)(char).mkString
+                    case Alignment.RIGHT => List.fill(paddingNumber)(char).mkString + string
                 }
             } else
                 string

@@ -1,13 +1,13 @@
 package io.github.ppdzm.utils.spark.sql
 
 import java.util.Properties
-
 import io.github.ppdzm.utils.database.common.DatabaseConstants
 import io.github.ppdzm.utils.spark.SparkUtils
+import io.github.ppdzm.utils.spark.implicits.SeqLikeConversions
 import io.github.ppdzm.utils.spark.implicits.DataFrameConversions._
 import io.github.ppdzm.utils.universal.base.Logging
 import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
-import io.github.ppdzm.utils.universal.implicits.UnitConversions._
+import io.github.ppdzm.utils.universal.implicits.UnitConversions.BytesLengthFormatter
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 

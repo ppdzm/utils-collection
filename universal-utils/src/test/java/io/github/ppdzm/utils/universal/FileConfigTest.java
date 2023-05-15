@@ -1,10 +1,15 @@
 package io.github.ppdzm.utils.universal;
 
 import io.github.ppdzm.utils.universal.config.Config;
+import io.github.ppdzm.utils.universal.config.FileConfigPrinter;
 import io.github.ppdzm.utils.universal.config.FileConfig;
+import io.github.ppdzm.utils.universal.core.CoreConstants;
+import io.github.ppdzm.utils.universal.core.SystemProperties;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
 
 public class FileConfigTest {
     public static void main(String[] args) throws Exception {
@@ -22,4 +27,11 @@ public class FileConfigTest {
         System.out.println(config.newConfigItem("c").mapValue());
         System.out.println(config.newConfigItem("d").mapListValue());
     }
+
+    @Test
+    public void printConfig() throws Exception {
+        SystemProperties.set(CoreConstants.PROGRAM_LANGUAGE_KEY, "zh");
+        FileConfigPrinter.print();
+    }
+
 }

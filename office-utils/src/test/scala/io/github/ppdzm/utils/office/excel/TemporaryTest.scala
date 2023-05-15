@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.office.excel
 
 import io.github.ppdzm.utils.office.excel.workbook.{OLE2WorkBook, OOXMLWorkBook}
-import io.github.ppdzm.utils.universal.feature.LoanPattern
 import org.apache.commons.io.FileUtils
 import org.scalatest.FunSuite
+import scalikejdbc.LoanPattern
 
 import java.io.File
 import java.nio.charset.StandardCharsets

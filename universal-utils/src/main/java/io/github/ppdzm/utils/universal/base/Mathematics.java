@@ -163,7 +163,6 @@ public class Mathematics {
 
     /**
      * 连续自然数1~n的k次方求和
-     * note.youdao.com/share/?id=83d59f16088ca0a0e0b6bbd2ad497785&type=note#/
      *
      * @param n 自然数
      * @param k 次方

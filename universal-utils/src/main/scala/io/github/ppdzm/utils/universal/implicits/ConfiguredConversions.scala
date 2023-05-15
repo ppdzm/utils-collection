@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import java.sql.ResultSet
-
 import io.github.ppdzm.utils.universal.cli.{CliUtils, PrintConfig, Render}
 import io.github.ppdzm.utils.universal.config.Config
+
+import java.sql.ResultSet
 
 /**
  * Created by Stuart Alex on 2021/4/8.

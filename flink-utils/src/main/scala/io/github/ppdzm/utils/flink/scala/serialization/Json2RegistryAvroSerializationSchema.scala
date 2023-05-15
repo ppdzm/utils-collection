@@ -1,11 +1,10 @@
 package io.github.ppdzm.utils.flink.scala.serialization
 
 import java.io.ByteArrayOutputStream
-
-import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.formats.avro.AvroUtils
 import org.apache.avro.Schema
 import org.apache.flink.formats.avro.{RegistryAvroSerializationSchema, SchemaCoder}
+import scalikejdbc.LoanPattern
 
 /**
  * Created by Stuart Alex on 2021/1/29.

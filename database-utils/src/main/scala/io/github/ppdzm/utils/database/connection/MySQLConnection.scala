@@ -2,7 +2,6 @@ package io.github.ppdzm.utils.database.connection
 
 import io.github.ppdzm.utils.database.common.{DatabaseConstants, Drivers}
 import io.github.ppdzm.utils.database.pool.jdbc.HikariConnectionPool
-import io.github.ppdzm.utils.universal.feature.LoanPattern
 
 import java.sql.{Connection, PreparedStatement, ResultSet, Statement}
 import java.util.Properties

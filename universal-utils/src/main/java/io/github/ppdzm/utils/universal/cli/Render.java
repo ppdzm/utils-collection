@@ -101,7 +101,7 @@ public enum Render {
      */
     WHITE_B(47);
 
-    private int value;
+    private final int value;
 
     Render(int value) {
         this.value = value;

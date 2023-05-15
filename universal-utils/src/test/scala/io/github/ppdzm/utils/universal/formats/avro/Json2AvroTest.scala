@@ -3,15 +3,14 @@ package io.github.ppdzm.utils.universal.formats.avro
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.github.luben.zstd.Zstd
-import io.github.ppdzm.utils.universal.feature.LoanPattern
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.formats.json.JacksonJsonUtils
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.commons.io.FileUtils
 import org.scalatest.FunSuite
+import scalikejdbc.LoanPattern
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -20,11 +19,11 @@ class Json2AvroTest extends FunSuite {
 
     test("wechat-json-log-2-avro-generic-data") {
         val originalJsonString = LoanPattern.using(Source.fromFile(new File("../data/json/original/log-wechat-click.json"), "utf-8"))(s => s.mkString)
-        val jsonArray = JsonUtils.parse(originalJsonString)
+        val jsonArray = JacksonJsonUtils.parse(originalJsonString)
         println("compacted original json string is:")
-        val compactedOriginalJsonString = JsonUtils.serialize(jsonArray)
+        val compactedOriginalJsonString = JacksonJsonUtils.serialize(jsonArray)
         println("original size " + compactedOriginalJsonString.getBytes.length + " " + compactedOriginalJsonString)
-        val repairedJsonString = jsonArray.map(node => s"""{"wechat.wechat":${JsonUtils.serialize(node)}}""").mkString("[", ",", "]")
+        val repairedJsonString = jsonArray.map(node => s"""{"wechat.wechat":${JacksonJsonUtils.serialize(node)}}""").mkString("[", ",", "]")
         println("repaired json string is:")
         println("repaired size " + repairedJsonString.getBytes.length + " " + repairedJsonString)
         val schema = new Schema.Parser().parse(new File("../data/json/schema-all.json"))
@@ -40,11 +39,11 @@ class Json2AvroTest extends FunSuite {
 
     test("wechat-json-log-2-avro-bytes") {
         val originalJsonString = LoanPattern.using(Source.fromFile(new File("../data/json/original/log-wechat-click.json"), "utf-8"))(s => s.mkString)
-        val jsonArray = JsonUtils.parse(originalJsonString)
+        val jsonArray = JacksonJsonUtils.parse(originalJsonString)
         println("compacted original json string is:")
-        val compactedOriginalJsonString = JsonUtils.serialize(jsonArray)
+        val compactedOriginalJsonString = JacksonJsonUtils.serialize(jsonArray)
         println("original size " + compactedOriginalJsonString.getBytes.length + " " + compactedOriginalJsonString)
-        val repairedJsonString = jsonArray.map(node => s"""{"wechat.wechat":${JsonUtils.serialize(node)}}""").mkString("[", ",", "]")
+        val repairedJsonString = jsonArray.map(node => s"""{"wechat.wechat":${JacksonJsonUtils.serialize(node)}}""").mkString("[", ",", "]")
         println("repaired json string is:")
         println("repaired size " + repairedJsonString.getBytes.length + " " + repairedJsonString)
         val schema = new Schema.Parser().parse(new File("../data/json/schema-all.json"))
@@ -74,7 +73,7 @@ class Json2AvroTest extends FunSuite {
                     val file = new File(s"../data/json/log/log-wechat-$e.json")
                     println(file.getName)
                     val jsonString = LoanPattern.using(Source.fromFile(file, "utf-8"))(s => s.mkString)
-                    val jsonArray = JsonUtils.parse(jsonString).asInstanceOf[ArrayNode]
+                    val jsonArray = JacksonJsonUtils.parse(jsonString).asInstanceOf[ArrayNode]
                     jsonArray.foreach {
                         node =>
                             node.get("events").asInstanceOf[ArrayNode].foreach {
@@ -83,7 +82,7 @@ class Json2AvroTest extends FunSuite {
                             }
                     }
                     val repairedJsonString = jsonArray.map {
-                        node => s"""{"wechat.wechat":${JsonUtils.serialize(node)}}"""
+                        node => s"""{"wechat.wechat":${JacksonJsonUtils.serialize(node)}}"""
                     }
                         .mkString("[", ",", "]")
                     println(repairedJsonString)

@@ -1,11 +1,11 @@
 package io.github.ppdzm.utils.universal.cli
 
-import java.util.Properties
-
 import io.github.ppdzm.utils.universal.base.Enum
 import io.github.ppdzm.utils.universal.config.Config
 import io.github.ppdzm.utils.universal.core.SystemProperties
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+
+import java.util.Properties
 
 /**
  * Created by Stuart Alex on 2017/9/6.

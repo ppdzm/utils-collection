@@ -31,7 +31,6 @@ public class AvroUtils {
     private static final Schema.Parser parser = new Schema.Parser();
 
     /**
-     *
      * Avro字节数组转回Avro实体（类型未知，字节数组中含有Schema信息）
      *
      * @param bytes Avro格式字节数组
@@ -79,9 +78,9 @@ public class AvroUtils {
     /**
      * Avro字节数组转回Avro实体（GenericRecord/GenericData.Array，字节数组中不含Schema信息）
      *
-     * @param bytes Avro格式字节数组
+     * @param bytes        Avro格式字节数组
      * @param schemaString Avro Schema字符串
-     * @param <T>   类型
+     * @param <T>          类型
      * @return 泛型T列表
      * @throws IOException IOException
      */
@@ -104,9 +103,9 @@ public class AvroUtils {
     /**
      * Avro字节数组转回Avro实体（GenericRecord/GenericData.Array，字节数组中不含Schema信息）
      *
-     * @param bytes Avro格式字节数组
+     * @param bytes  Avro格式字节数组
      * @param schema Avro Schema
-     * @param <T>   类型
+     * @param <T>    类型
      * @return 泛型T列表
      * @throws IOException IOException
      */
@@ -293,7 +292,7 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @param <T>   类型
+     * @param <T>        类型
      * @return 泛型T列表
      * @throws IOException IOException
      */
@@ -345,7 +344,7 @@ public class AvroUtils {
      *
      * @param jsonString JsonString
      * @param schema     Avro Schema
-     * @param <T>   类型
+     * @param <T>        类型
      * @return 泛型T列表
      * @throws IOException IOException
      */

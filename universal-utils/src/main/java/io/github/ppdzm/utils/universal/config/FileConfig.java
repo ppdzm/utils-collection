@@ -5,7 +5,7 @@ import io.github.ppdzm.utils.universal.cli.CliUtils;
 import io.github.ppdzm.utils.universal.cli.Render;
 import io.github.ppdzm.utils.universal.core.CoreConstants;
 import io.github.ppdzm.utils.universal.core.SystemProperties;
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils;
+import io.github.ppdzm.utils.universal.formats.json.JacksonJsonUtils;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -45,6 +45,8 @@ public class FileConfig extends Config {
         if (active.isEmpty()) {
             logging.logInfo("Profile " + CliUtils.rendering("default", Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
         } else {
+            System.setProperty(CoreConstants.PROFILE_ACTIVE_KEY, active);
+            System.setProperty(CoreConstants.PROFILE_ACTIVE_KEY_ALIAS, active);
             logging.logInfo("Profile " + CliUtils.rendering(active, Render.GREEN) + CliUtils.rendering(" activated", Render.MAGENTA));
         }
         String[] splits = active.split("/");
@@ -67,7 +69,7 @@ public class FileConfig extends Config {
             logging.logInfo("Config file located at " + CliUtils.rendering(path, Render.GREEN));
             InputStream inputStream = url.openStream();
             if (fixedExtension.equals(".json")) {
-                Map<String, Object> configMap = JsonUtils.parse(url.openStream(), Map.class);
+                Map<String, Object> configMap = JacksonJsonUtils.parse(url.openStream(), Map.class);
                 properties.put(CoreConstants.PROFILE_ROOT, configMap);
             } else {
                 properties.load(inputStream);
@@ -93,6 +95,9 @@ public class FileConfig extends Config {
         Properties properties = initialize(SystemProperties.configFilePrefix(), SystemProperties.configFileExtension());
         for (Object key : cliProperties.keySet()) {
             String value = cliProperties.getProperty(key.toString());
+            if (key.toString().equals(CoreConstants.PROFILE_ACTIVE_KEY) || key.toString().equals(CoreConstants.PROFILE_EXTENSION_KEY) || key.toString().equals(CoreConstants.PROFILE_PREFIX_KEY)) {
+                System.setProperty(key.toString(), value);
+            }
             properties.put(key, value);
         }
         return properties;

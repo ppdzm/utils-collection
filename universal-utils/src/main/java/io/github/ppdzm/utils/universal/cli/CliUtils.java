@@ -1,11 +1,16 @@
 package io.github.ppdzm.utils.universal.cli;
 
 import io.github.ppdzm.utils.universal.base.Logging;
-import io.github.ppdzm.utils.universal.base.Symbols;
+import io.github.ppdzm.utils.universal.base.StringUtils;
+import io.github.ppdzm.utils.universal.core.SystemProperties;
+import io.github.ppdzm.utils.universal.tuple.Tuple2;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static io.github.ppdzm.utils.universal.base.Symbols.carriageReturn;
 
 /**
  * @author Created by Stuart Alex on 2021/5/7.
@@ -124,7 +129,7 @@ public class CliUtils {
      * @return string
      */
     public static String move2Begin() {
-        return Symbols.carriageReturn;
+        return carriageReturn;
     }
 
     /**
@@ -218,6 +223,153 @@ public class CliUtils {
     }
 
     /**
+     * 打印输出帮助文档
+     *
+     * @param help 命令——帮助
+     */
+    public static void printHelp(List<Tuple2<String, String>> help, String render) {
+        int maxLength = help.stream().mapToInt(e -> e.f1.length()).max().orElse(0);
+        help.stream()
+                .map(e -> {
+                    String[] parts = e.f1.split("\n");
+                    if (parts.length > 1) {
+                        String head = parts[0];
+                        String[] tail = Arrays.copyOfRange(parts, 1, parts.length);
+                        String indentedTail =
+                                Arrays.stream(tail)
+                                        .map(line -> StringUtils.repeat(" ", maxLength) + "\t" + line)
+                                        .collect(Collectors.joining("\t", "\n\t", ""));
+                        return StringUtils.rightPad(e.f1, maxLength) + "\t" + head + indentedTail;
+                    } else {
+                        return StringUtils.rightPad(e.f1, maxLength) + "\t" + e.f1.toString();
+                    }
+                })
+                .forEach(e -> System.out.println(rendering(e, render)));
+    }
+
+
+    /**
+     * 以字符颜色渲染的方式输出有限循环程序的当前执行进度
+     *
+     * @param sum        总循环次数
+     * @param present    当前已执行次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void printStage(int sum, int present, String textRender) {
+        printStage(null, sum, present, ' ', textRender);
+    }
+
+    /**
+     * 以字符颜色渲染的方式输出有限循环程序的当前执行进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param present    当前已执行次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void printStage(String mission, int sum, int present, String textRender) {
+        printStage(mission, sum, present, ' ', textRender);
+    }
+
+    /**
+     * 以字符颜色渲染的方式输出有限循环程序的当前执行进度
+     *
+     * @param sum        总循环次数
+     * @param present    当前已执行次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void printStage(int sum, int present, char symbol, String textRender) {
+        printStage(null, sum, present, symbol, textRender);
+    }
+
+    /**
+     * 以字符颜色渲染的方式输出有限循环程序的当前执行进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param present    当前已执行次数
+     * @param symbol     显示进度使用的字符
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void printStage(String mission, int sum, int present, char symbol, String textRender) {
+        String backgroundColor = "";
+        if (symbol == ' ')
+            backgroundColor = "0;42";
+        else
+            backgroundColor = textRender;
+        int percentage = present * 100 / sum;
+        String bar = StringUtils.repeat(symbol, percentage);
+        String blanks = StringUtils.repeat(' ', 100 - percentage);
+        String padding = StringUtils.repeat(' ', String.valueOf(sum).length() - String.valueOf(present).length());
+        String missionInHead = "";
+        String startPrompt = "";
+        String endPrompt = "";
+        if (StringUtils.isNotNullAndEmpty(mission)) {
+            missionInHead = mission + ": ";
+            startPrompt = "INFO Start execute mission【" + rendering(mission, textRender) + rendering("】", Render.MAGENTA);
+            endPrompt = "INFO Mission 【" + rendering(mission, textRender) + "】 accomplished";
+        }
+        String head = rendering("[", Render.MAGENTA) +
+                rendering(missionInHead + bar + ">", backgroundColor) +
+                rendering(blanks + "(" + padding + present + "/" + sum + "," + StringUtils.takeRight("  " + percentage, 3) + "%)", textRender) +
+                rendering("]", Render.MAGENTA);
+        String progress = "";
+        if (present == 1) {
+            logging.logInfo(startPrompt);
+            System.out.println(head);
+        } else if (present < sum) {
+            deleteCurrentRow();
+            System.out.println(carriageReturn + head);
+        } else {
+            deleteCurrentRow();
+            System.out.println(carriageReturn + head);
+            logging.logInfo(endPrompt);
+        }
+    }
+
+    /**
+     * 渲染文本
+     *
+     * @param messages       原始文本
+     * @param messageRenders 原始文本与渲染器
+     * @return string
+     */
+    public static String rendering(List<String> messages, Map<String, Render> messageRenders) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String key : messages) {
+            Render render = messageRenders.get(key);
+            stringBuilder.append(rendering(key, render));
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 渲染文本
+     *
+     * @param messages 原始文本与渲染器
+     * @return String
+     */
+    public static String rendering(Map<String, Render> messages) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String msg : messages.keySet()) {
+            Render render = messages.get(msg);
+            stringBuilder.append(rendering(msg, render));
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 渲染文本
+     *
+     * @param string  原始文本
+     * @param renders 渲染器
+     * @return string
+     */
+    public static String rendering(String string, String renders) {
+        return rendering(string, Arrays.stream(renders.split(";")).map(Integer::parseInt).map(Render::valueOf).collect(Collectors.toList()));
+    }
+
+    /**
      * 渲染文本
      *
      * @param string  原始文本
@@ -235,17 +387,16 @@ public class CliUtils {
     /**
      * 渲染文本
      *
-     * @param messages       原始文本
-     * @param messageRenders 原始文本与渲染器
+     * @param string  原始文本
+     * @param renders 渲染器
      * @return string
      */
-    public static String rendering(List<String> messages, Map<String, Render> messageRenders) {
+    public static String rendering(String string, List<Render> renders) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (String key : messages) {
-            Render render = messageRenders.get(key);
-            stringBuilder.append(rendering(key, render));
+        for (Render render : renders) {
+            stringBuilder.append(render.getValue()).append(";");
         }
-        return stringBuilder.toString();
+        return ESCAPE + stringBuilder.substring(0, stringBuilder.lastIndexOf(";")) + "m" + string + ESCAPE + Render.RESET + "m";
     }
 
     /**
@@ -293,6 +444,112 @@ public class CliUtils {
      */
     public static String up(int n) {
         return ESCAPE + n + UP;
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param sum        总循环次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void waiting(int sum, String textRender) {
+        waiting(null, sum, ' ', textRender, 1000);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param sum        总循环次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     * @param interval   休眠间隔
+     */
+    public static void waiting(int sum, String textRender, int interval) {
+        waiting(null, sum, ' ', textRender, interval);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param sum        总循环次数
+     * @param symbol     显示进度使用的字符
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void waiting(int sum, char symbol, String textRender) {
+        waiting(null, sum, symbol, textRender, 1000);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param sum        总循环次数
+     * @param symbol     显示进度使用的字符
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     * @param interval   休眠间隔
+     */
+    public static void waiting(int sum, char symbol, String textRender, int interval) {
+        waiting(null, sum, symbol, textRender, interval);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void waiting(String mission, int sum, String textRender) {
+        waiting(mission, sum, ' ', textRender, 1000);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     * @param interval   休眠间隔
+     */
+    public static void waiting(String mission, int sum, String textRender, int interval) {
+        waiting(mission, sum, ' ', textRender, interval);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param symbol     显示进度使用的字符
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     */
+    public static void waiting(String mission, int sum, char symbol, String textRender) {
+        waiting(mission, sum, symbol, textRender, 1000);
+    }
+
+    /**
+     * 等待，并显示进度
+     *
+     * @param mission    程序段的任务命名
+     * @param sum        总循环次数
+     * @param symbol     显示进度使用的字符
+     * @param textRender 文本渲染器 {@link io.github.ppdzm.utils.universal.cli.Render}
+     * @param interval   休眠间隔
+     */
+    public static void waiting(String mission, int sum, char symbol, String textRender, int interval) {
+        SystemProperties.setLogging2Stdout(true);
+        for (int i = 1; i <= sum; i++) {
+            printStage(mission, sum, i, symbol, textRender);
+            if (interval > 0) {
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        waiting("my mission", 10, '=', "0;32", 0);
     }
 
 }

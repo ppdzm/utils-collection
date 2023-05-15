@@ -1,9 +1,7 @@
 package io.github.ppdzm.utils.flink.scala.streaming.kafka
 
 import io.github.ppdzm.utils.flink.scala.streaming.FlinkStreaming
-import io.github.ppdzm.utils.hadoop.kafka.config.KafkaConsumerProperties
-import io.github.ppdzm.utils.universal.implicits.ArrayConversions._
-import io.github.ppdzm.utils.universal.implicits.ExtendedJavaConversions._
+import io.github.ppdzm.utils.hadoop.scala.kafka.config.KafkaConsumerProperties
 import org.apache.flink.api.common.serialization.DeserializationSchema
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer, KafkaDeserializationSchema}

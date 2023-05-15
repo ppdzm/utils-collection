@@ -5,6 +5,8 @@ import io.github.ppdzm.utils.flink.streaming.FlinkStreaming;
 import io.github.ppdzm.utils.flink.streaming.config.FlinkStreamingConfig;
 import io.github.ppdzm.utils.flink.streaming.kafka.config.FlinkKafkaStreamingConfig;
 import io.github.ppdzm.utils.universal.alert.Alerter;
+import io.github.ppdzm.utils.universal.cli.CliUtils;
+import io.github.ppdzm.utils.universal.cli.Render;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
+import static org.apache.kafka.common.config.SaslConfigs.SASL_KERBEROS_SERVICE_NAME;
 
 /**
  * @author Created by Stuart Alex on 2021/5/8.
@@ -119,6 +123,12 @@ public abstract class FlinkKafkaStreaming<T> extends FlinkStreaming<T> {
             }
         }
         return consumerProperties;
+    }
+
+    public Properties getProducerProperties() {
+        Properties props = new Properties();
+        props.put(BOOTSTRAP_SERVERS_CONFIG, this.kafkaSourceBrokers);
+        return props;
     }
 
 }

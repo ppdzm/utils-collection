@@ -9,5 +9,4 @@ object ExceptionGenerator {
         constructor.newInstance(exceptionMessage).asInstanceOf[Exception]
     }
 
-
 }

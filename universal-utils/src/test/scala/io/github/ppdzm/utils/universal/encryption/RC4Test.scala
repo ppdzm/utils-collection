@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.universal.encryption
 
 import cn.hutool.core.util.StrUtil
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.formats.json.JacksonJsonUtils
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.scalatest.FunSuite
 
@@ -45,19 +45,19 @@ class RC4Test extends FunSuite {
               |	"index": "systemacclogs",
               |	"k8s_pod_namespace": "lala-go"
               |}""".stripMargin
-        val logJson = JsonUtils.parse(log)
+        val logJson = JacksonJsonUtils.parse(log)
         val message = logJson.get("message").asText()
         println(message)
         val unicodeEscapedMessage = message.escapeUnicode8
         println(unicodeEscapedMessage)
-        val unicodeEscapedMessageJson = JsonUtils.parse(unicodeEscapedMessage)
+        val unicodeEscapedMessageJson = JacksonJsonUtils.parse(unicodeEscapedMessage)
         val postParameters = unicodeEscapedMessageJson.get("postps").asText().unescapeUnicode8
         println(postParameters)
         val dec = new cn.hutool.crypto.symmetric.RC4("R6qGg5^Pdv%4").crypt(postParameters.unicode82Bytes)
         val decryptedBytes = RC4.decrypt(postParameters.unicode82Bytes, "R6qGg5^Pdv%4")
         val decompressed = GZipUtils.decompress(decryptedBytes)
         val decom = GZipUtils.decompress(dec)
-        println(JsonUtils.pretty(decompressed))
+        println(JacksonJsonUtils.pretty(decompressed))
         println(decom)
     }
 

@@ -87,6 +87,9 @@ public class ConfigItem implements Serializable {
         }
         Map<String, String> map = new HashMap<>();
         for (String value : arrayValue(fieldSeparator)) {
+            if (value == null || value.isEmpty()) {
+                continue;
+            }
             String[] splits = StringUtils.split(value, keyValueSeparator);
             if (splits.length != 2) {
                 throw new IllegalArgumentException("value " + value + " can not splits to 2 values with separator " + keyValueSeparator);
@@ -142,6 +145,10 @@ public class ConfigItem implements Serializable {
     }
 
     public String stringValue() throws Exception {
+        Object value = rawValue();
+        if (value == null) {
+            return config.getProperty(key);
+        }
         return rawValue().toString();
     }
 

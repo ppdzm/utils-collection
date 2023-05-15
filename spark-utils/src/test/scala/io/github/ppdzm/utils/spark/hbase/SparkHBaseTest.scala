@@ -1,9 +1,9 @@
 package io.github.ppdzm.utils.spark.hbase
 
-import io.github.ppdzm.utils.hadoop.constants.ZookeeperConfigConstants
-import io.github.ppdzm.utils.hadoop.hbase.implicts.HBaseImplicits._
-import io.github.ppdzm.utils.hadoop.hbase.{HBaseCatalog, HBaseEnvironment}
-import io.github.ppdzm.utils.hadoop.security.KerberosConfig
+import io.github.ppdzm.utils.hadoop.scala.constants.ZookeeperConfigConstants
+import io.github.ppdzm.utils.hadoop.scala.hbase.implicts.HBaseImplicits._
+import io.github.ppdzm.utils.hadoop.scala.hbase.{HBaseCatalog, HBaseEnvironment}
+import io.github.ppdzm.utils.hadoop.scala.security.KerberosConfig
 import io.github.ppdzm.utils.spark.SparkUtils
 import io.github.ppdzm.utils.spark.sql.SparkSQL
 import io.github.ppdzm.utils.universal.cli.PrintConfig

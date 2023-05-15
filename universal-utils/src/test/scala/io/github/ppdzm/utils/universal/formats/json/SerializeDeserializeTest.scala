@@ -16,7 +16,7 @@ class SerializeDeserializeTest extends FunSuite {
         val sc = new ScalaClass("Stuart Alex", 30)
         println(Json4sUtils.serialize4s(sc))
         val person = new Person("Stuart Alex", 30)
-        println(JsonUtils.serialize(person))
+        println(JacksonJsonUtils.serialize(person))
     }
 
     test("deserialize") {
@@ -26,7 +26,7 @@ class SerializeDeserializeTest extends FunSuite {
         println(cc)
         val sc = Json4sUtils.deserialize4s[ScalaClass](json)
         println(sc)
-        val person = JsonUtils.deserialize(json, classOf[Person])
+        val person = JacksonJsonUtils.deserialize(json, classOf[Person])
         println(person)
     }
 

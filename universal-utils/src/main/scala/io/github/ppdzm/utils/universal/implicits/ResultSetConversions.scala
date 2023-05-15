@@ -1,10 +1,9 @@
 package io.github.ppdzm.utils.universal.implicits
 
-import java.sql.{ResultSet, ResultSetMetaData}
-
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import io.github.ppdzm.utils.universal.implicits.SeqConversions._
 
+import java.sql.{ResultSet, ResultSetMetaData}
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 

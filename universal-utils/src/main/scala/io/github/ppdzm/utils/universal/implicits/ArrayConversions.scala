@@ -29,17 +29,17 @@ object ArrayConversions {
             assert(array.nonEmpty, "array cannot be empty")
             val elementNumber = array.length
             (0 until (1 << elementNumber))
-                .map {
-                    cursor =>
-                        (0 until elementNumber)
-                            .map(e => e -> (1 << e))
-                            .filter(e => (e._2 & cursor) != 0)
-                            .map(_._1)
-                            .map(array(_))
-                            .toList
-                }
-                .filter(number == -1 || _.length == number)
-                .toList
+              .map {
+                  cursor =>
+                      (0 until elementNumber)
+                        .map(e => e -> (1 << e))
+                        .filter(e => (e._2 & cursor) != 0)
+                        .map(_._1)
+                        .map(array(_))
+                        .toList
+              }
+              .filter(number == -1 || _.length == number)
+              .toList
         }
 
     }
@@ -65,8 +65,8 @@ object ArrayConversions {
          */
         def prettyShow(render: String, alignment: Any, explode: Boolean, length: Int, linefeed: Int, flank: Boolean, null2Empty: Boolean, transverse: Boolean, truncate: Boolean, truncateLength: Int, vertical: Boolean, columns: Seq[String] = this.columns): Unit = {
             array.map(_.toList)
-                .toList
-                .prettyShow(render, alignment, explode, length, linefeed, flank, null2Empty, transverse, truncate, truncateLength, vertical, columns)
+              .toList
+              .prettyShow(render, alignment, explode, length, linefeed, flank, null2Empty, transverse, truncate, truncateLength, vertical, columns)
         }
 
         /**
@@ -87,8 +87,8 @@ object ArrayConversions {
          */
         def toTable(alignment: Any, explode: Boolean, length: Int, linefeed: Int, flank: Boolean, null2Empty: Boolean, transverse: Boolean, truncate: Boolean, truncateLength: Int, vertical: Boolean, columns: Seq[String] = this.columns): (String, Seq[String], String) = {
             array.map(_.toList)
-                .toList
-                .toTable(alignment, explode, length, linefeed, flank, null2Empty, transverse, truncate, truncateLength, vertical, columns)
+              .toList
+              .toTable(alignment, explode, length, linefeed, flank, null2Empty, transverse, truncate, truncateLength, vertical, columns)
         }
 
         /**

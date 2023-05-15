@@ -1,5 +1,6 @@
 package io.github.ppdzm.utils.universal.formats.avro;
 
+
 import com.fasterxml.jackson.core.*;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author Created by Stuart Alex on 2021/5/22.
  */
 public class ExtendedJsonParser extends JsonParser {
-    private List<JsonElement> elements;
+    private final List<JsonElement> elements;
     private int pos = 0;
 
     public ExtendedJsonParser(List<JsonElement> elements) {

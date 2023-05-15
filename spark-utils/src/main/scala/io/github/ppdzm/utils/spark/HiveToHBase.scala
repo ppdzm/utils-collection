@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.spark
 
-import io.github.ppdzm.utils.hadoop.hbase.HBaseCatalog
+import io.github.ppdzm.utils.hadoop.scala.hbase.HBaseCatalog
 import io.github.ppdzm.utils.universal.base.ResourceUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.spark.{HBaseContext, KeyFamilyQualifier}

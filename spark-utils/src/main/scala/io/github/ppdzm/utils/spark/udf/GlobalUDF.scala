@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.spark.udf
 
 import io.github.ppdzm.utils.universal.base.functions
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions.AnyImplicits
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 

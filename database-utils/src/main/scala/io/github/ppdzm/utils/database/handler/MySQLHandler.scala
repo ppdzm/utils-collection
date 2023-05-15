@@ -2,9 +2,9 @@ package io.github.ppdzm.utils.database.handler
 
 import io.github.ppdzm.utils.database.connection.MySQLConnection
 import io.github.ppdzm.utils.universal.base.StringUtils
-import io.github.ppdzm.utils.universal.feature.LoanPattern
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
-import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
+import io.github.ppdzm.utils.universal.implicits.ResultSetConversions.ResultSetImplicits
+import scalikejdbc.LoanPattern
 
 import java.sql.{ResultSet, ResultSetMetaData}
 import java.util

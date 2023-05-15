@@ -1,10 +1,9 @@
 package io.github.ppdzm.utils.universal.feature
 
-import java.math.BigInteger
-import java.security.MessageDigest
-
 import io.github.ppdzm.utils.universal.base.Logging
 
+import java.math.BigInteger
+import java.security.MessageDigest
 import scala.collection.mutable
 import scala.reflect.internal.util.{AbstractFileClassLoader, BatchSourceFile}
 import scala.reflect.io.{AbstractFile, VirtualDirectory}

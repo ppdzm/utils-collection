@@ -3,10 +3,9 @@ package io.github.ppdzm.utils.universal.formats.avro
 import java.io.File
 import java.nio.charset.StandardCharsets._
 import java.util.Base64
-
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.github.luben.zstd.Zstd
-import io.github.ppdzm.utils.universal.formats.json.JsonUtils
+import io.github.ppdzm.utils.universal.formats.json.JacksonJsonUtils
 import org.apache.commons.io.FileUtils
 import org.scalatest.FunSuite
 
@@ -51,9 +50,9 @@ class Avro2JsonTest extends FunSuite {
     }
 
     def fix(singleLog: String): String = {
-        JsonUtils.parse(singleLog)
+        JacksonJsonUtils.parse(singleLog)
             .asInstanceOf[ArrayNode]
-            .map(node => JsonUtils.serialize(node))
+            .map(node => JacksonJsonUtils.serialize(node))
             .map {
                 compacted =>
                     compacted.replace("\"browse_time\":\"\"", "\"browse_time\":null")

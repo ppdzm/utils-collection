@@ -1,6 +1,8 @@
 package io.github.ppdzm.utils.universal.formats.avro;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import org.apache.avro.AvroTypeException;
@@ -16,10 +18,10 @@ import org.apache.avro.util.Utf8;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * @author Created by Stuart Alex on 2021/3/24.
@@ -278,8 +280,8 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
         Symbol.IntCheckAction top = (Symbol.IntCheckAction) parser.popSymbol();
         if (size != top.size) {
             throw new AvroTypeException(
-                "Incorrect length for fixed binary: expected " +
-                    top.size + " but received " + size + " bytes.");
+                    "Incorrect length for fixed binary: expected " +
+                            top.size + " but received " + size + " bytes.");
         }
     }
 
@@ -291,7 +293,7 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
             in.nextToken();
             if (result.length != len) {
                 throw new AvroTypeException("Expected fixed length " + len
-                    + ", but got" + result.length);
+                        + ", but got" + result.length);
             }
             System.arraycopy(result, 0, bytes, start, len);
         } else {
@@ -311,7 +313,7 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
             in.nextToken();
             if (result.length != length) {
                 throw new AvroTypeException("Expected fixed length " + length
-                    + ", but got" + result.length);
+                        + ", but got" + result.length);
             }
         } else {
             throw error("fixed");
@@ -431,12 +433,12 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
         if (in.getCurrentToken() == JsonToken.VALUE_NULL) {
             label = "null";
         } else if (in.getCurrentToken() == JsonToken.START_OBJECT &&
-            in.nextToken() == JsonToken.FIELD_NAME) {
+                in.nextToken() == JsonToken.FIELD_NAME) {
             label = in.getText();
             in.nextToken();
             parser.pushSymbol(Symbol.UNION_END);
         } else if (a.size() == 2 &&
-            ("null".equals(a.getLabel(0)) || "null".equals(a.getLabel(1)))) {
+                ("null".equals(a.getLabel(0)) || "null".equals(a.getLabel(1)))) {
             label = ("null".equals(a.getLabel(0)) ? a.getLabel(1) : a.getLabel(0));
         } else {
             throw error("start-union");

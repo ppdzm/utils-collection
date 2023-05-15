@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.database.handler
 
-import io.github.ppdzm.utils.universal.implicits.ResultSetConversions._
+import io.github.ppdzm.utils.universal.implicits.ResultSetConversions.ResultSetImplicits
 import org.scalatest.FunSuite
 
 class MySQLHandlerTest extends FunSuite {

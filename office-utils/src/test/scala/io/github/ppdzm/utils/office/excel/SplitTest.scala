@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.office.excel
 
-import io.github.ppdzm.utils.universal.implicits.BasicConversions._
+import io.github.ppdzm.utils.universal.implicits.BasicConversions.StringImplicits
 import org.scalatest.FunSuite
 
 class SplitTest extends FunSuite {

@@ -1,8 +1,5 @@
 package io.github.ppdzm.utils.universal.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -23,7 +20,7 @@ import java.util.List;
 public class BytesUtils {
 
     private static final char[] HEX_CHARS = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
     // Using the charset canonical name for String/byte[] conversions is much
     // more efficient due to use of cached encoders/decoders.
@@ -31,8 +28,6 @@ public class BytesUtils {
 
     //HConstants.EMPTY_BYTE_ARRAY should be updated if this changed
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
-    private static final Logger LOG = LoggerFactory.getLogger(BytesUtils.class);
 
     /**
      * Size of int in bytes
@@ -244,7 +239,7 @@ public class BytesUtils {
     }
 
     private static final char[] HEX_CHARS_UPPER = {
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
     /**
@@ -281,8 +276,8 @@ public class BytesUtils {
 
     private static boolean isHexDigit(char c) {
         return
-            (c >= 'A' && c <= 'F') ||
-                (c >= '0' && c <= '9');
+                (c >= 'A' && c <= 'F') ||
+                        (c >= '0' && c <= '9');
     }
 
     /**
@@ -312,8 +307,7 @@ public class BytesUtils {
                 char hd2 = in.charAt(i + 3);
 
                 // they need to be A-F0-9:
-                if (!isHexDigit(hd1) ||
-                    !isHexDigit(hd2)) {
+                if (!isHexDigit(hd1) || !isHexDigit(hd2)) {
                     // bogus escape code, ignore:
                     continue;
                 }
@@ -455,7 +449,7 @@ public class BytesUtils {
     public static int putLong(byte[] bytes, int offset, long val) {
         if (bytes.length - offset < SIZEOF_LONG) {
             throw new IllegalArgumentException("Not enough room to put a long at"
-                + " offset " + offset + " in a " + bytes.length + " byte array");
+                    + " offset " + offset + " in a " + bytes.length + " byte array");
         }
         for (int i = offset + 7; i > offset; i--) {
             bytes[i] = (byte) val;
@@ -617,7 +611,7 @@ public class BytesUtils {
     public static int readAsInt(byte[] bytes, int offset, final int length) {
         if (offset + length > bytes.length) {
             throw new IllegalArgumentException("offset (" + offset + ") + length (" + length
-                + ") exceed the" + " capacity of the array: " + bytes.length);
+                    + ") exceed the" + " capacity of the array: " + bytes.length);
         }
         int n = 0;
         for (int i = offset; i < (offset + length); i++) {
@@ -733,7 +727,7 @@ public class BytesUtils {
     public static int putShort(byte[] bytes, int offset, short val) {
         if (bytes.length - offset < SIZEOF_SHORT) {
             throw new IllegalArgumentException("Not enough room to put a short at"
-                + " offset " + offset + " in a " + bytes.length + " byte array");
+                    + " offset " + offset + " in a " + bytes.length + " byte array");
         }
         bytes[offset + 1] = (byte) val;
         val >>= 8;
@@ -757,7 +751,7 @@ public class BytesUtils {
     public static int putAsShort(byte[] bytes, int offset, int val) {
         if (bytes.length - offset < SIZEOF_SHORT) {
             throw new IllegalArgumentException("Not enough room to put a short at"
-                + " offset " + offset + " in a " + bytes.length + " byte array");
+                    + " offset " + offset + " in a " + bytes.length + " byte array");
         }
         bytes[offset + 1] = (byte) val;
         val >>= 8;
@@ -799,7 +793,7 @@ public class BytesUtils {
      */
     public static BigDecimal toBigDecimal(byte[] bytes, int offset, final int length) {
         if (bytes == null || length < SIZEOF_INT + 1 ||
-            (offset + length > bytes.length)) {
+                (offset + length > bytes.length)) {
             return null;
         }
 
@@ -830,7 +824,7 @@ public class BytesUtils {
 
     /**
      * @param a   left operand
-     * @param buf right operand
+     * @param buf takeRight operand
      * @return True if equal
      */
     public static boolean equals(byte[] a, ByteBuffer buf) {
@@ -1007,29 +1001,29 @@ public class BytesUtils {
     }
 
     /**
-     * Bytewise binary increment/deincrement of long contained in byte array
+     * Bytewise binary increment/de-increment of long contained in byte array
      * on given amount.
      *
      * @param value  - array of bytes containing long (length &lt;= SIZEOF_LONG)
-     * @param amount value will be incremented on (deincremented if negative)
+     * @param amount value will be incremented on (de-incremented if negative)
      * @return array of bytes containing incremented long (length == SIZEOF_LONG)
      */
     public static byte[] incrementBytes(byte[] value, long amount) {
         byte[] val = value;
         if (val.length < SIZEOF_LONG) {
             // Hopefully this doesn't happen too often.
-            byte[] newvalue;
+            byte[] newValue;
             if (val[0] < 0) {
-                newvalue = new byte[]{-1, -1, -1, -1, -1, -1, -1, -1};
+                newValue = new byte[]{-1, -1, -1, -1, -1, -1, -1, -1};
             } else {
-                newvalue = new byte[SIZEOF_LONG];
+                newValue = new byte[SIZEOF_LONG];
             }
-            System.arraycopy(val, 0, newvalue, newvalue.length - val.length,
-                val.length);
-            val = newvalue;
+            System.arraycopy(val, 0, newValue, newValue.length - val.length,
+                    val.length);
+            val = newValue;
         } else if (val.length > SIZEOF_LONG) {
             throw new IllegalArgumentException("Increment BytesUtils - value too big: " +
-                val.length);
+                    val.length);
         }
         if (amount == 0) {
             return val;
@@ -1040,7 +1034,7 @@ public class BytesUtils {
         return binaryIncrementPos(val, amount);
     }
 
-    /* increment/deincrement for positive value */
+    /* increment/de-increment for positive value */
     private static byte[] binaryIncrementPos(byte[] value, long amount) {
         long amo = amount;
         int sign = 1;
@@ -1067,7 +1061,7 @@ public class BytesUtils {
         return value;
     }
 
-    /* increment/deincrement for negative value */
+    /* increment/de-increment for negative value */
     private static byte[] binaryIncrementNeg(byte[] value, long amount) {
         long amo = amount;
         int sign = 1;
@@ -1101,7 +1095,7 @@ public class BytesUtils {
         byte[] b = toBytes(s);
         if (b.length > size) {
             throw new IOException("Trying to write " + b.length + " bytes (" +
-                toStringBinary(b) + ") into a field of length " + size);
+                    toStringBinary(b) + ") into a field of length " + size);
         }
 
         out.writeBytes(s);
@@ -1158,7 +1152,7 @@ public class BytesUtils {
 
     /**
      * Search sorted array "a" for byte "key". I can't remember if I wrote this or copied it from
-     * somewhere. (mcorgan)
+     * somewhere.
      *
      * @param a         Array to search. Entries must be sorted and unique.
      * @param fromIndex First index inclusive of "a" to include in the search.
@@ -1357,7 +1351,7 @@ public class BytesUtils {
         byte[] result = new byte[srcBytes.length * multiNum];
         for (int i = 0; i < multiNum; i++) {
             System.arraycopy(srcBytes, 0, result, i * srcBytes.length,
-                srcBytes.length);
+                    srcBytes.length);
         }
         return result;
     }

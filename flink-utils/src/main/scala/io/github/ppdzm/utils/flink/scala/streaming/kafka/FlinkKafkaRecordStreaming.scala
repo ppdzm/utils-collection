@@ -19,7 +19,7 @@ trait FlinkKafkaRecordStreaming[T] extends FlinkKafkaStreaming[T] {
     override protected lazy val dataSource: SourceFunction[T] = {
         this.logging.logInfo("consumer configuration is following:\n" + consumerProperties.toKeyValuePair.withKeySorted.withKeyPadded(-1, "\t", "\t", "").mkString("\n"))
         new FlinkKafkaConsumer(kafkaSourceTopic, deserializationSchema, consumerProperties)
-            .setStartFromGroupOffsets()
-            .setCommitOffsetsOnCheckpoints(true)
+          .setStartFromGroupOffsets()
+          .setCommitOffsetsOnCheckpoints(true)
     }
 }
