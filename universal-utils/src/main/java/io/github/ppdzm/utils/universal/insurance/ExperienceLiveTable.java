@@ -3,7 +3,13 @@ package io.github.ppdzm.utils.universal.insurance;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 经验生命表
+ *
+ * @author Created by Stuart Alex on 2017/3/29.
+ */
 public interface ExperienceLiveTable {
+
     double a(int x, int n);
 
     double p(int x, int n);

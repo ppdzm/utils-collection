@@ -79,13 +79,13 @@ public class ConfigItem implements Serializable {
         Object rawValue = rawValue();
         if (rawValue instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) rawValue;
-            Map<String, String> stringMap = new HashMap<>();
+            Map<String, String> stringMap = new HashMap<>(4);
             for (String s : map.keySet()) {
                 stringMap.put(s, map.get(s).toString());
             }
             return stringMap;
         }
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(4);
         for (String value : arrayValue(fieldSeparator)) {
             if (value == null || value.isEmpty()) {
                 continue;
@@ -107,13 +107,13 @@ public class ConfigItem implements Serializable {
         Object rawValue = rawValue();
         if (rawValue instanceof Map) {
             Map<String, List<Object>> map = (Map<String, List<Object>>) rawValue;
-            Map<String, List<String>> stringMap = new HashMap<>();
+            Map<String, List<String>> stringMap = new HashMap<>(4);
             for (String s : map.keySet()) {
                 stringMap.put(s, map.get(s).stream().map(Object::toString).collect(Collectors.toList()));
             }
             return stringMap;
         }
-        Map<String, List<String>> mapList = new HashMap<>();
+        Map<String, List<String>> mapList = new HashMap<>(4);
         if (valueSeparator == null) {
             for (String value : arrayValue(fieldSeparator)) {
                 String[] splits = StringUtils.split(value, keyValueSeparator);

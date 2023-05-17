@@ -18,15 +18,25 @@ import java.util.List;
  * @author Created by Stuart Alex on 2021/6/19.
  */
 public class BytesUtils {
-
+    private static final char A_UPPER = 'A';
+    private static final char F_UPPER = 'F';
+    private static final char A_LOWER = 'a';
+    private static final char F_LOWER = 'f';
     private static final char[] HEX_CHARS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
-    // Using the charset canonical name for String/byte[] conversions is much
-    // more efficient due to use of cached encoders/decoders.
+    private static final char[] HEX_CHARS_UPPER = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+
+    /**
+     * Using the charset canonical name for String/byte[] conversions is much more efficient due to use of cached encoders/decoders.
+     */
     private static final String UTF8_CSN = StandardCharsets.UTF_8.name();
 
-    //HConstants.EMPTY_BYTE_ARRAY should be updated if this changed
+    /**
+     * HConstants.EMPTY_BYTE_ARRAY should be updated if this changed
+     */
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
@@ -79,8 +89,7 @@ public class BytesUtils {
      * @param srcLength source length
      * @return incremented offset
      */
-    public static int putBytes(byte[] tgtBytes, int tgtOffset, byte[] srcBytes,
-                               int srcOffset, int srcLength) {
+    public static int putBytes(byte[] tgtBytes, int tgtOffset, byte[] srcBytes, int srcOffset, int srcLength) {
         System.arraycopy(srcBytes, srcOffset, tgtBytes, tgtOffset, srcLength);
         return tgtOffset + srcLength;
     }
@@ -230,17 +239,14 @@ public class BytesUtils {
      * @see #getBytes(ByteBuffer)
      */
     public static String toStringBinary(ByteBuffer buf) {
-        if (buf == null)
+        if (buf == null) {
             return "null";
+        }
         if (buf.hasArray()) {
             return toStringBinary(buf.array(), buf.arrayOffset(), buf.limit());
         }
         return toStringBinary(toBytes(buf));
     }
-
-    private static final char[] HEX_CHARS_UPPER = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
 
     /**
      * Write a printable representation of a byte array. Non-printable
@@ -275,9 +281,7 @@ public class BytesUtils {
     }
 
     private static boolean isHexDigit(char c) {
-        return
-                (c >= 'A' && c <= 'F') ||
-                        (c >= '0' && c <= '9');
+        return (c >= A_UPPER && c <= F_UPPER) || (c >= '0' && c <= '9');
     }
 
     /**
@@ -288,8 +292,8 @@ public class BytesUtils {
      * @return The converted hex value as a byte.
      */
     public static byte toBinaryFromHex(byte ch) {
-        if (ch >= 'A' && ch <= 'F') {
-            return (byte) ((byte) 10 + (byte) (ch - 'A'));
+        if (ch >= A_UPPER && ch <= F_UPPER) {
+            return (byte) ((byte) 10 + (byte) (ch - A_UPPER));
         }
         // else
         return (byte) (ch - '0');
@@ -315,7 +319,8 @@ public class BytesUtils {
                 byte d = (byte) ((toBinaryFromHex((byte) hd1) << 4) + toBinaryFromHex((byte) hd2));
 
                 b[size++] = d;
-                i += 3; // skip 3
+                // skip 3
+                i += 3;
             } else {
                 b[size++] = (byte) ch;
             }
@@ -1034,7 +1039,13 @@ public class BytesUtils {
         return binaryIncrementPos(val, amount);
     }
 
-    /* increment/de-increment for positive value */
+    /**
+     * increment/de-increment for positive value
+     *
+     * @param value
+     * @param amount
+     * @return
+     */
     private static byte[] binaryIncrementPos(byte[] value, long amount) {
         long amo = amount;
         int sign = 1;
@@ -1061,7 +1072,13 @@ public class BytesUtils {
         return value;
     }
 
-    /* increment/de-increment for negative value */
+    /**
+     * increment/de-increment for negative value
+     *
+     * @param value
+     * @param amount
+     * @return
+     */
     private static byte[] binaryIncrementNeg(byte[] value, long amount) {
         long amo = amount;
         int sign = 1;
@@ -1144,7 +1161,9 @@ public class BytesUtils {
      * @return a copy of the given designated byte array
      */
     public static byte[] copy(byte[] bytes, final int offset, final int length) {
-        if (bytes == null) return null;
+        if (bytes == null) {
+            return null;
+        }
         byte[] result = new byte[length];
         System.arraycopy(bytes, offset, result, 0, length);
         return result;
@@ -1175,10 +1194,12 @@ public class BytesUtils {
             } else if (midVal > unsignedKey) {
                 high = mid - 1;
             } else {
-                return mid; // key found
+                // key found
+                return mid;
             }
         }
-        return -(low + 1); // key not found.
+        // key not found.
+        return -(low + 1);
     }
 
     /**
@@ -1194,7 +1215,8 @@ public class BytesUtils {
             throw new IllegalArgumentException("cannot increment null array");
         }
         for (int i = copy.length - 1; i >= 0; --i) {
-            if (copy[i] == -1) {// -1 is all 1-bits, which is the unsigned maximum
+            if (copy[i] == -1) {
+                // -1 is all 1-bits, which is the unsigned maximum
                 copy[i] = 0;
             } else {
                 ++copy[i];
@@ -1331,9 +1353,7 @@ public class BytesUtils {
      */
     public static byte[] createMaxByteArray(int maxByteCount) {
         byte[] maxByteArray = new byte[maxByteCount];
-        for (int i = 0; i < maxByteArray.length; i++) {
-            maxByteArray[i] = (byte) 0xff;
-        }
+        Arrays.fill(maxByteArray, (byte) 0xff);
         return maxByteArray;
     }
 
@@ -1380,10 +1400,10 @@ public class BytesUtils {
     private static int hexCharToNibble(char ch) {
         if (ch <= '9' && ch >= '0') {
             return ch - '0';
-        } else if (ch >= 'a' && ch <= 'f') {
-            return ch - 'a' + 10;
-        } else if (ch >= 'A' && ch <= 'F') {
-            return ch - 'A' + 10;
+        } else if (ch >= A_LOWER && ch <= F_LOWER) {
+            return ch - A_LOWER + 10;
+        } else if (ch >= A_UPPER && ch <= F_UPPER) {
+            return ch - A_UPPER + 10;
         }
         throw new IllegalArgumentException("Invalid hex char: " + ch);
     }
@@ -1396,7 +1416,7 @@ public class BytesUtils {
      * Create a byte array from a string of hash digits. The length of the
      * string must be a multiple of 2
      *
-     * @param hex
+     * @param hex 十六进制
      */
     public static byte[] fromHex(String hex) {
         int len = hex.length();
@@ -1407,53 +1427,4 @@ public class BytesUtils {
         return b;
     }
 
-    /**
-     * @param b
-     * @param delimiter
-     * @return Index of delimiter having started from start of <code>b</code> moving rightward.
-     */
-    public static int searchDelimiterIndex(final byte[] b, int offset, final int length, final int delimiter) {
-        if (b == null) {
-            throw new IllegalArgumentException("Passed buffer is null");
-        }
-        int result = -1;
-        for (int i = offset; i < length + offset; i++) {
-            if (b[i] == delimiter) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Find index of passed delimiter walking from end of buffer backwards.
-     *
-     * @param b
-     * @param delimiter
-     * @return Index of delimiter
-     */
-    public static int searchDelimiterIndexInReverse(final byte[] b, final int offset, final int length, final int delimiter) {
-        if (b == null) {
-            throw new IllegalArgumentException("Passed buffer is null");
-        }
-        int result = -1;
-        for (int i = (offset + length) - 1; i >= offset; i--) {
-            if (b[i] == delimiter) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public static int findCommonPrefix(byte[] left, byte[] right, int leftLength, int rightLength, int leftOffset, int rightOffset) {
-        int length = Math.min(leftLength, rightLength);
-        int result = 0;
-
-        while (result < length && left[leftOffset + result] == right[rightOffset + result]) {
-            result++;
-        }
-        return result;
-    }
 }

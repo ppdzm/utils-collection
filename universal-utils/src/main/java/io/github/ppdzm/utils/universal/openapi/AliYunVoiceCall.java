@@ -13,16 +13,24 @@ import java.util.List;
  * 阿里云电话报警工具类
  */
 public class AliYunVoiceCall {
-    //产品域名（接口地址固定，无需修改）
-    private final static String domain = "dyvmsapi.aliyuncs.com";
-    //AK信息
-    private final static String accessKeyId = "LTAI5zqsai1mqpWdw";
-    private final static String accessKeySecret = "K2pqjuDvchBQhsal4MzNX9dqQhErfsr";
-    //云通信产品-语音API服务产品名称（产品名固定，无需修改）
-    private final static String product = "Dyvmsapi";
-    private final static String regionId = "cn-hangzhou";
-    private final static String endpointName = "cn-hangzhou";
-    private final static String showNumber = "02160881888";
+    /**
+     * 产品域名（接口地址固定，无需修改）
+     */
+
+    private final static String DOMAIN = "dyvmsapi.aliyuncs.com";
+    /**
+     * AK信息
+     */
+    private final static String ACCESS_KEY_ID = "LTAI5zqsai1mqpWdw";
+    private final static String ACCESS_KEY_SECRET = "K2pqjuDvchBQhsal4MzNX9dqQhErfsr";
+    /**
+     * 云通信产品-语音API服务产品名称（产品名固定，无需修改）
+     */
+    private final static String PRODUCT = "Dyvmsapi";
+    private final static String REGION_ID = "cn-hangzhou";
+    private final static String ENDPOINT_NAME = "cn-hangzhou";
+    private final static String SHOW_NUMBER = "02160881888";
+    private final static String LEGAL_RESPONSE = "OK";
 
     /**
      * 电话报警
@@ -53,8 +61,8 @@ public class AliYunVoiceCall {
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
 
         //初始化acsClient 暂时不支持多region
-        DefaultProfile profile = DefaultProfile.getProfile(regionId, accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint(endpointName, regionId, product, domain);
+        DefaultProfile profile = DefaultProfile.getProfile(REGION_ID, ACCESS_KEY_ID, ACCESS_KEY_SECRET);
+        DefaultProfile.addEndpoint(ENDPOINT_NAME, REGION_ID, PRODUCT, DOMAIN);
         DefaultAcsClient acsClient = new DefaultAcsClient(profile);
 
         SingleCallByTtsRequest request = new SingleCallByTtsRequest();
@@ -78,7 +86,7 @@ public class AliYunVoiceCall {
             SingleCallByTtsResponse singleCallByTtsResponse = acsClient.getAcsResponse(request);
 
             System.out.println("singleCallByTtsResponse.getCode: " + singleCallByTtsResponse.getCode());
-            if (singleCallByTtsResponse.getCode() != null && "OK".equals(singleCallByTtsResponse.getCode())) {
+            if (singleCallByTtsResponse.getCode() != null && LEGAL_RESPONSE.equals(singleCallByTtsResponse.getCode())) {
                 //请求成功
                 System.out.println("语音文本外呼---------------");
                 System.out.println("RequestId=" + singleCallByTtsResponse.getRequestId());

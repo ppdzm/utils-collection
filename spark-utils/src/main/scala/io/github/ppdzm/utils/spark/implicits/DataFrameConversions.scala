@@ -102,7 +102,7 @@ object DataFrameConversions {
          */
         def toHtmlTable: String = {
             val header = dataFrame.schema.map(_.name).mkString("<tr><th>", "</th><th>", "</th></tr>")
-            val rows = dataFrame.collect().map(_.mkString("<tr><td>", "</td><td>", "</td></tr>")).mkString(lineSeparator)
+            val rows = dataFrame.collect().map(_.mkString("<tr><td>", "</td><td>", "</td></tr>")).mkString(LINE_SEPARATOR)
             s"""<table border=1 cellspacing=0>\n$header$rows"""
         }
 

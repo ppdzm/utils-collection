@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Stuart Alex on 2017/9/22.
+ * @author Created by Stuart Alex on 2017/9/22.
  */
 public class Loan {
 
@@ -72,10 +72,11 @@ public class Loan {
         double payback = averageCapitalPlusInterestOfHouseLoan(principal, guess, periods).getTotalPayback() / periods;
 
         while (Math.abs(monthPayback - payback) > 0.0001) {
-            if (monthPayback > payback)
+            if (monthPayback > payback) {
                 guess += guess / 2.0;
-            else
+            } else {
                 guess /= 2.0;
+            }
 
             payback = averageCapitalPlusInterestOfHouseLoan(principal, guess, periods).getTotalPayback() / periods;
         }

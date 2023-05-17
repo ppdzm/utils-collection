@@ -33,7 +33,7 @@ abstract class EasyKafkaProducer[KS: ClassTag, VS: ClassTag, T] {
      * @return
      */
     def fromDirectoryFileContent(directory: String, fileNameRegex: String = ".*"): DataWrapper = {
-        val url = ResourceUtils.locateResourceAsURL(directory)
+        val url = ResourceUtils.locateResourceAsUrl(directory)
         val data = new File(url.getPath).listFiles().filter(_.getName.matches(fileNameRegex))
           .map { file => LoanPattern.using(Source.fromFile(file, "utf-8"))(s => s.getLines().mkString) }
         new DataWrapper(data)
@@ -47,7 +47,7 @@ abstract class EasyKafkaProducer[KS: ClassTag, VS: ClassTag, T] {
      * @return
      */
     def fromDirectoryFileLines(directory: String, fileNameRegex: String = ".*"): DataWrapper = {
-        val url = ResourceUtils.locateResourceAsURL(directory)
+        val url = ResourceUtils.locateResourceAsUrl(directory)
         if (url == null)
             throw new NotDirectoryException(directory)
         val data = new File(url.getPath).listFiles().filter(_.getName.matches(fileNameRegex))

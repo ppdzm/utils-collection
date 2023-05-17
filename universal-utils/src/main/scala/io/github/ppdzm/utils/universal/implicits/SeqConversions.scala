@@ -55,7 +55,7 @@ object SeqConversions {
             if (header.nonEmpty)
                 header.prettyPrintln(render)
             if (rows.nonEmpty) {
-                rows.mkString(lineSeparator).prettyPrintln(render)
+                rows.mkString(LINE_SEPARATOR).prettyPrintln(render)
                 if (footer.nonEmpty)
                     footer.prettyPrintln(render)
             }
@@ -105,14 +105,14 @@ object SeqConversions {
             val rowVerticalBorder = border.rowVerticalBorder(vertical)
             val takeNumber = if (length <= 0 || length >= seq.length) seq.length else length
             // 加工后实际展示的数据
-            val displayArray = seq.map(_.map(_.n2e(null2Empty).trim.trim(lineFeed)))
+            val displayArray = seq.map(_.map(_.n2e(null2Empty).trim.trim(LINE_FEED)))
               .map(a => a.map(e => if (truncate && e.length > truncateLength) e.take(truncateLength - 3) + "..." else e))
-              .map(a => a.map(e => if (linefeed > 0) e.sliceByWidth(linefeed).map(_ + lineSeparator).mkString else e))
+              .map(a => a.map(e => if (linefeed > 0) e.sliceByWidth(linefeed).map(_ + LINE_SEPARATOR).mkString else e))
               .take(takeNumber)
             val withHeaderArray = displayArray
               .map(e => e.++(List.fill(displayColumns.length - e.length)("")))
               .:+(displayColumns)
-              .map(_.map(_.split(lineSeparator)))
+              .map(_.map(_.split(LINE_SEPARATOR)))
             // 每一列的最大宽度
             val maxWidthArray = displayColumns.indices.map(i => withHeaderArray.map(_ (i)).map(_.map(_.width).max).max)
             // 行数据
@@ -123,18 +123,18 @@ object SeqConversions {
                   }
                   .map {
                       seq =>
-                          val maxRowsCount = seq.map(_.split(lineSeparator).length).max
+                          val maxRowsCount = seq.map(_.split(LINE_SEPARATOR).length).max
                           val explodedRow =
                               seq.indices
                                 .map {
                                     i =>
-                                        val paddingRowsCount = maxRowsCount - seq(i).split(lineSeparator).length
-                                        val explodedColumn = seq(i).split(lineSeparator).map(e => e.pad(maxWidthArray(i) - e.width + e.length, this.paddingChar, alignment))
+                                        val paddingRowsCount = maxRowsCount - seq(i).split(LINE_SEPARATOR).length
+                                        val explodedColumn = seq(i).split(LINE_SEPARATOR).map(e => e.pad(maxWidthArray(i) - e.width + e.length, this.paddingChar, alignment))
                                         Array.fill(paddingRowsCount / 2)("".pad(maxWidthArray(i), this.paddingChar, alignment))
                                           .++(explodedColumn)
                                           .++(Array.fill(paddingRowsCount / 2 + paddingRowsCount % 2)("".pad(maxWidthArray(i), this.paddingChar, alignment)))
                                 }
-                          (0 until maxRowsCount).map(i => explodedRow.map(_ (i)).mkString(rowFlankBorder, rowVerticalBorder, rowFlankBorder)).mkString(lineSeparator)
+                          (0 until maxRowsCount).map(i => explodedRow.map(_ (i)).mkString(rowFlankBorder, rowVerticalBorder, rowFlankBorder)).mkString(LINE_SEPARATOR)
                   }
             generateTable(rows, displayColumns, maxWidthArray, alignment, flank, transverse, vertical)
         }
@@ -160,7 +160,7 @@ object SeqConversions {
             val rowVerticalBorder = border.rowVerticalBorder(vertical)
             val takeNumber = if (length <= 0 || length >= seq.length) seq.length else length
             // 加工后实际展示的数据
-            val displayedArray = seq.map(_.map(_.n2e(null2Empty).trim.trim(lineFeed)))
+            val displayedArray = seq.map(_.map(_.n2e(null2Empty).trim.trim(LINE_FEED)))
               .map(a => a.map(e => if (truncate && e.length > truncateLength) e.take(truncateLength - 3) + "..." else e))
               .take(takeNumber)
             val withEmptyColumnArray = displayedArray.map(e => e.++(List.fill(displayColumns.length - e.length)(" ")))
@@ -208,7 +208,7 @@ object SeqConversions {
          */
         def toHtmlTable(columns: Seq[String]): String = {
             val header = columns.mkString("<tr><th>", "</th><th>", "</th></tr>")
-            val rows = seq.map(_.mkString("<tr><td>", "</td><td>", "</td></tr>")).mkString(lineSeparator)
+            val rows = seq.map(_.mkString("<tr><td>", "</td><td>", "</td></tr>")).mkString(LINE_SEPARATOR)
             s"""<table border=1 cellspacing=0>\n$header$rows"""
         }
 
@@ -228,15 +228,15 @@ object SeqConversions {
                     seq.map { e =>
                         columns.indices
                           .map(i => columns(i).pad(leftMaxLength, this.paddingChar, -1) + "\t" + e(i).toString)
-                          .mkString(lineSeparator)
+                          .mkString(LINE_SEPARATOR)
                     }
                 rows.indices
                   .map {
                       i =>
                           if (i < rows.length - 1)
-                              rowSeparator + lineSeparator + rows(i)
+                              rowSeparator + LINE_SEPARATOR + rows(i)
                           else
-                              rowSeparator + lineSeparator + rows(i) + lineSeparator + rowSeparator
+                              rowSeparator + LINE_SEPARATOR + rows(i) + LINE_SEPARATOR + rowSeparator
                   }
             } else {
                 Seq[String]()
@@ -296,13 +296,13 @@ object SeqConversions {
             if (transverse) {
                 // 行与行之间需要横栏时，将数据行除最后一行外，都加上横栏（最后一行的横栏默认始终存在）
                 (
-                  List(headerUpBorder, columnHeader, headerDownBorder).mkString(lineSeparator),
-                  rows.mkString(lineSeparator + rowBorder + lineSeparator).split(lineSeparator).filter(_.nonEmpty).toSeq,
+                  List(headerUpBorder, columnHeader, headerDownBorder).mkString(LINE_SEPARATOR),
+                  rows.mkString(LINE_SEPARATOR + rowBorder + LINE_SEPARATOR).split(LINE_SEPARATOR).filter(_.nonEmpty).toSeq,
                   tailBorder
                 )
             }
             else {
-                (List(columnHeader, headerDownBorder).mkString(lineSeparator), rows, tailBorder)
+                (List(columnHeader, headerDownBorder).mkString(LINE_SEPARATOR), rows, tailBorder)
             }
         }
 

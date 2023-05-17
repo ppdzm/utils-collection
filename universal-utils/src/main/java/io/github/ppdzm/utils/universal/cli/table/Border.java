@@ -1,5 +1,8 @@
 package io.github.ppdzm.utils.universal.cli.table;
 
+/**
+ * @author Created by Stuart Alex on 2017/3/29.
+ */
 public interface Border {
     /**
      * 列标题上边界交叉字符
@@ -20,6 +23,8 @@ public interface Border {
 
     /**
      * 列标题上下界线条字符
+     *
+     * @return String
      */
     String headerLineBorder();
 

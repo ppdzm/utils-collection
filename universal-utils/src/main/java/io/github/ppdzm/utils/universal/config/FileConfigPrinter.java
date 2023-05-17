@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 import static io.github.ppdzm.utils.universal.core.CoreConstants.*;
 
 /**
- * Created by Stuart Alex on 2021/3/15.
+ * @author Created by Stuart Alex on 2021/3/15.
  */
 public class FileConfigPrinter {
+
+    private final static String ZH = "zh";
 
     public static void print() throws Exception {
         print(null);
@@ -29,25 +31,28 @@ public class FileConfigPrinter {
     }
 
     public static void print(String prefix, String active, String extension) throws Exception {
-        if (!prefix.isEmpty())
+        if (!prefix.isEmpty()) {
             System.setProperty(PROFILE_PREFIX_KEY, prefix);
-        if (!active.isEmpty())
+        }
+        if (!active.isEmpty()) {
             System.setProperty(PROFILE_ACTIVE_KEY, active);
-        if (!extension.isEmpty())
+        }
+        if (!extension.isEmpty()) {
             System.setProperty(PROFILE_EXTENSION_KEY, extension);
+        }
         FileConfig config = new FileConfig();
         printConfig(config);
     }
 
     public static void printConfig(Config config) {
-        Map<String, Object> configKeyValuePairList = MapUtils.fromProperties(config.properties);
+        Map<String, Object> configKeyValuePairList = MapUtils.fromProperties(config.getProperties());
         if (configKeyValuePairList.isEmpty()) {
             System.out.println(CliUtils.rendering("configs is empty, exit!", Render.RED));
             System.exit(0);
         }
         String lang = SystemProperties.language();
         String tip = "";
-        if (lang.equals("zh")) {
+        if (lang.equals(ZH)) {
             tip = "提示：当前显示语言为中文，欲显示其他语言请使用java -Dprogram.language=<lang>切换，目前仅支持en、zh。";
         } else {
             tip = "Tip: the current displayed language is English. To display other languages, please use java -Dprogram.language=<lang> to change, only en, zh is supported now.";

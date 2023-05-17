@@ -88,7 +88,7 @@ object BasicConversions {
     }
 
     implicit class StringImplicits(string: String) {
-        private lazy val specialSymbol = Array(lineSeparator, tab, backQuote, "\1")
+        private lazy val specialSymbol = Array(LINE_SEPARATOR, TAB, BACK_QUOTE, "\1")
 
         /**
          * 在字符串两侧加上双引号
@@ -105,10 +105,10 @@ object BasicConversions {
          */
         def dequote(recursive: Boolean): String = {
             if (recursive) {
-                if ((string.startsWith(singleQuote) && string.endsWith(singleQuote)) || (string.startsWith(doubleQuote) && string.endsWith(doubleQuote)))
+                if ((string.startsWith(SINGLE_QUOTE) && string.endsWith(SINGLE_QUOTE)) || (string.startsWith(DOUBLE_QUOTE) && string.endsWith(DOUBLE_QUOTE)))
                     return string.substring(1, string.length - 1).dequote(recursive)
             } else {
-                if ((string.startsWith(singleQuote) && string.endsWith(singleQuote)) || (string.startsWith(doubleQuote) && string.endsWith(doubleQuote)))
+                if ((string.startsWith(SINGLE_QUOTE) && string.endsWith(SINGLE_QUOTE)) || (string.startsWith(DOUBLE_QUOTE) && string.endsWith(DOUBLE_QUOTE)))
                     return string.substring(1, string.length - 1)
             }
             string
@@ -186,7 +186,7 @@ object BasicConversions {
             var singleQuoteFlag = false
             var dashFlag = false
             string.indices.foreach(i => {
-                if (string(i).toString == singleQuote) {
+                if (string(i).toString == SINGLE_QUOTE) {
                     if (singleQuoteFlag)
                         dashFlag = false
                     singleQuoteFlag = !singleQuoteFlag
@@ -242,7 +242,7 @@ object BasicConversions {
          */
         def width: Int = {
             string.map(char => {
-                if (char.toString == lineFeed)
+                if (char.toString == LINE_FEED)
                     1
                 else if (char.isCJK)
                     2

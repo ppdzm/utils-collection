@@ -1,5 +1,31 @@
 package io.github.ppdzm.utils.universal.formats.avro;
 
+/**
+ * @author Created by Stuart Alex on 2023/5/15.
+ */
 public enum NumberType {
-    INT, LONG, BIG_INTEGER, FLOAT, DOUBLE, BIG_DECIMAL
+    /**
+     * int
+     */
+    INT,
+    /**
+     * long
+     */
+    LONG,
+    /**
+     * bigint
+     */
+    BIG_INTEGER,
+    /**
+     * float
+     */
+    FLOAT,
+    /**
+     * double
+     */
+    DOUBLE,
+    /**
+     * big decimal
+     */
+    BIG_DECIMAL;
 }

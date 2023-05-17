@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class HttpRequest {
     private final String url;
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>(4);
 
     public HttpRequest(String url) {
         this.url = url;

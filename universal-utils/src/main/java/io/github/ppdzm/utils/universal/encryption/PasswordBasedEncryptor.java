@@ -8,10 +8,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by Stuart Alex on 2017/3/29.
+ * @author Created by Stuart Alex on 2017/3/29.
  */
 public class PasswordBasedEncryptor {
-    private static final String defaultPassword = "https://www.xyz.com";
+    private static final String DEFAULT_PASSWORD = "https://www.xyz.com";
 
     /**
      * Encrypts the message using the specified password.
@@ -36,7 +36,7 @@ public class PasswordBasedEncryptor {
      * @return The encrypted message.
      */
     public static String encrypt(String message) {
-        return encrypt(message, defaultPassword);
+        return encrypt(message, DEFAULT_PASSWORD);
     }
 
     /**
@@ -62,7 +62,7 @@ public class PasswordBasedEncryptor {
      * @return The decrypted message.
      */
     public static String decrypt(String encryptedMessage) {
-        return decrypt(encryptedMessage, defaultPassword);
+        return decrypt(encryptedMessage, DEFAULT_PASSWORD);
     }
 
     /**

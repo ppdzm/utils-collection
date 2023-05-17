@@ -2,6 +2,11 @@ package io.github.ppdzm.utils.universal.tuple;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * @param <T1>
+ * @param <T2>
+ * @author Created by Stuart Alex on 2023/5/13.
+ */
 @AllArgsConstructor
 public class Tuple2<T1, T2> {
     public T1 f1;

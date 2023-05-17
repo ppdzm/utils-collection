@@ -1,7 +1,7 @@
 package io.github.ppdzm.utils.hadoop.scala.hbase.implicts
 
 import io.github.ppdzm.utils.hadoop.scala.hbase.{HBaseRow, Qualifier}
-import io.github.ppdzm.utils.universal.base.Symbols.lineSeparator
+import io.github.ppdzm.utils.universal.base.Symbols.LINE_SEPARATOR
 import io.github.ppdzm.utils.universal.cli.table.PrettyBorder
 import io.github.ppdzm.utils.universal.implicits.BasicConversions._
 import org.apache.hadoop.hbase.CellUtil
@@ -36,11 +36,11 @@ object HBaseImplicits {
                 hBaseRow.data
             else
                 hBaseRow.data.map(f => {
-                    val family = f._1.sliceByWidth(linefeed).mkString(lineSeparator)
+                    val family = f._1.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                     val qualifiers = f._2.map(q => {
-                        val qualifier = q._1.sliceByWidth(linefeed).mkString(lineSeparator)
+                        val qualifier = q._1.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                         val timestamp = q._2._1
-                        val value = q._2._2.sliceByWidth(linefeed).mkString(lineSeparator)
+                        val value = q._2._2.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                         qualifier -> (timestamp, value)
                     })
                     (family, qualifiers)
@@ -52,9 +52,9 @@ object HBaseImplicits {
             val maxQualifierWidth = data.flatMap(_._2.keys).toArray.+:("Qualifier").map(_.width).max
             //最大列值宽度
             val maxValueWidth = if (linefeed == 0)
-                data.flatMap(_._2.flatMap(_._2._2.split(lineSeparator))).toArray.+:("Value").map(_.width).max
+                data.flatMap(_._2.flatMap(_._2._2.split(LINE_SEPARATOR))).toArray.+:("Value").map(_.width).max
             else
-                Array(data.flatMap(_._2.flatMap(_._2._2.split(lineSeparator))).toArray.+:("Value").map(_.width).max, linefeed).min
+                Array(data.flatMap(_._2.flatMap(_._2._2.split(LINE_SEPARATOR))).toArray.+:("Value").map(_.width).max, linefeed).min
             //表格除左右最外边框的宽度
             val width = Seq(maxFamilyWidth + maxQualifierWidth + maxValueWidth + timestampLength + 3, rowKey.width).max
             //值单元格实际宽度
@@ -76,7 +76,7 @@ object HBaseImplicits {
             val rowBottomBorder = Seq(maxFamilyWidth, maxQualifierWidth, valueCellWidth, timestampLength)
               .map(border.rowHorizontal * _).mkString(border.rowLeftBottomAngle, border.rowDownT, border.rowRightBottomAngle)
             //列与列之间的分隔边框
-            val qualifierRowBorder = lineSeparator + Seq(maxQualifierWidth, valueCellWidth, timestampLength)
+            val qualifierRowBorder = LINE_SEPARATOR + Seq(maxQualifierWidth, valueCellWidth, timestampLength)
               .map(border.rowHorizontal * _).mkString(border.rowLeftT, border.rowCross, border.rowRightT)
             val rows: String = data
               .map {
@@ -85,27 +85,27 @@ object HBaseImplicits {
                           f._2.map {
                               q =>
                                   //列值
-                                  val value = q._2._2.split(lineSeparator).map(e => e.pad(valueCellWidth - e.width + e.length, this.paddingChar, alignment))
-                                  val paddingNumber = value.length - q._1.split(lineSeparator).length
+                                  val value = q._2._2.split(LINE_SEPARATOR).map(e => e.pad(valueCellWidth - e.width + e.length, this.paddingChar, alignment))
+                                  val paddingNumber = value.length - q._1.split(LINE_SEPARATOR).length
                                   //列族
                                   val qualifier = Array.fill(paddingNumber / 2)(this.paddingChar.toString * maxQualifierWidth)
-                                    .++(q._1.split(lineSeparator).map(_.pad(maxQualifierWidth, this.paddingChar, alignment)))
+                                    .++(q._1.split(LINE_SEPARATOR).map(_.pad(maxQualifierWidth, this.paddingChar, alignment)))
                                     .++(Array.fill(paddingNumber / 2 + paddingNumber % 2)(this.paddingChar.toString * maxQualifierWidth))
                                   //时间戳
                                   val timestamp = Array.fill(paddingNumber / 2)(this.paddingChar.toString * timestampLength)
                                     .++(Array(q._2._1.toString).map(_.pad(timestampLength, this.paddingChar, alignment)))
                                     .++(Array.fill(paddingNumber / 2 + paddingNumber % 2)(this.paddingChar.toString * timestampLength))
                                   val qvts = qualifier.indices.map(i => Array(qualifier(i), value(i), timestamp(i)).mkString(border.rowVertical, border.rowVertical, border.rowVertical))
-                                  qvts.mkString(lineSeparator)
+                                  qvts.mkString(LINE_SEPARATOR)
                           }
-                            .mkString("", qualifierRowBorder + lineSeparator, "").split(lineSeparator)
-                      val familyPaddingNumber = qualifierCells.length - f._1.split(lineSeparator).length
+                            .mkString("", qualifierRowBorder + LINE_SEPARATOR, "").split(LINE_SEPARATOR)
+                      val familyPaddingNumber = qualifierCells.length - f._1.split(LINE_SEPARATOR).length
                       val familyCells = Array.fill(familyPaddingNumber / 2)(this.paddingChar.toString * maxFamilyWidth)
-                        .++(f._1.split(lineSeparator).map(_.pad(maxFamilyWidth, this.paddingChar, alignment)))
+                        .++(f._1.split(LINE_SEPARATOR).map(_.pad(maxFamilyWidth, this.paddingChar, alignment)))
                         .++(Array.fill(familyPaddingNumber / 2 + familyPaddingNumber % 2)(this.paddingChar.toString * maxFamilyWidth))
-                      familyCells.indices.map(i => border.rowVertical + familyCells(i) + qualifierCells(i)).mkString(lineSeparator)
+                      familyCells.indices.map(i => border.rowVertical + familyCells(i) + qualifierCells(i)).mkString(LINE_SEPARATOR)
               }
-              .mkString("", lineSeparator + familyBottomBorder + lineSeparator, lineSeparator + rowBottomBorder)
+              .mkString("", LINE_SEPARATOR + familyBottomBorder + LINE_SEPARATOR, LINE_SEPARATOR + rowBottomBorder)
             headerTopBorder.prettyPrintln(render)
             header.prettyPrintln(render)
             headerBottomBorder.prettyPrintln(render)
@@ -123,11 +123,11 @@ object HBaseImplicits {
                 hBaseRow.data
             else
                 hBaseRow.data.map(f => {
-                    val family = f._1.sliceByWidth(linefeed).mkString(lineSeparator)
+                    val family = f._1.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                     val qualifiers = f._2.map(q => {
-                        val qualifier = q._1.sliceByWidth(linefeed).mkString(lineSeparator)
+                        val qualifier = q._1.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                         val timestamp = q._2._1
-                        val value = q._2._2.sliceByWidth(linefeed).mkString(lineSeparator)
+                        val value = q._2._2.sliceByWidth(linefeed).mkString(LINE_SEPARATOR)
                         qualifier -> (timestamp, value)
                     })
                     (family, qualifiers)
@@ -139,9 +139,9 @@ object HBaseImplicits {
             val maxQualifierWidth = data.flatMap(_._2.keys).toArray.+:("Qualifier").map(_.width).max
             //最大列值宽度
             val maxValueWidth = if (linefeed == 0)
-                data.flatMap(_._2.flatMap(_._2._2.split(lineSeparator))).toArray.+:("Value").map(_.width).max
+                data.flatMap(_._2.flatMap(_._2._2.split(LINE_SEPARATOR))).toArray.+:("Value").map(_.width).max
             else
-                Array(data.flatMap(_._2.flatMap(_._2._2.split(lineSeparator))).toArray.+:("Value").map(_.width).max, linefeed).min
+                Array(data.flatMap(_._2.flatMap(_._2._2.split(LINE_SEPARATOR))).toArray.+:("Value").map(_.width).max, linefeed).min
             //表格除左右最外边框的宽度
             val width = Seq(maxFamilyWidth + maxQualifierWidth + maxValueWidth + timestampLength + 3, rowKey.width).max
             //首行上边框（包括角）
@@ -160,30 +160,30 @@ object HBaseImplicits {
             val familyRowBorder = Seq(maxFamilyWidth, maxQualifierWidth, valueCellWidth, timestampLength)
               .map(this.rowBorder * _).mkString(this.intersect, this.intersect, this.intersect)
             //列与列之间的分隔边框
-            val qualifierRowBorder = lineSeparator + Seq(maxQualifierWidth, valueCellWidth, timestampLength)
+            val qualifierRowBorder = LINE_SEPARATOR + Seq(maxQualifierWidth, valueCellWidth, timestampLength)
               .map(this.rowBorder * _).mkString(this.intersect, this.intersect, this.intersect)
             val rows = data.map(f => {
                 val qualifierCells = f._2.map(q => {
                     //列值
-                    val value = q._2._2.split(lineSeparator).map(e => e.pad(valueCellWidth - e.width + e.length, this.paddingChar, alignment))
-                    val paddingNumber = value.length - q._1.split(lineSeparator).length
+                    val value = q._2._2.split(LINE_SEPARATOR).map(e => e.pad(valueCellWidth - e.width + e.length, this.paddingChar, alignment))
+                    val paddingNumber = value.length - q._1.split(LINE_SEPARATOR).length
                     //列族
                     val qualifier = Array.fill(paddingNumber / 2)(this.paddingChar.toString * maxQualifierWidth)
-                      .++(q._1.split(lineSeparator).map(_.pad(maxQualifierWidth, this.paddingChar, alignment)))
+                      .++(q._1.split(LINE_SEPARATOR).map(_.pad(maxQualifierWidth, this.paddingChar, alignment)))
                       .++(Array.fill(paddingNumber / 2 + paddingNumber % 2)(this.paddingChar.toString * maxQualifierWidth))
                     //时间戳
                     val timestamp = Array.fill(paddingNumber / 2)(this.paddingChar.toString * timestampLength)
                       .++(Array(q._2._1.toString).map(_.pad(timestampLength, this.paddingChar, alignment)))
                       .++(Array.fill(paddingNumber / 2 + paddingNumber % 2)(this.paddingChar.toString * timestampLength))
                     val qvts = qualifier.indices.map(i => Array(qualifier(i), value(i), timestamp(i)).mkString(this.verticalBorder, this.verticalBorder, this.flankBorder))
-                    qvts.mkString(lineSeparator)
-                }).mkString("", qualifierRowBorder + lineSeparator, "").split(lineSeparator)
-                val familyPaddingNumber = qualifierCells.length - f._1.split(lineSeparator).length
+                    qvts.mkString(LINE_SEPARATOR)
+                }).mkString("", qualifierRowBorder + LINE_SEPARATOR, "").split(LINE_SEPARATOR)
+                val familyPaddingNumber = qualifierCells.length - f._1.split(LINE_SEPARATOR).length
                 val familyCells = Array.fill(familyPaddingNumber / 2)(this.paddingChar.toString * maxFamilyWidth)
-                  .++(f._1.split(lineSeparator).map(_.pad(maxFamilyWidth, this.paddingChar, alignment)))
+                  .++(f._1.split(LINE_SEPARATOR).map(_.pad(maxFamilyWidth, this.paddingChar, alignment)))
                   .++(Array.fill(familyPaddingNumber / 2 + familyPaddingNumber % 2)(this.paddingChar.toString * maxFamilyWidth))
-                familyCells.indices.map(i => this.flankBorder + familyCells(i) + qualifierCells(i)).mkString(lineSeparator)
-            }).mkString("", lineSeparator + familyRowBorder + lineSeparator, lineSeparator + familyRowBorder)
+                familyCells.indices.map(i => this.flankBorder + familyCells(i) + qualifierCells(i)).mkString(LINE_SEPARATOR)
+            }).mkString("", LINE_SEPARATOR + familyRowBorder + LINE_SEPARATOR, LINE_SEPARATOR + familyRowBorder)
             topHeaderBorder.prettyPrintln(render)
             header.prettyPrintln(render)
             bottomHeaderBorder.prettyPrintln(render)

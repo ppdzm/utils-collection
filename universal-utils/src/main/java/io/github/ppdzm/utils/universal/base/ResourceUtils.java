@@ -39,14 +39,14 @@ public class ResourceUtils {
     }
 
     public static InputStream locateAsInputStream(String fileName) throws IOException {
-        URL url = locateResourceAsURL(fileName);
+        URL url = locateResourceAsUrl(fileName);
         if (url == null) {
             throw new FileNotFoundException(fileName);
         }
         return url.openStream();
     }
 
-    public static URL locateResourceAsURL(String fileName) throws MalformedURLException {
+    public static URL locateResourceAsUrl(String fileName) throws MalformedURLException {
         URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
         if (url == null) {
             File file = new File(fileName);

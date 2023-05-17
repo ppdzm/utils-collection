@@ -13,6 +13,7 @@ import javax.mail.PasswordAuthentication;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("ALL")
 public class SMTPAuthenticator extends Authenticator {
     private String username;
     private String password;

@@ -2,6 +2,7 @@ package io.github.ppdzm.utils.universal.cli;
 
 import io.github.ppdzm.utils.universal.base.Logging;
 import io.github.ppdzm.utils.universal.base.StringUtils;
+import io.github.ppdzm.utils.universal.base.Symbols;
 import io.github.ppdzm.utils.universal.core.SystemProperties;
 import io.github.ppdzm.utils.universal.tuple.Tuple2;
 import org.apache.commons.cli.HelpFormatter;
@@ -10,7 +11,7 @@ import org.apache.commons.cli.Options;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.github.ppdzm.utils.universal.base.Symbols.carriageReturn;
+import static io.github.ppdzm.utils.universal.base.Symbols.CARRIAGE_RETURN;
 
 /**
  * @author Created by Stuart Alex on 2021/5/7.
@@ -129,7 +130,7 @@ public class CliUtils {
      * @return string
      */
     public static String move2Begin() {
-        return carriageReturn;
+        return String.valueOf(CARRIAGE_RETURN);
     }
 
     /**
@@ -145,7 +146,6 @@ public class CliUtils {
         if (args == null || args.length == 0) {
             return restArgs;
         }
-        //logging.logInfo(rendering("Receive args: ", Render.MAGENTA) + rendering(String.join(", ", args), Render.GREEN));
         logging.logInfo("Receive args: " + rendering(String.join(", ", args), Render.GREEN));
         Map<String, Object> argumentsMapping = new HashMap<>(4);
         int i = 0;
@@ -293,10 +293,11 @@ public class CliUtils {
      */
     public static void printStage(String mission, int sum, int present, char symbol, String textRender) {
         String backgroundColor = "";
-        if (symbol == ' ')
+        if (symbol == Symbols.BLANK.charAt(0)) {
             backgroundColor = "0;42";
-        else
+        } else {
             backgroundColor = textRender;
+        }
         int percentage = present * 100 / sum;
         String bar = StringUtils.repeat(symbol, percentage);
         String blanks = StringUtils.repeat(' ', 100 - percentage);
@@ -319,10 +320,10 @@ public class CliUtils {
             System.out.println(head);
         } else if (present < sum) {
             deleteCurrentRow();
-            System.out.println(carriageReturn + head);
+            System.out.println(CARRIAGE_RETURN + head);
         } else {
             deleteCurrentRow();
-            System.out.println(carriageReturn + head);
+            System.out.println(CARRIAGE_RETURN + head);
             logging.logInfo(endPrompt);
         }
     }

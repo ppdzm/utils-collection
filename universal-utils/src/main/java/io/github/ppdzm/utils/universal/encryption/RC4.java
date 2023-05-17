@@ -3,6 +3,7 @@ package io.github.ppdzm.utils.universal.encryption;
 /**
  * @author stuartalex
  */
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class RC4 {
 
     public static byte[] decrypt(byte[] input, String key) {

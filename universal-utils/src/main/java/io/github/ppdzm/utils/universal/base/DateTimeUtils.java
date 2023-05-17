@@ -13,8 +13,8 @@ import java.util.*;
  * @author Created by Stuart Alex on 2021/5/19.
  */
 public class DateTimeUtils {
-    private static final Map<String, SimpleDateFormat> dataFormats = new HashMap<>();
-    private static final List<String> zoneIds = Arrays.asList(
+    private static final Map<String, SimpleDateFormat> DATA_FORMATS = new HashMap<>(4);
+    private static final List<String> ZONE_IDS = Arrays.asList(
             "GMT", "GMT+01:00", "GMT+02:00", "GMT+03:00", "GMT+03:30", "GMT+04:00", "GMT+05:00", "GMT+05:30", "GMT+06:00",
             "GMT+07:00", "GMT+08:00", "GMT+09:00", "GMT+09:30", "GMT+10:00", "GMT+11:00", "GMT+12:00",
             "GMT-11:00", "GMT-10:00", "GMT-09:00", "GMT-08:00", "GMT-07:00", "GMT-06:00", "GMT-05:00", "GMT-04:00", "GMT-03:30", "GMT-03:00", "GMT-01:00"
@@ -33,10 +33,10 @@ public class DateTimeUtils {
 
     public static List<String> dateRange(String dt, String format) throws ParseException {
         List<String> dateRange = new ArrayList<>();
-        if (dt.contains(",")) {
+        if (dt.contains(Symbols.COMMA)) {
             // 离散的日期
             dateRange = Arrays.asList(dt.split(","));
-        } else if (dt.contains("-")) {
+        } else if (dt.contains(Symbols.HYPHEN)) {
             // 范围的日期
             String[] splits = dt.split("-");
             String startDay, endDay;
@@ -85,11 +85,11 @@ public class DateTimeUtils {
     }
 
     public static SimpleDateFormat getDateFormat(String format) {
-        if (!dataFormats.containsKey(format)) {
+        if (!DATA_FORMATS.containsKey(format)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-            dataFormats.put(format, simpleDateFormat);
+            DATA_FORMATS.put(format, simpleDateFormat);
         }
-        return dataFormats.get(format);
+        return DATA_FORMATS.get(format);
     }
 
     public static String dayOfLastHour(String format) {
@@ -141,7 +141,7 @@ public class DateTimeUtils {
         Instant now = Instant.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         List<String> matchedZoneIds = new ArrayList<>();
-        for (String zoneId : zoneIds) {
+        for (String zoneId : ZONE_IDS) {
             String zoneTimeHourMin = now.atZone(ZoneId.of(zoneId)).format(formatter);
             if (zoneTimeHourMin.compareTo(startHourMinute) > 0 && zoneTimeHourMin.compareTo(endHourMinute) < 0) {
                 matchedZoneIds.add(zoneId);

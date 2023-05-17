@@ -29,7 +29,7 @@ import java.util.Stack;
 public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.ActionHandler {
     static final String CHARSET = "ISO-8859-1";
     private static final JsonElement NULL_JSON_ELEMENT = new JsonElement(null);
-    private static final JsonFactory jsonFactory = new JsonFactory();
+    private static final JsonFactory JSON_FACTORY = new JsonFactory();
     private final Schema schema;
     Stack<ReorderBuffer> reorderBuffers = new Stack<>();
     ReorderBuffer currentReorderBuffer;
@@ -79,6 +79,8 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
                 case VALUE_NULL:
                     result.add(new JsonElement(t, in.getText()));
                     break;
+                default:
+                    break;
             }
             in.nextToken();
         } while (level != 0);
@@ -116,7 +118,7 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
             throw new NullPointerException("InputStream to read from cannot be null!");
         }
         parser.reset();
-        this.in = jsonFactory.createJsonParser(in);
+        this.in = JSON_FACTORY.createParser(in);
         this.in.nextToken();
         return this;
     }
@@ -126,7 +128,7 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
             throw new NullPointerException("String to read from cannot be null!");
         }
         parser.reset();
-        this.in = new JsonFactory().createJsonParser(in);
+        this.in = new JsonFactory().createParser(in);
         this.in.nextToken();
         return this;
     }
@@ -521,19 +523,6 @@ public class ExtendedJsonDecoder extends ParsingDecoder implements Parser.Action
     }
 
     private void injectDefaultValueIfAvailable(final JsonParser in, String fieldName) throws IOException {
-        /*
-        Field field = findField(schema.getElementType(), fieldName);
-
-        if (field == null) {
-            throw new AvroTypeException("Expected field name not found: " + fieldName);
-        }
-
-        JsonNode defVal = field.defaultValue();
-        if (defVal == null) {
-            throw new AvroTypeException("Expected field name not found: " + fieldName);
-        }
-        */
-
         JsonNode defVal = NullNode.instance;
         List<JsonElement> result = new ArrayList<JsonElement>(2);
 

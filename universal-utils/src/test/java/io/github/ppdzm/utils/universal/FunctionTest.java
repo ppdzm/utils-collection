@@ -21,17 +21,18 @@ public class FunctionTest {
     @Test
     public void retryTest2() {
         Integer retry = Retry
-                .<Integer>retry()
+                .<Integer, Integer>retry()
                 .times(5)
                 .interval(1000)
-                .ignoreInvalidResult(true)
+                .ignoreInvalidResult(false)
                 .retry(() -> {
                     int x = Mathematics.randomInt(1, 10);
                     System.out.println(x);
                     return x;
                 })
                 .until(e -> e == 10)
-                .apply();
+                .process(e -> e * e)
+                .applyWithProcessor();
         System.out.println(StringUtils.repeat('=', 10));
         System.out.println(retry);
     }

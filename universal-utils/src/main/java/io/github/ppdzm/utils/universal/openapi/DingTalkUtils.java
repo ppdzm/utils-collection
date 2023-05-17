@@ -2,7 +2,7 @@ package io.github.ppdzm.utils.universal.openapi;
 
 import io.github.ppdzm.utils.universal.formats.json.JacksonJsonUtils;
 import io.github.ppdzm.utils.universal.http.HttpRequest;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;

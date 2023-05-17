@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by Stuart Alex on 2021/3/15.
+ * @author Created by Stuart Alex on 2021/3/15.
  */
 public class MapUtils {
 
     public static Map<String, Object> fromProperties(Properties properties) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(4);
         for (Object key : properties.keySet()) {
             map.put(key.toString(), properties.get(key));
         }
@@ -26,7 +26,7 @@ public class MapUtils {
 
 
         public MapBuilder() {
-            this.map = new HashMap<>();
+            this.map = new HashMap<>(4);
         }
 
         public MapBuilder<K, V> put(K k, V v) {
@@ -39,4 +39,5 @@ public class MapUtils {
         }
 
     }
+
 }

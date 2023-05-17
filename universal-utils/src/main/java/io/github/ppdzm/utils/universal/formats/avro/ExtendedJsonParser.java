@@ -62,6 +62,8 @@ public class ExtendedJsonParser extends JsonParser {
                 case END_OBJECT:
                     level--;
                     break;
+                default:
+                    break;
             }
         } while (level > 0);
         return this;

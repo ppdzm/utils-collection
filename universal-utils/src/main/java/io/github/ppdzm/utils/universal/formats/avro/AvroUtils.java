@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Created by Stuart Alex on 2021/5/21.
  */
 public class AvroUtils {
-    private static final Schema.Parser parser = new Schema.Parser();
+    private static final Schema.Parser PARSER = new Schema.Parser();
 
     /**
      * Avro字节数组转回Avro实体（类型未知，字节数组中含有Schema信息）
@@ -85,7 +85,7 @@ public class AvroUtils {
      * @throws IOException IOException
      */
     public static <T> List<T> bytes2Generic(byte[] bytes, String schemaString) throws IOException {
-        return bytes2Generic(bytes, parser.parse(schemaString));
+        return bytes2Generic(bytes, PARSER.parse(schemaString));
     }
 
     /**
@@ -154,7 +154,7 @@ public class AvroUtils {
      */
     public static Schema getSchemaFromFile(String schemaFileName) throws IOException {
         InputStream schemaInputStream = ResourceUtils.locateAsInputStream(schemaFileName);
-        return parser.parse(schemaInputStream);
+        return PARSER.parse(schemaInputStream);
     }
 
     /**
@@ -164,7 +164,7 @@ public class AvroUtils {
      * @return Schema
      */
     public static Schema getSchemaFromString(String schemaString) {
-        return parser.parse(schemaString);
+        return PARSER.parse(schemaString);
     }
 
     /**
@@ -176,7 +176,7 @@ public class AvroUtils {
      * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithSchema(String jsonString, String schemaString) throws IOException {
-        return json2AvroBytesWithSchema(jsonString, parser.parse(schemaString));
+        return json2AvroBytesWithSchema(jsonString, PARSER.parse(schemaString));
     }
 
     /**
@@ -237,7 +237,7 @@ public class AvroUtils {
      * @throws IOException IOException
      */
     public static byte[] json2AvroBytesWithoutSchema(String jsonString, String schemaString) throws IOException {
-        Schema schema = parser.parse(schemaString);
+        Schema schema = PARSER.parse(schemaString);
         return json2AvroBytesWithoutSchema(jsonString, schema);
     }
 
@@ -372,7 +372,7 @@ public class AvroUtils {
      * @return Map<String, Object>
      */
     private static Map<String, Object> parseRecord2Map(GenericRecord record, boolean reserveParentName, String parentName) {
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(4);
         if (record == null) {
             return resultMap;
         }
@@ -451,10 +451,6 @@ public class AvroUtils {
                                 resultMap.putAll(recordMapInUnion);
                                 finished = true;
                                 break;
-                            case "string":
-                                resultMap.put(fieldName, String.valueOf(record.get(fieldName)));
-                                finished = true;
-                                break;
                             default:
                                 resultMap.put(fieldName, String.valueOf(record.get(fieldName)));
                                 finished = true;
@@ -484,7 +480,7 @@ public class AvroUtils {
      * @return Map<String, String>
      */
     private static Map<String, String> parseMapField2Map(Object mapField) {
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>(4);
         if (mapField == null) {
             return resultMap;
         }

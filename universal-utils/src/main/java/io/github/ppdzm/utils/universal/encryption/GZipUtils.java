@@ -5,11 +5,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * @author Created by Stuart Alex on 2017/3/29.
+ */
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class GZipUtils {
 
     public static byte[] compress(String str) throws IOException {
-        if (str == null || str.isEmpty())
+        if (str == null || str.isEmpty()) {
             return null;
+        }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
         gzip.write(str.getBytes(StandardCharsets.UTF_8));

@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.spark.udf
 
-import io.github.ppdzm.utils.universal.base.functions
+import io.github.ppdzm.utils.universal.base.Functions
 import io.github.ppdzm.utils.universal.implicits.BasicConversions.AnyImplicits
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
@@ -71,6 +71,6 @@ object GlobalUDF {
      *
      * @return
      */
-    def bytes2Long: UserDefinedFunction = udf { (bytes: Array[Byte]) => functions.bytes2Long(bytes) }
+    def bytes2Long: UserDefinedFunction = udf { (bytes: Array[Byte]) => Functions.bytes2Long(bytes) }
 
 }

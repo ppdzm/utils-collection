@@ -13,30 +13,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * @author Created by Stuart Alex on 2023/5/13.
+ */
 public class SqlUtils {
-    private final static List<Tuple2<String, String>> replaceOnce = Arrays.asList(
+    private final static List<Tuple2<String, String>> REPLACE_ONCE = Arrays.asList(
             Tuple2.of("\b", ""),
             Tuple2.of("\n", " "),
             Tuple2.of("\r", ""),
             Tuple2.of("\t", ""),
             Tuple2.of("`", "")
     );
-    private final static List<Tuple2<String, String>> replaceRecursively = Arrays.asList(
+    private final static List<Tuple2<String, String>> REPLACE_RECURSIVELY = Arrays.asList(
             Tuple2.of("  ", " "),
             Tuple2.of("( ", "("),
             Tuple2.of(" )", ")"),
             Tuple2.of(", ", ","),
             Tuple2.of(" ,", ",")
     );
-    private final static Logging logging = new Logging(SqlUtils.class);
-    private final static Pattern pattern = Pattern.compile("[#$]\\{[^#\\}$]+\\}");
+    private final static Logging LOGGING = new Logging(SqlUtils.class);
+    private final static Pattern PATTERN = Pattern.compile("[#$]\\{[^#\\}$]+\\}");
 
     /**
      * 解析文件中的SQL语句
      *
-     * @param file       SQL文件
-     * @param properties 参数配置
-     * @param squeeze    是否压缩SQL
+     * @param file                                 SQL文件
+     * @param properties                           参数配置
+     * @param squeeze                              是否压缩SQL
+     * @param throwExceptionIfParameterNotProvided 参数未提供时是否抛出异常
      * @return String
      */
     public static List<String> analyse(File file, Properties properties, boolean squeeze, boolean throwExceptionIfParameterNotProvided) throws Exception {
@@ -46,25 +50,28 @@ public class SqlUtils {
     /**
      * 解析单条SQL语句
      *
-     * @param sql        SQL 语句
-     * @param properties 参数配置
-     * @param squeeze    是否压缩SQL
+     * @param sql                                  SQL 语句
+     * @param properties                           参数配置
+     * @param squeeze                              是否压缩SQL
+     * @param throwExceptionIfParameterNotProvided 参数未提供时是否抛出异常
      * @return String
      */
     public static String analyse(String sql, Properties properties, boolean squeeze, boolean throwExceptionIfParameterNotProvided) throws Exception {
         List<String> scripts = analyse(Collections.singletonList(sql), properties, squeeze, throwExceptionIfParameterNotProvided);
-        if (scripts.isEmpty())
+        if (scripts.isEmpty()) {
             return "";
-        else
+        } else {
             return scripts.get(0);
+        }
     }
 
     /**
      * 解析单条SQL语句
      *
-     * @param originalScriptLines SQL 语句列表
-     * @param properties          参数配置
-     * @param squeeze             是否压缩SQL
+     * @param originalScriptLines                  SQL 语句列表
+     * @param properties                           参数配置
+     * @param squeeze                              是否压缩SQL
+     * @param throwExceptionIfParameterNotProvided 参数未提供时是否抛出异常
      * @return String
      */
     public static List<String> analyse(List<String> originalScriptLines, Properties properties, boolean squeeze, boolean throwExceptionIfParameterNotProvided) throws Exception {
@@ -75,17 +82,19 @@ public class SqlUtils {
     /**
      * 解析单条SQL语句
      *
-     * @param originalScriptLines SQL 语句列表
-     * @param properties          参数配置
-     * @param squeeze             是否压缩SQL
+     * @param originalScriptLines                  SQL 语句列表
+     * @param properties                           参数配置
+     * @param squeeze                              是否压缩SQL
+     * @param throwExceptionIfParameterNotProvided 参数未提供时是否抛出异常
      * @return String
      */
     public static List<String> analyse(List<String> originalScriptLines, Map<String, Object> properties, boolean squeeze, boolean throwExceptionIfParameterNotProvided) throws Exception {
-        String joiner = null;
-        if (squeeze)
+        String joiner;
+        if (squeeze) {
             joiner = " ";
-        else
+        } else {
             joiner = "\n";
+        }
         List<String> first = Arrays.stream(originalScriptLines
                 .stream()
                 .map(StringUtils::trimComment)
@@ -96,8 +105,9 @@ public class SqlUtils {
         List<String> ultimate = new ArrayList<>();
         for (String line : first) {
             String sql = substitute(line, properties, squeeze, throwExceptionIfParameterNotProvided);
-            if (!sql.isEmpty())
+            if (!sql.isEmpty()) {
                 ultimate.add(sql);
+            }
         }
         return ultimate;
     }
@@ -110,13 +120,14 @@ public class SqlUtils {
      */
     public static String squeeze(String script) {
         String squeezedScript = script.trim();
-        for (Tuple2<String, String> tuple2 : replaceOnce) {
+        for (Tuple2<String, String> tuple2 : REPLACE_ONCE) {
             squeezedScript = squeezedScript.replace(tuple2.f1, tuple2.f2);
         }
         squeezedScript = squeezedScript.trim();
-        for (Tuple2<String, String> tuple2 : replaceRecursively) {
-            while (squeezedScript.contains(tuple2.f1))
+        for (Tuple2<String, String> tuple2 : REPLACE_RECURSIVELY) {
+            while (squeezedScript.contains(tuple2.f1)) {
                 squeezedScript = squeezedScript.replace(tuple2.f1, tuple2.f2);
+            }
         }
         squeezedScript = squeezedScript.trim();
         return squeezedScript;
@@ -155,9 +166,9 @@ public class SqlUtils {
     public static String substitute(String sql, Map<String, Object> properties, boolean squeeze, boolean throwExceptionIfParameterNotProvided) throws Exception {
         String temp = sql;
         boolean canNotFindMore = false;
-        while (pattern.matcher(temp).find() && !canNotFindMore) {
+        while (PATTERN.matcher(temp).find() && !canNotFindMore) {
             canNotFindMore = true;
-            Matcher matcher = pattern.matcher(temp);
+            Matcher matcher = PATTERN.matcher(temp);
             while (matcher.find()) {
                 String parameter = matcher.group(0);
                 String name = parameter.substring(2, parameter.length() - 1).replace("hivevar:", "");
@@ -165,7 +176,7 @@ public class SqlUtils {
                     if (throwExceptionIfParameterNotProvided) {
                         throw new Exception("value of parameter " + name + " isn't provided");
                     } else {
-                        logging.logWarning("value of parameter " + name + " isn't provided");
+                        LOGGING.logWarning("value of parameter " + name + " isn't provided");
                     }
                 } else {
                     Object value = properties.get(name);
@@ -177,8 +188,9 @@ public class SqlUtils {
             }
         }
         temp = temp.trim();
-        if (squeeze)
+        if (squeeze) {
             return squeeze(temp);
+        }
         return temp;
     }
 
@@ -193,9 +205,9 @@ public class SqlUtils {
         int inputParameterCount = 0;
         String temp = sql;
         boolean canNotFindMore = false;
-        while (pattern.matcher(temp).find() && !canNotFindMore) {
+        while (PATTERN.matcher(temp).find() && !canNotFindMore) {
             canNotFindMore = true;
-            Matcher matcher = pattern.matcher(temp);
+            Matcher matcher = PATTERN.matcher(temp);
             while (matcher.find()) {
                 String parameter = matcher.group(0);
                 String name = parameter.substring(2, parameter.length() - 1).replace("hivevar:", "");
@@ -216,8 +228,9 @@ public class SqlUtils {
                 }
             }
         }
-        if (inputParameterCount > 0)
+        if (inputParameterCount > 0) {
             CliUtils.deleteRowsUpward(inputParameterCount);
+        }
         return temp.trim();
     }
 

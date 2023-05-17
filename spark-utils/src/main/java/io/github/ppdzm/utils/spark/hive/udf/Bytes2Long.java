@@ -1,6 +1,6 @@
 package io.github.ppdzm.utils.spark.hive.udf;
 
-import io.github.ppdzm.utils.universal.base.functions;
+import io.github.ppdzm.utils.universal.base.Functions;
 import org.apache.hadoop.hive.ql.exec.UDF;
 
 /**
@@ -16,7 +16,7 @@ public class Bytes2Long extends UDF {
      * @return Long
      */
     public Long evaluate(byte[] bytes) {
-        return functions.bytes2Long(bytes);
+        return Functions.bytes2Long(bytes);
     }
 
 }

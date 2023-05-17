@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 /**
  * @author Created by Stuart Alex on 2021/6/11.
  */
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class SSH2Utils {
 
     public static void executeShellOnRemoteServer(String remoteHost, String user, String password, String command) throws IOException {

@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 经验生命表
+ *
+ * @author Created by Stuart Alex on 2017/3/29.
+ */
 public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable {
     protected Double v;
     /**
@@ -21,6 +25,10 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         this.maxAge = this.rows.size() - 1;
     }
 
+    /**
+     * 获取死亡表
+     * @return 死亡表
+     */
     public abstract List<Double> deadList();
 
     /**
@@ -38,12 +46,12 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
             double deadRate = Math.round(deadAtEnd / survivalAtStart * 1e6) / 1e6;
             temps.add(new Row(age, survivalAtStart, deadAtEnd, 1 - deadRate, deadRate, -1));
         }
-        Map<Integer, Row> result = new HashMap<>();
+        Map<Integer, Row> result = new HashMap<>(4);
         for (int i = 0; i < temps.size(); i++) {
             Row r = temps.get(i);
-            if (r.getX() == maxAge)
+            if (r.getX() == maxAge) {
                 result.put(r.getX(), new Row(r.getX(), r.getL(), r.getD(), r.getP(), r.getQ(), 0.5));
-            else {
+            } else {
                 double sumL = temps.stream().filter(t -> t.getX() >= r.getX()).mapToDouble(Row::getL).sum();
                 double e = Math.round((sumL / r.getL() + 0.5) * 10) / 10.0;
                 result.put(r.getX(), new Row(r.getX(), r.getL(), r.getD(), r.getP(), r.getQ(), e));
@@ -52,14 +60,17 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return result;
     }
 
+    @Override
     public double a(int x, int n) {
         return (m(x) - m(x + n)) / d(x);
     }
 
+    @Override
     public double p(int x, int n) {
         return 1 - q(x, n);
     }
 
+    @Override
     public double q(int x, int n) {
         double sum = 0.0;
         for (int i = x; i < x + n; i++) {
@@ -68,6 +79,7 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return Mathematics.round(sum / rows.get(x).getL(), 6);
     }
 
+    @Override
     public double q(int x, int n, int u) {
         double sum = 0.0;
         for (int i = x + n; i < x + n + u; i++) {
@@ -76,6 +88,7 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return Mathematics.round(sum / rows.get(x).getL(), 6);
     }
 
+    @Override
     public double r(int x) {
         double sum = 0.0;
         for (int i = x; i <= maxAge; i++) {
@@ -84,6 +97,7 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return sum;
     }
 
+    @Override
     public double m(int x) {
         double sum = 0.0;
         for (int i = x; i <= maxAge; i++) {
@@ -92,10 +106,12 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return sum;
     }
 
+    @Override
     public double c(int x) {
         return Math.pow(v, x + 1) * rows.get(x).getD();
     }
 
+    @Override
     public double s(int x) {
         double sum = 0.0;
         for (int i = x; i <= maxAge; i++) {
@@ -104,6 +120,7 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return sum;
     }
 
+    @Override
     public double n(int x) {
         double sum = 0.0;
         for (int i = x; i <= maxAge; i++) {
@@ -112,6 +129,7 @@ public abstract class AbstractExperienceLiveTable implements ExperienceLiveTable
         return sum;
     }
 
+    @Override
     public double d(int x) {
         return Math.pow(v, x) * rows.get(x).getL();
     }

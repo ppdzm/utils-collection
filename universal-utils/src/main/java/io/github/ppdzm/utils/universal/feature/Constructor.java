@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.universal.feature;
 
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -9,26 +8,19 @@ import java.util.Map;
  */
 public class Constructor {
 
-    public static void construct(Object object, Map<String, String> columnsMap) {
+    public static <T> T construct(Class<T> tClass, Map<String, Object> fieldValueMap) throws InstantiationException, IllegalAccessException {
+        T t = tClass.newInstance();
+        construct(t, fieldValueMap);
+        return t;
+    }
+
+    public static void construct(Object object, Map<String, Object> fieldValueMap) {
         Arrays.stream(object.getClass().getDeclaredFields()).forEach(field -> {
             String columnName = field.getName();
             try {
-                if (columnsMap.containsKey(columnName) && columnsMap.get(columnName) != null) {
+                if (fieldValueMap.containsKey(columnName) && fieldValueMap.get(columnName) != null) {
                     field.setAccessible(true);
-                    switch (field.getType().getSimpleName().toLowerCase()) {
-                        case "integer":
-                            field.set(object, Integer.valueOf(columnsMap.get(columnName)));
-                            break;
-                        case "long":
-                            field.set(object, Long.valueOf(columnsMap.get(columnName)));
-                            break;
-                        case "date":
-                            field.set(object, Date.valueOf(columnsMap.get(columnName)));
-                            break;
-                        default:
-                            field.set(object, columnsMap.get(columnName));
-                            break;
-                    }
+                    field.set(object, fieldValueMap.get(columnName));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

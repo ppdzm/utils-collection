@@ -9,10 +9,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by Stuart Alex on 2017/9/8.
+ * @author Created by Stuart Alex on 2017/9/8.
  */
 public class MessageGenerator {
-    private static final Map<String, ResourceBundle> resourceBundles = new HashMap<>();
+    private static final Map<String, ResourceBundle> RESOURCE_BUNDLES = new HashMap<>(4);
 
     public static String generate(String name, int value) {
         ResourceBundle resourceBundle = getResourceBundle();
@@ -40,15 +40,15 @@ public class MessageGenerator {
 
     private static ResourceBundle getResourceBundle() {
         String language = SystemProperties.language();
-        if (!resourceBundles.containsKey(language)) {
+        if (!RESOURCE_BUNDLES.containsKey(language)) {
             try {
                 ResourceBundle resourceBundle = ResourceBundle.getBundle("message", Locale.forLanguageTag(language));
-                resourceBundles.put(language, resourceBundle);
+                RESOURCE_BUNDLES.put(language, resourceBundle);
             } catch (Exception e) {
                 // Handle the exception
             }
         }
-        return resourceBundles.get(language);
+        return RESOURCE_BUNDLES.get(language);
     }
 
 }

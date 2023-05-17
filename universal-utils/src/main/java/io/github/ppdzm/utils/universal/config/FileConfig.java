@@ -15,8 +15,9 @@ import java.util.Properties;
 /**
  * @author Created by Stuart Alex on 2021/5/7.
  */
-public class FileConfig extends Config {
+public class FileConfig extends AbstractConfig {
     private static final long serialVersionUID = 7904251176493043350L;
+    private static final String JSON_EXTENSION=".json";
 
     public FileConfig(String name, String extension) throws Exception {
         this.properties = initialize(name, extension);
@@ -63,12 +64,12 @@ public class FileConfig extends Config {
         }
         logging.logInfo("Load config from file " + CliUtils.rendering(profileName, Render.GREEN));
         Properties properties = new Properties();
-        URL url = ResourceUtils.locateResourceAsURL(profileName);
+        URL url = ResourceUtils.locateResourceAsUrl(profileName);
         if (url != null) {
             String path = url.getPath();
             logging.logInfo("Config file located at " + CliUtils.rendering(path, Render.GREEN));
             InputStream inputStream = url.openStream();
-            if (fixedExtension.equals(".json")) {
+            if (fixedExtension.equals(JSON_EXTENSION)) {
                 Map<String, Object> configMap = JacksonJsonUtils.parse(url.openStream(), Map.class);
                 properties.put(CoreConstants.PROFILE_ROOT, configMap);
             } else {

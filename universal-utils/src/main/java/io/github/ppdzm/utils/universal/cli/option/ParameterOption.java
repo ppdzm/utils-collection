@@ -3,7 +3,10 @@ package io.github.ppdzm.utils.universal.cli.option;
 import io.github.ppdzm.utils.universal.cli.MessageGenerator;
 import org.apache.commons.cli.Option;
 
-public class ParameterOption extends CommonOption {
+/**
+ * @author Created by Stuart Alex on 2017/9/22.
+ */
+public class ParameterOption extends AbstractOption {
 
     public ParameterOption() {
         super("p", "parameter");

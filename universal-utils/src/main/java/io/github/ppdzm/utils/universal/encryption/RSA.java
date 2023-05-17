@@ -17,8 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * * Created by Stuart Alex on 2017/3/29.
+ * @author Created by Stuart Alex on 2017/3/29.
  */
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class RSA {
     private final static String KEY_ALGORITHM = "RSA";
     private final static String SIGNATURE_ALGORITHM = "MD5withRSA";
@@ -26,8 +27,8 @@ public class RSA {
     private final static String PRIVATE_KEY = "RSAPrivateKey";
     private final static int MAX_ENCRYPT_BLOCK = 117;
     private final static int MAX_DECRYPT_BLOCK = 128;
-    private final static Base64.Decoder base64Decoder = Base64.getDecoder();
-    private final static Base64.Encoder base64Encoder = Base64.getEncoder();
+    private final static Base64.Decoder BASE64_DECODER = Base64.getDecoder();
+    private final static Base64.Encoder BASE64_ENCODER = Base64.getEncoder();
 
     /**
      * 生成公钥、私钥
@@ -58,7 +59,7 @@ public class RSA {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.initSign(privateKey);
         signature.update(data);
-        return new String(base64Encoder.encode(signature.sign()));
+        return new String(BASE64_ENCODER.encode(signature.sign()));
     }
 
     /**
@@ -69,14 +70,14 @@ public class RSA {
      * @param sign            私钥签名后的数据
      */
     public static boolean verify(byte[] data, String publicKeyString, String sign) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
-        byte[] keyBytes = base64Decoder.decode(publicKeyString);
+        byte[] keyBytes = BASE64_DECODER.decode(publicKeyString);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PublicKey publicKey = keyFactory.generatePublic(keySpec);
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.initVerify(publicKey);
         signature.update(data);
-        return signature.verify(base64Decoder.decode(sign));
+        return signature.verify(BASE64_DECODER.decode(sign));
     }
 
     /**
@@ -86,7 +87,7 @@ public class RSA {
      * @param privateKeyString 私钥
      */
     public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKeyString) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        byte[] keyBytes = base64Decoder.decode(privateKeyString);
+        byte[] keyBytes = BASE64_DECODER.decode(privateKeyString);
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PrivateKey privateKey = keyFactory.generatePrivate(pkcs8KeySpec);
@@ -103,7 +104,7 @@ public class RSA {
      * @param publicKeyString 公钥
      */
     public static byte[] decryptByPublicKey(byte[] encryptedData, String publicKeyString) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        byte[] keyBytes = base64Decoder.decode(publicKeyString);
+        byte[] keyBytes = BASE64_DECODER.decode(publicKeyString);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PublicKey publicKey = keyFactory.generatePublic(x509KeySpec);
@@ -120,7 +121,7 @@ public class RSA {
      * @param privateKeyString 私钥
      */
     public static byte[] encryptByPrivateKey(byte[] data, String privateKeyString) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        byte[] keyBytes = base64Decoder.decode(privateKeyString);
+        byte[] keyBytes = BASE64_DECODER.decode(privateKeyString);
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PrivateKey privateKey = keyFactory.generatePrivate(pkcs8KeySpec);
@@ -137,7 +138,7 @@ public class RSA {
      * @param publicKeyString 公钥
      */
     public static byte[] encryptByPublicKey(byte[] data, String publicKeyString) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        byte[] keyBytes = base64Decoder.decode(publicKeyString);
+        byte[] keyBytes = BASE64_DECODER.decode(publicKeyString);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         PublicKey publicKey = keyFactory.generatePublic(x509KeySpec);
@@ -171,7 +172,7 @@ public class RSA {
      */
     public static String getPrivateKey(Map<String, Object> keyMap) {
         Key key = (Key) keyMap.get(PRIVATE_KEY);
-        return new String(base64Encoder.encode(key.getEncoded()));
+        return new String(BASE64_ENCODER.encode(key.getEncoded()));
     }
 
     /**
@@ -181,7 +182,7 @@ public class RSA {
      */
     public static String getPublicKey(Map<String, Object> keyMap) {
         Key key = (Key) keyMap.get(PUBLIC_KEY);
-        return new String(base64Encoder.encode(key.getEncoded()));
+        return new String(BASE64_ENCODER.encode(key.getEncoded()));
     }
 
 }

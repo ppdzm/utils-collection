@@ -16,7 +16,7 @@ public class StringUtils {
             return 0;
         }
         if (str2 == null) {
-            return nullIsLess ? 1 : - 1;
+            return nullIsLess ? 1 : -1;
         }
         return str1.compareTo(str2);
     }
@@ -174,7 +174,7 @@ public class StringUtils {
             }
         }
         String temp = buffer.toString();
-        if (temp.startsWith("\"")) {
+        if (temp.startsWith(String.valueOf(Symbols.DOUBLE_QUOTE))) {
             temp = temp.substring(1);
         }
         if (!temp.isEmpty()) {
