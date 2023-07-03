@@ -149,6 +149,9 @@ public class ConfigItem implements Serializable {
         if (value == null) {
             return config.getProperty(key);
         }
+        if (value.getClass() == String.class) {
+            return config.getProperty(key);
+        }
         return rawValue().toString();
     }
 

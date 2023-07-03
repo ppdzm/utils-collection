@@ -2,6 +2,7 @@ package io.github.ppdzm.utils.universal.feature
 
 import io.github.ppdzm.utils.universal.base.Logging
 
+import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
 import scala.collection.mutable
@@ -12,7 +13,7 @@ import scala.tools.nsc.{Global, Settings}
 /**
  * Created by Stuart Alex on 2017/3/20.
  */
-object Compiler extends Compiler(None) {
+object Compiler extends Compiler(null) {
 
     /**
      * 给表达式添加类定义
@@ -44,13 +45,15 @@ object Compiler extends Compiler(None) {
 
 }
 
-case class Compiler(targetDirectory: Option[String]) {
+case class Compiler(targetDirectory: String) {
     private val logging = new Logging(getClass)
     private val classCache = mutable.Map[String, Class[_]]()
-    private val target = targetDirectory match {
-        case Some(directory) => AbstractFile.getDirectory(directory)
-        case None => new VirtualDirectory("(memory)", None)
-    }
+    private val target =
+        if (targetDirectory != null) {
+            AbstractFile.getDirectory(new File(targetDirectory))
+        } else {
+            new VirtualDirectory("(memory)", None)
+        }
     private val classLoader = new AbstractFileClassLoader(this.target, this.getClass.getClassLoader)
     private val settings = new Settings()
     this.settings.deprecation.value = true

@@ -2,8 +2,11 @@ package io.github.ppdzm.utils.universal;
 
 import io.github.ppdzm.utils.universal.base.Mathematics;
 import io.github.ppdzm.utils.universal.base.StringUtils;
+import io.github.ppdzm.utils.universal.feature.Compiler;
 import io.github.ppdzm.utils.universal.feature.Retry;
 import org.junit.Test;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class FunctionTest {
 
@@ -24,7 +27,9 @@ public class FunctionTest {
                 .<Integer, Integer>retry()
                 .times(5)
                 .interval(1000)
-                .ignoreInvalidResult(false)
+                .defaultResult(5)
+                .defaultValue(5)
+                .ignoreInvalidResult(true)
                 .retry(() -> {
                     int x = Mathematics.randomInt(1, 10);
                     System.out.println(x);

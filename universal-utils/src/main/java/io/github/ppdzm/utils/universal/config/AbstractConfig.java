@@ -58,12 +58,10 @@ public abstract class AbstractConfig implements Config {
         return getProperty(property, null, true);
     }
 
-
     @Override
     public String getProperty(String property, String defaultValue) throws Exception {
         return getProperty(property, defaultValue, true);
     }
-
 
     @Override
     public String getProperty(String property, String defaultValue, boolean recursive) throws Exception {
@@ -159,12 +157,10 @@ public abstract class AbstractConfig implements Config {
         return keys;
     }
 
-
     @Override
     public ConfigItem newConfigItem(String key) {
         return new ConfigItem(this, key, null);
     }
-
 
     @Override
     public ConfigItem newConfigItem(String key, Object defaultValue) {
