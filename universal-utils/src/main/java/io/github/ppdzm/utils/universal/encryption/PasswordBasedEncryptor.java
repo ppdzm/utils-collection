@@ -1,5 +1,6 @@
 package io.github.ppdzm.utils.universal.encryption;
 
+import io.github.ppdzm.utils.universal.base.StringUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig;
 

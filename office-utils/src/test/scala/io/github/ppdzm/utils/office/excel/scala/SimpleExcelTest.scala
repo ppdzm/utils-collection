@@ -1,7 +1,6 @@
 package io.github.ppdzm.utils.office.excel.scala
 
 import io.github.ppdzm.utils.office.excel.scala.workbook.{JxlWorkBook, OLE2WorkBook, OOXMLWorkBook}
-import io.github.ppdzm.utils.office.excel.workbook.JxlWorkBook
 import org.scalatest.FunSuite
 import scalikejdbc.LoanPattern
 

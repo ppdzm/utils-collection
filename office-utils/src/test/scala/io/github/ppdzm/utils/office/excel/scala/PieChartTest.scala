@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.office.excel.scala
 
-import io.github.ppdzm.utils.office.excel.chart.ColumnSeriesPieChart
 import io.github.ppdzm.utils.office.excel.scala.chart.{ColumnSeriesPieChart, ValueSeriesPieChart}
 import io.github.ppdzm.utils.office.excel.scala.workbook.OOXMLWorkBook
 import org.scalatest.FunSuite

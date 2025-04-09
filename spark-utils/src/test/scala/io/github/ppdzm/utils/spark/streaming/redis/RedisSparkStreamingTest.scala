@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.spark.streaming.redis
 
-import io.github.ppdzm.utils.spark.streaming.kafka.{PP, RP}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
@@ -10,7 +9,6 @@ object RedisSparkStreamingTest extends RedisStreaming[String, Int] with App {
     override protected val sparkConf: SparkConf = new SparkConf()
     override protected val sparkSessionConf: Map[String, String] = Map[String, String]()
 
-    startWithProcessor(PP, RP)
 
     /**
      * RDD处理逻辑

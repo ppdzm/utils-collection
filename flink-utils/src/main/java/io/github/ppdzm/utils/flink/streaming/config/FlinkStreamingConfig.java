@@ -99,12 +99,14 @@ public class FlinkStreamingConfig {
         CheckpointConfiguration checkpointConfiguration = getCheckpointConfiguration();
         if (checkpointConfiguration != null && checkpointConfiguration.isCheckpointEnabled()) {
             streamExecutionEnvironment.enableCheckpointing(checkpointConfiguration.getCheckpointIntervalInMilliseconds(), checkpointConfiguration.getCheckpointMode());
+            streamExecutionEnvironment.getCheckpointConfig().setCheckpointStorage(checkpointConfiguration.getCheckpointDir());
             streamExecutionEnvironment.getCheckpointConfig().setCheckpointTimeout(checkpointConfiguration.getCheckpointTimeoutInMilliseconds());
             streamExecutionEnvironment.getCheckpointConfig().setMaxConcurrentCheckpoints(checkpointConfiguration.getMaxConcurrentCheckpoints());
             streamExecutionEnvironment.getCheckpointConfig().setMinPauseBetweenCheckpoints(checkpointConfiguration.getMinPauseBetweenCheckpoints());
             streamExecutionEnvironment.getCheckpointConfig().setTolerableCheckpointFailureNumber(checkpointConfiguration.getTolerableCheckpointFailureNumber());
             streamExecutionEnvironment.getCheckpointConfig().enableExternalizedCheckpoints(checkpointConfiguration.getCleanupMode());
             streamExecutionEnvironment.setStateBackend(checkpointConfiguration.getStateBackend());
+
         }
         return streamExecutionEnvironment;
     }

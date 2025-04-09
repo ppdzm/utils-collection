@@ -365,4 +365,5 @@ public class KafkaConsumerProperties {
         }
 
     }
+
 }

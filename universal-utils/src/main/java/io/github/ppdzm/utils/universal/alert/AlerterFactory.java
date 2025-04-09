@@ -26,6 +26,8 @@ public class AlerterFactory {
                         alertConfig.ALERTER_DING_TALK_RECEIVERS.arrayValue(),
                         alertConfig.ALERTER_DING_TALK_RECEIVER_IS_AT_ALL.booleanValue()
                 );
+            case "feishu":
+                return new FeiShuAlerter(alertConfig.ALERTER_FEI_SHU_WEB_HOOK_URL.stringValue());
             case "logger":
                 return new LoggerAlerter();
             case "mail":

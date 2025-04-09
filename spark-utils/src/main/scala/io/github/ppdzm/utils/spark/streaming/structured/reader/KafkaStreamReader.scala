@@ -1,7 +1,8 @@
 package io.github.ppdzm.utils.spark.streaming.structured.reader
 
 import io.github.ppdzm.utils.spark.streaming.structured.source.InputSources.kafkaSource
-import org.apache.spark.sql.SparkSession
+import io.github.ppdzm.utils.spark.streaming.structured.source.{Source, SourceOption}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class KafkaStreamReader(sparkSession: SparkSession, brokers: String)
     extends StreamReader(sparkSession: SparkSession) {

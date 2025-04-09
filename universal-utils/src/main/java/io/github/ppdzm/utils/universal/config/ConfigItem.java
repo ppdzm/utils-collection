@@ -150,7 +150,7 @@ public class ConfigItem implements Serializable {
             return config.getProperty(key);
         }
         if (value.getClass() == String.class) {
-            return config.getProperty(key);
+            return value.toString();
         }
         return rawValue().toString();
     }
@@ -170,5 +170,6 @@ public class ConfigItem implements Serializable {
         }
         return value;
     }
+
 
 }

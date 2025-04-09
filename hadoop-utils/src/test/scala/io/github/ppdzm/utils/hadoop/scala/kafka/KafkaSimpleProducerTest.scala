@@ -2,6 +2,7 @@ package io.github.ppdzm.utils.hadoop.scala.kafka
 
 import io.github.ppdzm.utils.hadoop.scala.constants.KafkaConfigConstants
 import io.github.ppdzm.utils.hadoop.scala.kafka.config.KafkaProducerProperties
+import io.github.ppdzm.utils.hadoop.scala.kafka.functions.{CountCondition, ExitExceptionHandler, NumberSubstitutor, TimeSleeper}
 import io.github.ppdzm.utils.hadoop.scala.kafka.producer.SimpleKafkaProducer
 import io.github.ppdzm.utils.universal.base.{ResourceUtils, StringUtils}
 import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
@@ -33,28 +34,18 @@ class KafkaSimpleProducerTest extends FunSuite with KafkaConfigConstants {
     }
 
     test("simple-producer") {
-        //        val brokers = KAFKA_BROKERS.stringValue
-        val brokers = "115.28.131.59:9093,118.190.89.43:9093,47.104.157.230:9093"
-        val toTopic = "dynamic-flume-consumer-test"
-        for (elem <- Range(1, 10)) {
-            SimpleKafkaProducer.send(
-                brokers,
-                toTopic,
-                StringUtils.randomString(1, "ABC".toCharArray),
-                StringUtils.randomString(10)
-            )
-        }
-
-        //        SimpleKafkaProducer
-        //            .fromDirectoryFileLines("../data/json/wechat/")
-        //            .toKafka(toTopic)
-        //            .withBrokers(brokers)
-        //            .withCondition(CountCondition(10))
-        //            .withExceptionHandler(ExitExceptionHandler)
-        //            .withSleeper(TimeSleeper(1000))
-        //            //            .withSubstitutor(NumberSubstitutor("1cb00feb-456a-456c-85a7-b42e269b5d61"))
-        //            .withRandom(true)
-        //            .start()
+        val toTopic = "test"
+        val brokers = "172.18.2.102:9092,172.18.2.103:9092,172.18.2.104:9092"
+        SimpleKafkaProducer
+          .fromStrings(Array("a", "b", "c"))
+          .toKafka(toTopic)
+          .withBrokers(brokers)
+          .withCondition(CountCondition(10))
+          .withExceptionHandler(ExitExceptionHandler)
+          .withSleeper(TimeSleeper(1000))
+          .withSubstitutor(NumberSubstitutor("1cb00feb-456a-456c-85a7-b42e269b5d61"))
+          .withRandom(true)
+          .start()
     }
 
     test("wan-producer") {

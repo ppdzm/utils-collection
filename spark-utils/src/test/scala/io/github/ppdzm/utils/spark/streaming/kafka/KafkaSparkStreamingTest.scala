@@ -7,7 +7,7 @@ import io.github.ppdzm.utils.universal.config.{Config, FileConfig}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.rdd.RDD
 
-object KafkaSparkStreamingTest extends KafkaStreaming[String, String, String, Int] with App {
+object KafkaSparkStreamingTest extends KafkaStreaming[String, String, String, Int] {
     override protected val config: Config = new FileConfig()
     override protected val applicationName: String = "test"
     override protected val alerter: Alerter = AlerterFactory.getAlerter("print", new AlertConfig(config))
@@ -17,8 +17,11 @@ object KafkaSparkStreamingTest extends KafkaStreaming[String, String, String, In
     override protected val kafkaOffsetConfig = KAFKA_OFFSET_CONFIG.stringValue
     override protected val intervalInSeconds = SPARK_STREAMING_SECONDS.intValue
     override protected val sparkSessionConf: Map[String, String] = Map[String, String]()
-    startWithProcessor(PP, RP)
-    //startWithProcessFunction(PP.processPartition, N.handlePartitionProcessResult)
+
+
+    startWithProcessor(PartitionProcessorImpl, ResultProcessorImpl)
+    // 或
+    startWithProcessFunction(PartitionProcessorImpl.processPartition, N.handlePartitionProcessResult)
 
     /**
      * RDD处理逻辑
@@ -54,7 +57,7 @@ object N {
     }
 }
 
-object PP extends PartitionProcessor[String, Int] {
+object PartitionProcessorImpl extends PartitionProcessor[String, Int] {
     /**
      * Partition处理逻辑
      *
@@ -71,7 +74,7 @@ object PP extends PartitionProcessor[String, Int] {
     }
 }
 
-object RP extends ResultProcessor[Int] {
+object ResultProcessorImpl extends ResultProcessor[Int] {
     private val logging = new Logging(getClass)
 
     /**

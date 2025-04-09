@@ -13,6 +13,7 @@ public class AlertConfig {
     public ConfigItem ALERTER_DING_TALK_WEB_HOOK_URL;
     public ConfigItem ALERTER_DING_TALK_RECEIVERS;
     public ConfigItem ALERTER_DING_TALK_RECEIVER_IS_AT_ALL;
+    public ConfigItem ALERTER_FEI_SHU_WEB_HOOK_URL;
     public ConfigItem ALERTER_MAIL_SMTP_HOST;
     public ConfigItem ALERTER_MAIL_SMTP_PORT;
     public ConfigItem ALERTER_MAIL_SENDER_NAME;
@@ -28,6 +29,7 @@ public class AlertConfig {
         this.ALERTER_DING_TALK_WEB_HOOK_URL = new ConfigItem(config, "alerter.ding-talk.web-hook.url");
         this.ALERTER_DING_TALK_RECEIVERS = new ConfigItem(config, "alerter.ding-talk.receivers");
         this.ALERTER_DING_TALK_RECEIVER_IS_AT_ALL = new ConfigItem(config, "alerter.ding-talk.receiver.is-at-all");
+        this.ALERTER_FEI_SHU_WEB_HOOK_URL = new ConfigItem(config, "alerter.fei-shu.web-hook.url");
         this.ALERTER_MAIL_SMTP_HOST = new ConfigItem(config, "alerter.mail.smtp.host");
         this.ALERTER_MAIL_SMTP_PORT = new ConfigItem(config, "alerter.mail.smtp.port");
         this.ALERTER_MAIL_SENDER_NAME = new ConfigItem(config, "alerter.mail.sender.name");

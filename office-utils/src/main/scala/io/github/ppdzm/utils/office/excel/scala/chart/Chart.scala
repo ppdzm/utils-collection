@@ -119,7 +119,7 @@ trait Chart {
 
     protected def setLegend(ctChart: CTChart): Unit = {
         val ctLegend = ctChart.addNewLegend()
-        // 图例项说明防止于底部
+        // 图例项说明放置于底部
         ctLegend.addNewLegendPos().setVal(STLegendPos.B)
         // 禁止覆盖图例项
         ctLegend.addNewOverlay().setVal(false)

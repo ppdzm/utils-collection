@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.office.excel.scala
 
-import io.github.ppdzm.utils.office.excel.chart.ColumnSeriesLineChart
 import io.github.ppdzm.utils.office.excel.scala.chart.{ColumnSeriesLineChart, ValueSeriesLineChart}
 import io.github.ppdzm.utils.office.excel.scala.enumeration.ExcelEnumerations.{Direction, LineChartGrouping, Order}
 import io.github.ppdzm.utils.office.excel.scala.workbook.OOXMLWorkBook

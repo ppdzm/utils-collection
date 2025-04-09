@@ -1,6 +1,5 @@
 package io.github.ppdzm.utils.office.excel.scala
 
-import io.github.ppdzm.utils.office.excel.chart.ValueSeriesBarChart
 import io.github.ppdzm.utils.office.excel.scala.chart.{ColumnSeriesBarChart, ValueSeriesBarChart}
 import io.github.ppdzm.utils.office.excel.scala.enumeration.ExcelEnumerations.{BarChartGrouping, Direction, Order}
 import io.github.ppdzm.utils.office.excel.scala.workbook.OOXMLWorkBook
